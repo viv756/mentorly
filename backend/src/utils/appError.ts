@@ -29,39 +29,30 @@ export class HttpException extends AppError {
 
 export class NotFoundException extends AppError {
   constructor(message = "Resource not found", errorCode?: ErrorCodeEnumType) {
-    super(
-      message,
-      HTTPSTATUS.NOT_FOUND,
-      errorCode || ErrorCodeEnum.RESOURCE_NOT_FOUND
-    );
+    super(message, HTTPSTATUS.NOT_FOUND, errorCode || ErrorCodeEnum.RESOURCE_NOT_FOUND);
   }
 }
 
 export class BadRequestException extends AppError {
   constructor(message = "Bad Request", errorCode?: ErrorCodeEnumType) {
-    super(
-      message,
-      HTTPSTATUS.BAD_REQUEST,
-      errorCode || ErrorCodeEnum.VALIDATION_ERROR
-    );
+    super(message, HTTPSTATUS.BAD_REQUEST, errorCode || ErrorCodeEnum.VALIDATION_ERROR);
   }
 }
 
 export class UnauthorizedException extends AppError {
   constructor(message = "Unauthorized Access", errorCode?: ErrorCodeEnumType) {
-    super(
-      message,
-      HTTPSTATUS.UNAUTHORIZED,
-      errorCode || ErrorCodeEnum.ACCESS_UNAUTHORIZED
-    );
+    super(message, HTTPSTATUS.UNAUTHORIZED, errorCode || ErrorCodeEnum.ACCESS_UNAUTHORIZED);
+  }
+}
+
+export class ForbiddenException extends AppError {
+  constructor(message = "Forbidden", errorCode?: ErrorCodeEnumType) {
+    super(message, HTTPSTATUS.FORBIDDEN, errorCode || ErrorCodeEnum.AUTH_TOKEN_NOT_FOUND);
   }
 }
 
 export class InternalServerException extends AppError {
-  constructor(
-    message = "Internal Server Error",
-    errorCode?: ErrorCodeEnumType
-  ) {
+  constructor(message = "Internal Server Error", errorCode?: ErrorCodeEnumType) {
     super(
       message,
       HTTPSTATUS.INTERNAL_SERVER_ERROR,

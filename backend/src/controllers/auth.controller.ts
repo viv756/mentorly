@@ -10,7 +10,7 @@ import { Env } from "../config/env.config";
 import { findByIdUserService, registerUserService } from "../services/auth.service";
 import { registerSchema } from "../validator/auth.validator";
 import { HTTPSTATUS } from "../config/http.config";
-import { NotFoundException, UnauthorizedException } from "../utils/appError";
+import { ForbiddenException, NotFoundException, UnauthorizedException } from "../utils/appError";
 
 export const registerUserController = asyncHandler(async (req: Request, res: Response) => {
   const body = registerSchema.parse({
@@ -51,10 +51,16 @@ export const loginController = asyncHandler(
 export const refreshTokenController = asyncHandler(async (req, res, next) => {
   const token = req.cookies.refreshToken;
   if (!token) {
-    throw new NotFoundException("Token is not found");
+    throw new ForbiddenException("Cookie not found");
   }
 
-  const payload = jwt.verify(token, Env.JWT_REFRESH_SECRET) as { userId: string };
+  let payload: { userId: string };
+
+  try {
+    payload = jwt.verify(token, Env.JWT_REFRESH_SECRET) as { userId: string };
+  } catch {
+    throw new UnauthorizedException("Invalid or expired refresh token");
+  }
 
   const user = await findByIdUserService(payload.userId);
   if (!user) {
@@ -62,7 +68,7 @@ export const refreshTokenController = asyncHandler(async (req, res, next) => {
   }
   const storedRefreshToken = await getRefreshTokenService(user._id.toString());
   if (storedRefreshToken !== token) {
-    throw new UnauthorizedException("Refresh token reuse detected");
+    throw new ForbiddenException("Refresh token reuse detected");
   }
 
   const newAccessToken = signAccessToken({
