@@ -41,7 +41,7 @@ export const signAccessToken = (payload: AccessTokenPayload) => {
     (jwt.decode(token) as JwtPayload)?.exp! * 1000;
 
   return {
-    token,
+    accessToken : token,
     expiresAt,
   };
 };

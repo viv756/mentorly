@@ -12,7 +12,7 @@ export interface UserDocument extends Document {
   omitPassword: () => Omit<UserDocument, "password">;
 }
 
-export const userSchema = new Schema<UserDocument>(
+const userSchema = new Schema<UserDocument>(
   {
     name: {
       type: String,
@@ -26,7 +26,7 @@ export const userSchema = new Schema<UserDocument>(
       trim: true,
       lowercase: true,
     },
-    password: { type: String, select: true,required:true },
+    password: { type: String, select: true, required: true },
     profilePicture: {
       type: String,
       default: null,

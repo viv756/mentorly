@@ -2,7 +2,7 @@ import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as JwtStrategy, ExtractJwt, StrategyOptions } from "passport-jwt";
 
-import { findByIdUserService, verifyUserService } from "../services/user.service";
+import { findByIdUserService, verifyUserService } from "../services/auth.service";
 import { Env } from "./env.config";
 
 /* ---------------- LOCAL STRATEGY (LOGIN) ---------------- */
@@ -48,3 +48,7 @@ passport.use(
     }
   })
 );
+
+export const passportAuthenticateJwt = passport.authenticate("jwt", {
+  session: false,
+});
