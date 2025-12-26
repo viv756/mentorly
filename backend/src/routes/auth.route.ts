@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { loginController, registerUserController } from "../controllers/auth.controller";
-import { passportAuthenticateJwt } from "../config/passport.config";
 
 const authRoutes = Router();
 
