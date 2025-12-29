@@ -38,9 +38,6 @@ export const registerUserService = async (body: {
 
     await session.commitTransaction();
 
-    console.log(user);
-    console.log(account);
-
     return {
       userId: user._id,
     };
