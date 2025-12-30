@@ -2,14 +2,14 @@ import { Request, Response } from "express";
 
 import { asyncHandler } from "../asyncHandler.middleware";
 import { findByIdUserService } from "../services/user.service";
-import { HTTPSTATUS } from "../config/http.config";
+import { HTTP_STATUS } from "../config/http.config";
 
 export const getCurrentUserController = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?._id;
 
   const user = await findByIdUserService(userId);
 
-  return res.status(HTTPSTATUS.OK).json({
+  return res.status(HTTP_STATUS.OK).json({
     message: "User fetched successfully",
     user,
   });

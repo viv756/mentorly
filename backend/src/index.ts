@@ -10,7 +10,7 @@ import { Env } from "./config/env.config";
 import connectDatabase from "./config/database";
 import { errorHandler } from "./middlewares/errorHandler.middleware";
 import { asyncHandler } from "./asyncHandler.middleware";
-import { HTTPSTATUS } from "./config/http.config";
+import { HTTP_STATUS } from "./config/http.config";
 
 import authRoutes from "./routes/auth.route";
 import { passportAuthenticateJwt } from "./config/passport.config";
@@ -35,7 +35,7 @@ app.use(
 app.get(
   `/`,
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    res.status(HTTPSTATUS.OK).json({
+    res.status(HTTP_STATUS.OK).json({
       message: "Hello",
     });
   })

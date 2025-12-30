@@ -9,7 +9,7 @@ import { asyncHandler } from "../asyncHandler.middleware";
 import { Env } from "../config/env.config";
 import { registerUserService } from "../services/auth.service";
 import { registerSchema } from "../validator/auth.validator";
-import { HTTPSTATUS } from "../config/http.config";
+import { HTTP_STATUS } from "../config/http.config";
 import { ForbiddenException, NotFoundException, UnauthorizedException } from "../utils/appError";
 import { findByIdUserService } from "../services/user.service";
 
@@ -20,7 +20,7 @@ export const registerUserController = asyncHandler(async (req: Request, res: Res
 
   await registerUserService(body);
 
-  res.status(HTTPSTATUS.CREATED).json({
+  res.status(HTTP_STATUS.CREATED).json({
     message: "User created successfully",
   });
 });
@@ -43,7 +43,7 @@ export const loginController = asyncHandler(
           path: "/api/auth/refresh",
         });
 
-        res.status(HTTPSTATUS.OK).json({ user: user.omitPassword(), accessToken, expiresAt });
+        res.status(HTTP_STATUS.OK).json({ user: user.omitPassword(), accessToken, expiresAt });
       }
     )(req, res, next);
   }
@@ -76,5 +76,5 @@ export const refreshTokenController = asyncHandler(async (req, res, next) => {
     userId: user._id.toString(),
   });
 
-  res.status(HTTPSTATUS.OK).json(newAccessToken);
+  res.status(HTTP_STATUS.OK).json(newAccessToken);
 });
