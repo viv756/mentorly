@@ -5,7 +5,6 @@ export interface UserDocument extends Document {
   name: string;
   email: string;
   password: string;
-  profilePicture: string | null;
   createdAt: Date;
   updatedAt: Date;
   comparePassword: (password: string) => Promise<boolean>;
@@ -27,10 +26,6 @@ const userSchema = new Schema<UserDocument>(
       lowercase: true,
     },
     password: { type: String, select: true, required: true },
-    profilePicture: {
-      type: String,
-      default: null,
-    },
   },
   {
     timestamps: true,
