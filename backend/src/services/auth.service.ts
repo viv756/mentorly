@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 import AccountModel from "../models/account.model";
 import UserModel from "../models/user.model";
+import ProfileModel from "../models/profile.model";
 
 import { ProviderEnum } from "../enums/account-provider.enum";
 import { BadRequestException, NotFoundException, UnauthorizedException } from "../utils/appError";
@@ -36,6 +37,9 @@ export const registerUserService = async (body: {
       providerId: email,
     });
     await account.save({ session });
+
+    const profile = new ProfileModel({ userId: user._id, rating: { average: 0, count: 0 } });
+    await profile.save({ session });
 
     await session.commitTransaction();
 

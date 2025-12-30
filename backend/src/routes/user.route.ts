@@ -1,8 +1,10 @@
 import { Router } from "express";
-import { getCurrentUserController } from "../controllers/user.controller";
 
-const userRoutes = Router()
+import { getCurrentUserController, updateProfileController } from "../controllers/user.controller";
 
-userRoutes.get("/current", getCurrentUserController)
+const userRoutes = Router();
 
-export default userRoutes
+userRoutes.get("/current", getCurrentUserController);
+userRoutes.patch("/profile/update", updateProfileController);
+
+export default userRoutes;
