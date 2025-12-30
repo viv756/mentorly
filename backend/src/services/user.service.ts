@@ -12,8 +12,12 @@ export const findByIdUserService = async (userId: string) => {
   return user?.omitPassword();
 };
 
-export const updateProfileService = async (userId: string, profileData: CreateProfileInput) => {
-  const { avatar, bio, socialLinks } = profileData;
+export const updateProfileService = async (
+  userId: string,
+  profileData: CreateProfileInput,
+  file: Express.Multer.File | undefined
+) => {
+  const { bio, socialLinks } = profileData;
 
   const user = await UserModel.findById(userId);
   if (!user) {
@@ -25,8 +29,8 @@ export const updateProfileService = async (userId: string, profileData: CreatePr
     throw new NotFoundException("Profile not found");
   }
 
-  if (avatar !== undefined) {
-    profile.avatar = avatar;
+  if (file !== undefined) {
+    profile.avatar = file.path;
   }
 
   if (bio !== undefined) {

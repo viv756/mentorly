@@ -18,10 +18,16 @@ export const getCurrentUserController = asyncHandler(async (req: Request, res: R
 
 export const updateProfileController = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?._id;
+  const file = req.file;
 
-  const validatedData = createProfileSchema.parse(req.body);
+  const body = {
+    ...req.body,
+    socialLinks: req.body.socialLinks ? JSON.parse(req.body.socialLinks) : undefined,
+  };
 
-  const profile = await updateProfileService(userId, validatedData);
+  const validatedData = createProfileSchema.parse(body);
+
+  const profile = await updateProfileService(userId, validatedData, file);
 
   return res.status(HTTP_STATUS.OK).json({
     message: "Profile updated",
