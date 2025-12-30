@@ -17,7 +17,7 @@ interface SocialLinks {
 
 export interface ProfileDocument extends Document {
   userId: Types.ObjectId;
-  avatar: string | null;
+  avatar: string;
   bio: string | null;
   profileCompleteness: number;
   rating: Rating;
@@ -42,7 +42,8 @@ const profileSchema = new Schema<ProfileDocument>(
 
     avatar: {
       type: String,
-      default: null,
+      default:
+        "https://res.cloudinary.com/devincarloz/image/upload/v1758973241/vsurmkwxyrfuqmdd5xgs.jpg",
     },
 
     bio: {
