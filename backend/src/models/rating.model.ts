@@ -2,8 +2,8 @@ import mongoose, { Schema, Document, Types } from "mongoose";
 
 export interface RatingDocument extends Document {
   sessionId: Types.ObjectId;
-  mentorId: Types.ObjectId;
-  learnerId: Types.ObjectId;
+  fromUserId: Types.ObjectId;
+  toUserId: Types.ObjectId;
   rating: number;
   comment?: string;
   createdAt: Date;
@@ -19,13 +19,13 @@ const ratingSchema = new Schema<RatingDocument>(
       index: true,
     },
 
-    mentorId: {
+    fromUserId: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
 
-    learnerId: {
+    toUserId: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
@@ -50,8 +50,8 @@ const ratingSchema = new Schema<RatingDocument>(
 ratingSchema.index({ sessionId: 1 }, { unique: true });
 
 ratingSchema.pre("validate", function () {
-  if (this.mentorId && this.learnerId && this.mentorId.equals(this.learnerId)) {
-    throw new Error("Mentor and learner cannot be the same user");
+  if (this.fromUserId && this.toUserId && this.fromUserId.equals(this.toUserId)) {
+    throw new Error("User cannot rate himself");
   }
 });
 
