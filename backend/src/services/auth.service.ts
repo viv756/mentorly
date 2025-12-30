@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 import AccountModel from "../models/account.model";
 import UserModel from "../models/user.model";
+
 import { ProviderEnum } from "../enums/account-provider.enum";
 import { BadRequestException, NotFoundException, UnauthorizedException } from "../utils/appError";
 
@@ -82,12 +83,4 @@ export const verifyUserService = async ({
   }
 
   return user;
-};
-
-export const findByIdUserService = async (userId: string) => {
-  const user = await UserModel.findById(userId);
-  if (!user) {
-    throw new NotFoundException("User not found ");
-  }
-  return user?.omitPassword();
 };

@@ -2,7 +2,9 @@ import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as JwtStrategy, ExtractJwt, StrategyOptions } from "passport-jwt";
 
-import { findByIdUserService, verifyUserService } from "../services/auth.service";
+import { verifyUserService } from "../services/auth.service";
+import { findByIdUserService } from "../services/user.service";
+
 import { Env } from "./env.config";
 
 /* ---------------- LOCAL STRATEGY (LOGIN) ---------------- */

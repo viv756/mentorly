@@ -7,10 +7,11 @@ import { signAccessToken } from "../utils/tokens";
 import { signRefreshToken } from "../utils/tokens";
 import { asyncHandler } from "../asyncHandler.middleware";
 import { Env } from "../config/env.config";
-import { findByIdUserService, registerUserService } from "../services/auth.service";
+import { registerUserService } from "../services/auth.service";
 import { registerSchema } from "../validator/auth.validator";
 import { HTTPSTATUS } from "../config/http.config";
 import { ForbiddenException, NotFoundException, UnauthorizedException } from "../utils/appError";
+import { findByIdUserService } from "../services/user.service";
 
 export const registerUserController = asyncHandler(async (req: Request, res: Response) => {
   const body = registerSchema.parse({

@@ -13,6 +13,8 @@ import { asyncHandler } from "./asyncHandler.middleware";
 import { HTTPSTATUS } from "./config/http.config";
 
 import authRoutes from "./routes/auth.route";
+import { passportAuthenticateJwt } from "./config/passport.config";
+import userRoutes from "./routes/user.route";
 
 const app = express();
 const BASE_PATH = Env.BASE_PATH;
@@ -48,6 +50,7 @@ app.get(
 // app.get(`${BASE_PATH}/auth/refresh`, refreshTokenController)
 
 app.use(`${BASE_PATH}/auth`, authRoutes);
+app.use(`${BASE_PATH}/user`, passportAuthenticateJwt,userRoutes);
 
 app.use(errorHandler);
 
