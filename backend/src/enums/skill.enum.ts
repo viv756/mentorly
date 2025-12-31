@@ -21,6 +21,6 @@ export const SkillTypeEnum = {
   LEARN: "LEARN",
 } as const;
 
-export type SkillCategoryEnumType = keyof typeof SkillCategoryEnum
-export type SkillLevelEnumType = keyof typeof SkillLevelEnum;
-export type SkillType = keyof typeof SkillTypeEnum;
+export type SkillCategoryEnumType = (typeof SkillCategoryEnum)[keyof typeof SkillCategoryEnum];
+export type SkillLevelEnumType = (typeof SkillLevelEnum)[keyof typeof SkillLevelEnum];
+export type SkillType = (typeof SkillTypeEnum)[keyof typeof SkillTypeEnum];

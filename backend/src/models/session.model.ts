@@ -1,33 +1,19 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
-
-/* =======================
-   Enums
-======================= */
-
-export enum SessionTypeEnum {
-  VIDEO = "video",
-  CHAT = "chat",
-}
-
-export enum SessionStatusEnum {
-  REQUESTED = "requested",
-  ACCEPTED = "accepted",
-  COMPLETED = "completed",
-  CANCELLED = "cancelled",
-}
-
-export enum VideoProviderEnum {
-  WEBRTC = "webrtc",
-  TWILIO = "twilio",
-  AGORA = "agora",
-}
+import {
+  SessionStatusEnum,
+  SessionStatusEnumType,
+  SessionTypeEnum,
+  SessionTypeEnumType,
+  VideoProviderEnum,
+  VideoProviderEnumType,
+} from "../enums/session.enum";
 
 /* =======================
    Interfaces
 ======================= */
 
 export interface VideoInfo {
-  provider: VideoProviderEnum;
+  provider: VideoProviderEnumType;
   roomId: string;
 }
 
@@ -35,10 +21,10 @@ export interface SessionDocument extends Document {
   mentorId: Types.ObjectId;
   learnerId: Types.ObjectId;
   skillId: Types.ObjectId;
-  sessionType: SessionTypeEnum;
+  sessionType: SessionTypeEnumType;
   scheduledAt: Date;
   durationMinutes: number;
-  status: SessionStatusEnum;
+  status: SessionStatusEnumType;
   video?: VideoInfo;
   createdAt: Date;
   updatedAt: Date;

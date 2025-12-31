@@ -1,26 +1,12 @@
 import mongoose, { Document, Schema, Types } from "mongoose";
-
-/* =======================
-   Enums
-======================= */
-
-export enum CreditSourceEnum {
-  SESSION = "SESSION",
-  PURCHASE = "PURCHASE",
-  ADMIN = "ADMIN",
-  REFUNDED = "REFUNDED",
-}
-
-export enum CreditStatusEnum {
-  PENDING = "PENDING",
-  CONFIRMED = "CONFIRMED",
-  REVERSED = "REVERSED",
-}
-
-export enum CreditTypeEnum {
-  DEBIT = "DEBIT",
-  CREDIT = "CREDIT",
-}
+import {
+  CreditSourceEnum,
+  CreditSourceEnumType,
+  CreditStatusEnum,
+  CreditStatusEnumType,
+  CreditTypeEnum,
+  CreditTypeEnumType,
+} from "../enums/credit-ledger.enum";
 
 /* =======================
    Interface
@@ -28,11 +14,11 @@ export enum CreditTypeEnum {
 
 export interface CreditsLedgerDocument extends Document {
   userId: Types.ObjectId;
-  type: CreditTypeEnum; // CREDIT or DEBIT
+  type: CreditTypeEnumType; // CREDIT or DEBIT
   amount: number; // Always positive
-  source: CreditSourceEnum; // SESSION / PURCHASE / ADMIN / REFUNDED
+  source: CreditSourceEnumType; // SESSION / PURCHASE / ADMIN / REFUNDED
   sourceId?: Types.ObjectId; // sessionId | paymentId | adminId
-  status: CreditStatusEnum;
+  status: CreditStatusEnumType;
   description?: string;
   createdAt: Date;
   updatedAt: Date;
