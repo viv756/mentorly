@@ -1,7 +1,11 @@
 import { Request, Response } from "express";
 
-import { asyncHandler } from "../asyncHandler.middleware";
-import { findByIdUserService, updateProfileService } from "../services/user.service";
+import { asyncHandler } from "../middlewares/asyncHandler.middleware";
+import {
+  findByIdUserService,
+  getCurrentUserProfileService,
+  updateProfileService,
+} from "../services/user.service";
 import { HTTP_STATUS } from "../config/http.config";
 import { createProfileSchema } from "../validator/user.validator";
 
@@ -32,5 +36,16 @@ export const updateProfileController = asyncHandler(async (req: Request, res: Re
   return res.status(HTTP_STATUS.OK).json({
     message: "Profile updated",
     profile,
+  });
+});
+
+export const getCurrentUserProfileController = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?._id;
+
+  const userProfile = await getCurrentUserProfileService(userId);
+
+  return res.status(HTTP_STATUS.OK).json({
+    message: "Profile fetched successfully",
+    userProfile,
   });
 });

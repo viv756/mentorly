@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
+import { UserDocument } from "./user.model";
 
 /* =======================
    Interfaces
@@ -16,7 +17,7 @@ interface SocialLinks {
 }
 
 export interface ProfileDocument extends Document {
-  userId: Types.ObjectId;
+  userId: Types.ObjectId | UserDocument
   avatar: string;
   bio: string | null;
   profileCompleteness: number;

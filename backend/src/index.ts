@@ -9,7 +9,7 @@ import cors from "cors";
 import { Env } from "./config/env.config";
 import connectDatabase from "./config/database";
 import { errorHandler } from "./middlewares/errorHandler.middleware";
-import { asyncHandler } from "./asyncHandler.middleware";
+import { asyncHandler } from "./middlewares/asyncHandler.middleware";
 import { HTTP_STATUS } from "./config/http.config";
 
 import authRoutes from "./routes/auth.route";
@@ -50,7 +50,7 @@ app.get(
 // app.get(`${BASE_PATH}/auth/refresh`, refreshTokenController)
 
 app.use(`${BASE_PATH}/auth`, authRoutes);
-app.use(`${BASE_PATH}/user`, passportAuthenticateJwt,userRoutes);
+app.use(`${BASE_PATH}/user`, passportAuthenticateJwt, userRoutes);
 
 app.use(errorHandler);
 

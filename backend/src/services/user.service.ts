@@ -1,5 +1,5 @@
 import ProfileModel from "../models/profile.model";
-import UserModel from "../models/user.model";
+import UserModel, { UserDocument } from "../models/user.model";
 
 import { NotFoundException } from "../utils/appError";
 import { CreateProfileInput } from "../validator/user.validator";
@@ -47,4 +47,17 @@ export const updateProfileService = async (
   await profile.save();
 
   return profile;
+};
+
+export const getCurrentUserProfileService = async (userId: string) => {
+  const user = await UserModel.findById(userId);
+  if (!user) {
+    throw new NotFoundException("User not found");
+  }
+
+  const userProfile = await ProfileModel.findOne({ userId })
+    .populate("userId", "name email createdAt -password")
+    .lean();
+
+  return userProfile;
 };
