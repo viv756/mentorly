@@ -50,4 +50,6 @@ export const userSkillZodSchema = z
     }
   });
 
+export const skillIdSchema = z.string().trim().min(1);
+
 export type userSkillType = z.infer<typeof userSkillZodSchema>;

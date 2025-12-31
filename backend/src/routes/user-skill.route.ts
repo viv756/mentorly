@@ -1,9 +1,18 @@
 import { Router } from "express";
-import { createUserSkillController, getUserSkillsController } from "../controllers/user-skill.controller";
+import {
+  createUserSkillController,
+  deleteUserSkillController,
+  getSkillByIdController,
+  getUserSkillsController,
+} from "../controllers/user-skill.controller";
 
 const userSkillRoutes = Router();
 
+userSkillRoutes.get("/:id", getSkillByIdController);
+userSkillRoutes.get("/all", getUserSkillsController);
+
 userSkillRoutes.post("/create", createUserSkillController);
-userSkillRoutes.get("/user/get", getUserSkillsController);
+
+userSkillRoutes.delete("/delete/:id", deleteUserSkillController);
 
 export default userSkillRoutes;

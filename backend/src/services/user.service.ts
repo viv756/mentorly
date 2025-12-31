@@ -19,11 +19,6 @@ export const updateProfileService = async (
 ) => {
   const { bio, socialLinks } = profileData;
 
-  const user = await UserModel.findById(userId);
-  if (!user) {
-    throw new NotFoundException("User not found");
-  }
-
   const profile = await ProfileModel.findOne({ userId });
   if (!profile) {
     throw new NotFoundException("Profile not found");
@@ -50,14 +45,13 @@ export const updateProfileService = async (
 };
 
 export const getCurrentUserProfileService = async (userId: string) => {
-  const user = await UserModel.findById(userId);
-  if (!user) {
-    throw new NotFoundException("User not found");
-  }
-
   const userProfile = await ProfileModel.findOne({ userId })
     .populate("userId", "name email createdAt -password")
     .lean();
+
+  if (!userProfile) {
+    throw new NotFoundException("Profile not found");
+  }
 
   return userProfile;
 };
