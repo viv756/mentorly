@@ -68,7 +68,6 @@ export const verifyUserService = async ({
     provider,
     providerId: email,
   });
-
   if (!account) {
     throw new NotFoundException("Account not found");
   }

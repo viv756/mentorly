@@ -12,9 +12,10 @@ import { errorHandler } from "./middlewares/errorHandler.middleware";
 import { asyncHandler } from "./middlewares/asyncHandler.middleware";
 import { HTTP_STATUS } from "./config/http.config";
 
-import authRoutes from "./routes/auth.route";
 import { passportAuthenticateJwt } from "./config/passport.config";
+import authRoutes from "./routes/auth.route";
 import userRoutes from "./routes/user.route";
+import userSkillRoutes from "./routes/user-skill.route";
 
 const app = express();
 const BASE_PATH = Env.BASE_PATH;
@@ -41,16 +42,9 @@ app.get(
   })
 );
 
-// app.get(`${BASE_PATH}/auth/testAuth`, passportAuthenticateJwt, (req, res, next) => {
-//   console.log(req.user);
-//   return res.json({
-//     user: req.user,
-//   });
-// });
-// app.get(`${BASE_PATH}/auth/refresh`, refreshTokenController)
-
 app.use(`${BASE_PATH}/auth`, authRoutes);
 app.use(`${BASE_PATH}/user`, passportAuthenticateJwt, userRoutes);
+app.use(`${BASE_PATH}/skill`, passportAuthenticateJwt, userSkillRoutes);
 
 app.use(errorHandler);
 

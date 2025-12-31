@@ -1,6 +1,13 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-import { SkillLevelEnum, SkillLevelEnumType, SkillTypeEnum, SkillType } from "../enums/skill.enum";
+import {
+  SkillLevelEnum,
+  SkillLevelEnumType,
+  SkillTypeEnum,
+  SkillType,
+  SkillCategoryEnum,
+  SkillCategoryEnumType,
+} from "../enums/skill.enum";
 import { WeekDay } from "../enums/date-range.enum";
 
 /* ---------- Types ---------- */
@@ -15,6 +22,8 @@ export interface UserSkillDocument extends Document {
   skillName: string;
   skillType: SkillType;
   skillLevel: SkillLevelEnumType;
+  category: SkillCategoryEnumType;
+  description: string;
   experienceYears?: number;
   availability?: Availability;
   createdAt: Date;
@@ -50,14 +59,22 @@ const userSkillSchema = new Schema<UserSkillDocument>(
       default: SkillLevelEnum.BEGINNER,
       required: true,
     },
-
+    category: {
+      type: String,
+      enum: Object.values(SkillCategoryEnum),
+      required: true,
+    },
+    description: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     experienceYears: {
       type: Number,
       required: function () {
         return this.skillType === SkillTypeEnum.TEACH;
       },
     },
-
     availability: {
       days: {
         type: [String],

@@ -30,6 +30,9 @@ export const loginController = asyncHandler(
       "local",
       { session: false },
       async (err: Error | null, user: Express.User, info: { message: string } | undefined) => {
+        if (!user) {
+          return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: "Invalid email or password" });
+        }
         const { accessToken, expiresAt } = signAccessToken({ userId: user._id });
         const refreshToken = signRefreshToken({ userId: user._id });
 
