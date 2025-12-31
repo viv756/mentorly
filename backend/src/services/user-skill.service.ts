@@ -24,6 +24,19 @@ export const createUserSkillService = async (body: userSkillType, userId: string
     throw new BadRequestException("Failed to create skill");
   }
 
-  console.log(userSkill);
   return userSkill;
+};
+
+export const getUserSkillsService = async (userId: string) => {
+  const user = await UserModel.findById(userId);
+  if (!user) {
+    throw new NotFoundException("User not exist");
+  }
+
+  const userSkills = await UserSkillModel.find({ userId }).lean();
+  if (!userSkills) {
+    throw new NotFoundException("User don,t have any skill");
+  }
+
+  return userSkills;
 };

@@ -74,21 +74,28 @@ const userSkillSchema = new Schema<UserSkillDocument>(
       required: function () {
         return this.skillType === SkillTypeEnum.TEACH;
       },
+      set: (v:any) => Number(v),
     },
     availability: {
-      days: {
-        type: [String],
-        enum: Object.values(WeekDay),
-        required: function () {
-          return this.skillType === SkillTypeEnum.TEACH;
+      type: {
+        days: {
+          type: [String],
+          enum: Object.values(WeekDay),
+          required: function () {
+            return this.skillType === SkillTypeEnum.TEACH;
+          },
+        },
+        timeSlots: {
+          type: [String],
+          required: function () {
+            return this.skillType === SkillTypeEnum.TEACH;
+          },
         },
       },
-      timeSlots: {
-        type: [String],
-        required: function () {
-          return this.skillType === SkillTypeEnum.TEACH;
-        },
+      required: function () {
+        return this.skillType === SkillTypeEnum.TEACH;
       },
+      default: undefined,
     },
   },
   { timestamps: true }
