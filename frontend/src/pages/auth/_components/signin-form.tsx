@@ -15,18 +15,14 @@ import { Button } from "@/components/ui/button";
 import { AUTH_ROUTES } from "@/routes/common/routePath";
 
 const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
   email: z.string().email({ message: "Please enter a valid email address." }),
   password: z.string().min(6, { message: "Password must be at least 6 characters." }),
 });
 
-const SignUpForm = () => {
+const SignInForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
       email: "",
       password: "",
     },
@@ -42,25 +38,12 @@ const SignUpForm = () => {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
         <div className="flex flex-col items-center gap-2 text-center">
-          <h1 className="text-2xl font-bold">Sign up to Mentorly.</h1>
+          <h1 className="text-2xl font-bold">Sign in to Mentorly.</h1>
           <p className="text-balance text-sm text-muted-foreground">
-            Fill information below to sign up
+            Fill information below to sign in
           </p>
         </div>
         <div className="grid gap-6">
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Username</FormLabel>
-                <FormControl>
-                  <Input placeholder="Jhon Doe" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <FormField
             control={form.control}
             name="email"
@@ -123,9 +106,9 @@ const SignUpForm = () => {
           </Button>
         </div>
         <div className="text-center text-sm">
-          Already have an account?
-          <Link to={AUTH_ROUTES.SIGN_IN} className="underline underline-offset-4">
-            Sign in
+          Don&apos;t have an account?
+          <Link to={AUTH_ROUTES.SIGN_UP} className="underline underline-offset-4">
+            Sign up
           </Link>
         </div>
       </form>
@@ -133,4 +116,4 @@ const SignUpForm = () => {
   );
 };
 
-export default SignUpForm;
+export default SignInForm;

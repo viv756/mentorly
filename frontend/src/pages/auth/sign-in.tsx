@@ -1,8 +1,8 @@
-import SignUpForm from "./_components/signup-form";
 import Logo from "@/components/logo/logo";
 import ArrowHittingTarget from "../../assets/images/arrow-hitting-target.jpg";
+import SignInForm from "./_components/signin-form";
 
-const SignUp = () => {
+const SignIn = () => {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       {/* sign-up form */}
@@ -12,7 +12,7 @@ const SignUp = () => {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            <SignUpForm />
+            <SignInForm />
           </div>
         </div>
       </div>
@@ -41,4 +41,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default SignIn;

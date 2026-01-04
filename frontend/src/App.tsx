@@ -1,10 +1,10 @@
 import { ThemeProvider } from "./context/theme-provider";
-import SignUp from "./pages/auth/sign-up";
+import AppRoutes from "./routes";
 
 const App = () => {
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-      <SignUp />
+      <AppRoutes />
     </ThemeProvider>
   );
 };
