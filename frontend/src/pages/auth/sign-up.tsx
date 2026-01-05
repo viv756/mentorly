@@ -1,43 +1,46 @@
-import SignUpForm from "./_components/signup-form";
+import { Link } from "react-router-dom";
+import { ChevronLeftIcon } from "lucide-react";
 import Logo from "@/components/logo/logo";
-import ArrowHittingTarget from "../../assets/images/arrow-hitting-target.jpg";
+import { Button } from "@/components/ui/button";
+import { FloatingPaths } from "@/pages/auth/_components/floating-paths";
+import SignUpForm from "./_components/signup-form";
 
 const SignUp = () => {
   return (
-    <div className="grid min-h-svh lg:grid-cols-2">
-      {/* sign-up form */}
-      <div className="flex flex-col gap-4 p-6 md:p-10 md:pt-6">
-        <div className="flex justify-center gap-2 md:justify-start">
-          <Logo />
+    <main className="relative md:h-screen md:overflow-hidden lg:grid lg:grid-cols-2">
+      {/* Left section */}
+      <div className="relative hidden h-full flex-col border-r bg-secondary p-10 lg:flex dark:bg-secondary/20">
+        <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-background" />
+        <Logo />
+        <div className="z-10 mt-auto">
+          <blockquote className="space-y-2">
+            <p className="text-xl">“Learn what you love. Teach what you know. Grow together.”</p>
+            <footer className="font-mono font-semibold text-sm">~ Vivek</footer>
+          </blockquote>
         </div>
-        <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs">
-            <SignUpForm />
-          </div>
-        </div>
-      </div>
-      {/* Image */}
-      <div className="relative hidden bg-muted lg:block -mt-3">
-        <div className="absolute inset-0 flex flex-col items-end justify-end pt-8 pl-8">
-          <div className="w-full max-w-3xl mx-0 pr-5">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Learn. Teach. Trade. Grow!
-            </h1>
-            <p className="mt-4 text-gray-600 dark:text-muted-foreground">
-              An AI-powered platform that matches learners and teachers worldwide. Exchange skills,
-              get AI-driven suggestions, and join a thriving community of lifelong learners. 🚀
-            </p>
-          </div>
-          <div className="relative max-w-3xl h-full w-full overflow-hidden mt-3">
-            <img
-              src={ArrowHittingTarget}
-              alt="ArrowHittingTarget"
-              className="absolute top-0 left-0 w-full h-full object-cover rounded-sm transform scale-[1.2] origin-top-left"
-            />
-          </div>
+        <div className="absolute inset-0">
+          <FloatingPaths position={1} />
+          <FloatingPaths position={-1} />
         </div>
       </div>
-    </div>
+      {/* Right section */}
+      <div className="relative flex min-h-screen flex-col justify-center p-4">
+        <div aria-hidden className="-z-10 absolute inset-0 isolate opacity-60 contain-strict">
+          <div className="-translate-y-87.5 absolute top-0 right-0 h-320 w-140 rounded-full bg-[radial-gradient(68.54%_68.72%_at_55.02%_31.46%,--theme(--color-foreground/.06)_0,hsla(0,0%,55%,.02)_50%,--theme(--color-foreground/.01)_80%)]" />
+          <div className="absolute top-0 right-0 h-320 w-60 rounded-full bg-[radial-gradient(50%_50%_at_50%_50%,--theme(--color-foreground/.04)_0,--theme(--color-foreground/.01)_80%,transparent_100%)] [translate:5%_-50%]" />
+          <div className="-translate-y-87.5 absolute top-0 right-0 h-320 w-60 rounded-full bg-[radial-gradient(50%_50%_at_50%_50%,--theme(--color-foreground/.04)_0,--theme(--color-foreground/.01)_80%,transparent_100%)]" />
+        </div>
+        <Button asChild className="absolute top-7 left-5" variant="ghost">
+          <Link to="/">
+            <ChevronLeftIcon />
+            Home
+          </Link>
+        </Button>
+        <div className="mx-auto space-y-4 sm:w-sm">
+          <SignUpForm />
+        </div>
+      </div>
+    </main>
   );
 };
 
