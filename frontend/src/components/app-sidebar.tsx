@@ -5,19 +5,19 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import Logo from "./logo/logo";
+import { Link } from "react-router-dom";
 
 // Menu items.
 const items = [
   {
     title: "Overview",
-    url: "#",
+    url: "/overview",
     icon: LayoutDashboard,
   },
   {
@@ -44,7 +44,7 @@ const items = [
 
 export function AppSidebar() {
   return (
-    <Sidebar>
+    <Sidebar className="lg:border-r-0!">
       <SidebarHeader className="md:p-3.5">
         <SidebarMenu>
           <SidebarMenuItem>
@@ -59,10 +59,10 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <Link to={item.url} className="flex items-center gap-3">
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
