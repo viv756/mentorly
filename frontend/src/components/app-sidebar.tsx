@@ -32,7 +32,6 @@ import {
 } from "./ui/dropdown-menu";
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
-import { cn } from "@/lib/utils";
 
 // Main menu items (NO settings here)
 const items = [
@@ -106,33 +105,19 @@ export function AppSidebar() {
                   <CollapsibleContent className="ml-3">
                     <SidebarMenuSub className="text-muted-foreground">
                       <SidebarMenuSubItem>
-                        <SidebarMenuButton asChild>
-                          <NavLink
-                            to="/account"
-                            className={({ isActive }) =>
-                              cn(
-                                "block rounded-md px-3 py-2 text-sm transition-colors",
-                                isActive ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
-                              )
-                            }>
-                            Account
-                          </NavLink>
-                        </SidebarMenuButton>
+                        <NavLink to="/account">
+                          {({ isActive }) => (
+                            <SidebarMenuButton isActive={isActive}>Account</SidebarMenuButton>
+                          )}
+                        </NavLink>
                       </SidebarMenuSubItem>
 
                       <SidebarMenuSubItem>
-                        <SidebarMenuButton asChild>
-                          <NavLink
-                            to="/advanced"
-                            className={({ isActive }) =>
-                              cn(
-                                "block rounded-md px-3 py-2 text-sm transition-colors",
-                                isActive ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
-                              )
-                            }>
-                            Advanced
-                          </NavLink>
-                        </SidebarMenuButton>
+                        <NavLink to="/advanced">
+                          {({ isActive }) => (
+                            <SidebarMenuButton isActive={isActive}>Advanced</SidebarMenuButton>
+                          )}
+                        </NavLink>
                       </SidebarMenuSubItem>
                     </SidebarMenuSub>
                   </CollapsibleContent>

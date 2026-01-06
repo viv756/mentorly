@@ -9,4 +9,9 @@ export const AUTH_ROUTES = {
 
 export const PROTECTED_ROUTES = {
   OVERVIEW: "/overview",
+  PROFILE: "/profile",
+  SKILLS: "/skills",
+  SEARCH: "/search",
+  ACCOUNT: "/account",
+  ADVANCED: "/advanced",
 };
