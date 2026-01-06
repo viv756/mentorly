@@ -6,3 +6,7 @@ export const AUTH_ROUTES = {
   SIGN_IN: "/sign-in",
   SIGN_UP: "/sign-up",
 };
+
+export const PROTECTED_ROUTES = {
+  OVERVIEW: "/overview",
+};
