@@ -1,4 +1,7 @@
 import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Plus, Upload, User, XIcon } from "lucide-react";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -26,9 +29,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, Upload, User, XIcon } from "lucide-react";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
 
 const formSchema = z.object({
   userName: z
