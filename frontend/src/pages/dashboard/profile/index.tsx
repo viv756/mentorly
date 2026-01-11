@@ -1,7 +1,9 @@
-import React from "react";
+import UpdateProfileForm from "./_components/updateProfile-form";
 
 const Profile = () => {
-  return <div>Profile</div>;
+  return <div>
+    <UpdateProfileForm/>
+  </div>;
 };
 
 export default Profile;
