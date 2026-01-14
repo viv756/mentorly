@@ -1,6 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LearningGoals from "./_components/learning-goals";
-import AddNewSkill from "./_components/sheet";
+import AddNewSkill from "./_components/add-new-skill";
 
 const UserSkills = () => {
   return (
