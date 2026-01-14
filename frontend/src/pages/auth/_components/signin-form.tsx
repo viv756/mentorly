@@ -14,6 +14,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import GoogleIcon from "./google-icon";
 import { AUTH_ROUTES } from "@/routes/common/routePath";
+import { useSignIn } from "@/hooks/api/auth/use-signin";
+import { Spinner } from "@/components/ui/spinner";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -21,6 +23,8 @@ const formSchema = z.object({
 });
 
 const SignInForm = () => {
+  const { mutate: login, isPending } = useSignIn();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -30,9 +34,12 @@ const SignInForm = () => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+    const payload = {
+      email: values.email,
+      password: values.password,
+    };
+
+    login(payload);
   }
 
   return (
@@ -71,8 +78,8 @@ const SignInForm = () => {
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-full">
-            Sign up
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending ? <Spinner /> : "Sign up"}
           </Button>
           <div className="flex w-full items-center justify-center">
             <div className="h-px w-full bg-border" />
