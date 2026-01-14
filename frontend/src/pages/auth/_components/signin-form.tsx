@@ -12,10 +12,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import GoogleIcon from "./google-icon";
 import { AUTH_ROUTES } from "@/routes/common/routePath";
 import { useSignIn } from "@/hooks/api/auth/use-signin";
-import { Spinner } from "@/components/ui/spinner";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -34,6 +34,8 @@ const SignInForm = () => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    if (isPending) return;
+
     const payload = {
       email: values.email,
       password: values.password,

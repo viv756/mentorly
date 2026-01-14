@@ -12,8 +12,8 @@ export const useSignIn = () => {
     mutationFn: signInMutationFn,
     onSuccess: (data) => {
       setCredentials(data.accessToken, data.expiresAt, data.user);
-      navigate("/", { replace: true });
       toast.success(data.message);
+      navigate("/", { replace: true });
     },
     onError: (error: any) => {
       toast.error(error.message)

@@ -36,7 +36,7 @@ const SignUp = () => {
             Home
           </Link>
         </Button>
-        <div className="mx-auto space-y-4 sm:w-sm">
+        <div className="mx-auto space-y-4 sm:w-sm w-full">
           <SignUpForm />
         </div>
       </div>

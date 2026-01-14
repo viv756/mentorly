@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Form,
   FormControl,
@@ -14,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import GoogleIcon from "./google-icon";
 import { AUTH_ROUTES } from "@/routes/common/routePath";
+import { useSignup } from "@/hooks/api/auth/use-signup";
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -24,6 +26,8 @@ const formSchema = z.object({
 });
 
 const SignUpForm = () => {
+  const { mutate: signUp, isPending } = useSignup();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -34,9 +38,13 @@ const SignUpForm = () => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+    if (isPending) return;
+    const payload = {
+      name: values.username,
+      email: values.email,
+      password: values.password,
+    };
+    signUp(payload);
   }
 
   return (
@@ -88,8 +96,8 @@ const SignUpForm = () => {
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-full">
-            Sign up
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending ? <Spinner /> : "Sign up"}
           </Button>
           <div className="flex w-full items-center justify-center">
             <div className="h-px w-full bg-border" />
