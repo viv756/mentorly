@@ -1,13 +1,13 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LearningGoals from "./_components/learning-goals";
-import { Button } from "@/components/ui/button";
+import AddNewSkill from "./_components/sheet";
 
-const Skills = () => {
+const UserSkills = () => {
   return (
     <div className="pt-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-4xl">Your Skills</h1>
-        <Button>Add new skill</Button>
+        <h1 className="text-4xl font-bold tracking-wide">Your Skills</h1>
+        <AddNewSkill />
       </div>
       <Tabs defaultValue="learn" className="w-full mt-10">
         <TabsList>
@@ -25,4 +25,4 @@ const Skills = () => {
   );
 };
 
-export default Skills;
+export default UserSkills
