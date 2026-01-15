@@ -56,7 +56,7 @@ export const formSchema = z.object({
     z
       .string()
       .min(20, "Description must be at least 20 characters")
-      .max(200, "Description must be at most 200 characters")
+      .max(500, "Description must be at most 500 characters")
   ),
   location: optionalInput(z.string()),
   socialLinks: z
@@ -226,7 +226,7 @@ const UpdateProfileForm = () => {
                       />
                       <InputGroupAddon align={"block-end"}>
                         <InputGroupText className="tabular-nums">
-                          {field?.value?.length}/200 characters
+                          {field?.value?.length}/500 characters
                         </InputGroupText>
                       </InputGroupAddon>
                     </InputGroup>

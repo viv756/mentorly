@@ -3,6 +3,7 @@ import type { formSchema } from "@/pages/dashboard/profile/_components/updatePro
 
 export type UpdateProfileFormPayload = z.infer<typeof formSchema>;
 
+// not finished
 export type UserProfileType = {
   _id: string,
   userId:{}
