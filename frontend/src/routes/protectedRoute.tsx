@@ -9,7 +9,7 @@ const ProtectedRoute = () => {
     return <div>Loading...</div>;
   }
 
-  if (accessToken ) return <Outlet />;
+  if (accessToken) return <Outlet />;
 
   return <Navigate to={AUTH_ROUTES.SIGN_IN} replace />;
 };

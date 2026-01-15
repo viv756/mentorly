@@ -1,11 +1,17 @@
+import { useAuthStore } from "@/store/store";
 import React from "react";
 import { Link } from "react-router-dom";
 
 const Home = () => {
-  return <div>Home
+  const { user } = useAuthStore();
+  console.log(user, "user");
 
-    <Link to={"/overview"}>overview</Link>
-  </div>;
+  return (
+    <div>
+      Home
+      <Link to={"/overview"}>overview</Link>
+    </div>
+  );
 };
 
 export default Home;
