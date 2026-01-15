@@ -1,12 +1,5 @@
 import { create } from "zustand";
-
-interface User {
-  userId: string;
-  profileId: string;
-  userName: string;
-  userEmail: string;
-  avatar: string;
-}
+import type { User } from "@/features/user/types";
 
 interface AuthState {
   user: User | null;

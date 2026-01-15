@@ -9,6 +9,7 @@ export const useGetCurrentUser = () => {
     queryKey: ["authUser"],
     queryFn: getCurrentUserFn,
     enabled: !!accessToken,
+    retry: 2,
     staleTime: 0,
   });
 

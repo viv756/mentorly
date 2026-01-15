@@ -8,7 +8,5 @@ const REFRESH_API = axios.create({
 
 export const refreshToken = async () => {
   const response = await REFRESH_API.post("/auth/refresh");
-  console.log(response.data);
-  
   return response.data
 };

@@ -10,19 +10,19 @@ interface Rating {
   count: number;
 }
 
-interface SocialLinks {
-  linkedin: string | null;
-  github: string | null;
-  twitter: string | null;
+interface SocialLink {
+  platform: "linkedin" | "github" | "twitter";
+  url: string;
 }
 
 export interface ProfileDocument extends Document {
-  userId: Types.ObjectId | UserDocument
+  userId: Types.ObjectId | UserDocument;
   avatar: string;
   bio: string | null;
+  location: string | null;
   profileCompleteness: number;
   rating: Rating;
-  socialLinks: SocialLinks;
+  socialLinks: SocialLink[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -53,6 +53,11 @@ const profileSchema = new Schema<ProfileDocument>(
       maxlength: 500,
       default: null,
     },
+    location: {
+      type: String,
+      trim: true,
+      default: null,
+    },
 
     profileCompleteness: {
       type: Number,
@@ -74,20 +79,20 @@ const profileSchema = new Schema<ProfileDocument>(
       },
     },
 
-    socialLinks: {
-      linkedin: {
-        type: String,
-        default: null,
+    socialLinks: [
+      {
+        platform: {
+          type: String,
+          enum: ["linkedin", "github", "twitter"],
+          required: true,
+        },
+        url: {
+          type: String,
+          required: true,
+          trim: true,
+        },
       },
-      github: {
-        type: String,
-        default: null,
-      },
-      twitter: {
-        type: String,
-        default: null,
-      },
-    },
+    ],
   },
   { timestamps: true }
 );
@@ -101,10 +106,12 @@ profileSchema.pre("save", function () {
   let completeness = 0;
 
   if (this.avatar) completeness += 20;
-  if (this.bio) completeness += 30;
-  if (this.socialLinks.linkedin) completeness += 15;
-  if (this.socialLinks.github) completeness += 15;
-  if (this.socialLinks.twitter) completeness += 10;
+  if (this.bio) completeness += 20;
+  if (this.location) completeness += 10;
+
+  if (this.socialLinks?.length) {
+    completeness += Math.min(this.socialLinks.length * 10, 30);
+  }
 
   this.profileCompleteness = Math.min(completeness, 100);
 });

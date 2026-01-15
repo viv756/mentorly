@@ -1,42 +1,73 @@
 import ProfileModel from "../models/profile.model";
-import UserModel, { UserDocument } from "../models/user.model";
+import UserModel from "../models/user.model";
 
 import { NotFoundException } from "../utils/appError";
-import { CreateProfileInput } from "../validator/user.validator";
+import { UpdateProfileInput } from "../validator/user.validator";
 
 export const findByIdUserService = async (userId: string) => {
   const user = await UserModel.findById(userId);
   if (!user) {
     throw new NotFoundException("User not found ");
   }
+
   return user?.omitPassword();
+};
+
+export const getCurrentUserDataService = async (userId: string) => {
+  const user = await UserModel.findById(userId).select("_id name email");
+  if (!user) {
+    throw new NotFoundException("User not found");
+  }
+
+  const profile = await ProfileModel.findOne({ userId }).select("_id avatar");
+  if (!profile) {
+    throw new NotFoundException("profile not found");
+  }
+
+  return {
+    userId: user._id,
+    userName: user.name,
+    userEmail: user.email,
+    profileId: profile._id,
+    avatar: profile.avatar,
+  };
 };
 
 export const updateProfileService = async (
   userId: string,
-  profileData: CreateProfileInput,
+  profileData: UpdateProfileInput,
   file: Express.Multer.File | undefined
 ) => {
-  const { bio, socialLinks } = profileData;
+  const { bio, socialLinks, name, location } = profileData;
 
   const profile = await ProfileModel.findOne({ userId });
   if (!profile) {
     throw new NotFoundException("Profile not found");
   }
 
+  if (name !== undefined) {
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+    user.name = name;
+    await user.save();
+  }
+
   if (file !== undefined) {
     profile.avatar = file.path;
+  }
+
+  if (location !== undefined) {
+    profile.location = location;
   }
 
   if (bio !== undefined) {
     profile.bio = bio;
   }
 
-  if (socialLinks) {
-    profile.socialLinks = {
-      ...profile.socialLinks,
-      ...socialLinks,
-    };
+  if (Array.isArray(socialLinks)) {
+    profile.socialLinks = socialLinks;
   }
 
   await profile.save();

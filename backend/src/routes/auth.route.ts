@@ -5,6 +5,6 @@ const authRoutes = Router();
 
 authRoutes.post("/register", registerUserController);
 authRoutes.post("/login", loginController);
-authRoutes.get("/refresh",refreshTokenController)
+authRoutes.post("/refresh",refreshTokenController)
 
 export default authRoutes;

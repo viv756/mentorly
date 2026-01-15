@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, Upload, User, XIcon } from "lucide-react";
@@ -29,18 +30,35 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useGetCurrentUserProfile } from "@/hooks/api/profile/use-get-current-user-profile";
+import { useUpdateProfile } from "@/hooks/api/profile/use-update-profile";
+import { Spinner } from "@/components/ui/spinner";
 
-const formSchema = z.object({
-  userName: z
-    .string()
-    .min(3, "Username must be at least 3 characters.")
-    .max(10, "Username must be at most 10 characters.")
-    .regex(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores."),
-  bio: z
-    .string()
-    .min(20, "Description must be at least 20 characters")
-    .max(200, "Description must be at most 200 characters"),
-  location: z.string(),
+const optionalInput = (schema: z.ZodString) => schema.optional().or(z.literal(""));
+const avatarSchema = z.union([
+  z
+    .instanceof(File)
+    .refine((file) => file.size <= 5 * 1024 * 1024, "File size must be less than 5MB")
+    .refine((file) => file.type.startsWith("image/"), "Only image files are allowed"),
+
+  z.string().url("Avatar must be a valid URL"),
+]);
+
+export const formSchema = z.object({
+  name: optionalInput(
+    z
+      .string()
+      .min(3, "name must be at least 3 characters.")
+      .max(10, "name must be at most 10 characters.")
+      .regex(/^[a-zA-Z0-9_]+$/, "name can only contain letters, numbers, and underscores.")
+  ),
+  bio: optionalInput(
+    z
+      .string()
+      .min(20, "Description must be at least 20 characters")
+      .max(200, "Description must be at most 200 characters")
+  ),
+  location: optionalInput(z.string()),
   socialLinks: z
     .array(
       z.object({
@@ -49,11 +67,7 @@ const formSchema = z.object({
       })
     )
     .optional(),
-  avatar: z
-    .instanceof(File)
-    .optional()
-    .refine((file) => !file || file.size <= 5 * 1024 * 1024, "File size must be less than 5MB")
-    .refine((file) => !file || file.type.startsWith("image/"), "Only image files are allowed"),
+  avatar: avatarSchema.optional(),
 });
 
 const socialLinks = [
@@ -63,11 +77,14 @@ const socialLinks = [
 ] as const;
 
 const UpdateProfileForm = () => {
+  const { data, isLoading } = useGetCurrentUserProfile();
+  const { mutate: updateProfile, isPending } = useUpdateProfile();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     mode: "onChange",
     defaultValues: {
-      userName: "",
+      name: "",
       bio: "",
       location: "",
       socialLinks: [],
@@ -80,8 +97,29 @@ const UpdateProfileForm = () => {
     name: "socialLinks",
   });
 
+  useEffect(() => {
+    if (!data || !data.userProfile) return;
+    const profile = data.userProfile;
+
+    form.reset({
+      name: profile.userId.name || "",
+      bio: profile.bio || "",
+      location: profile.location || "",
+      socialLinks: profile.socialLinks || [],
+      avatar: profile.avatar || "",
+    });
+  }, [data, form]);
+
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log(data);
+    const payload = new FormData();
+
+    if (data.name) payload.append("name", data.name);
+    if (data.bio) payload.append("bio", data.bio);
+    if (data.location) payload.append("location", data.location);
+    if (data.socialLinks) payload.append("socialLinks", JSON.stringify(data.socialLinks));
+    if (data.avatar) payload.append("avatar", data.avatar);
+
+    updateProfile(payload);
   };
 
   return (
@@ -150,21 +188,20 @@ const UpdateProfileForm = () => {
             )}
           />
 
-          {/* Username filed */}
+          {/* name filed */}
           <FieldSet>
             <FieldGroup>
               <Controller
-                name="userName"
+                name="name"
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="form-update-profile-username">User name</FieldLabel>
+                    <FieldLabel htmlFor="form-update-profile-name">Name</FieldLabel>
                     <Input
                       {...field}
-                      id="form-update-profile-username"
+                      id="form-update-profile-name"
                       aria-invalid={fieldState.invalid}
                       placeholder="Jhon Doe"
-                      required
                       autoComplete="off"
                     />
                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -189,7 +226,7 @@ const UpdateProfileForm = () => {
                       />
                       <InputGroupAddon align={"block-end"}>
                         <InputGroupText className="tabular-nums">
-                          {field.value.length}/200 characters
+                          {field?.value?.length}/200 characters
                         </InputGroupText>
                       </InputGroupAddon>
                     </InputGroup>
@@ -213,10 +250,9 @@ const UpdateProfileForm = () => {
                   <FieldLabel htmlFor="form-update-profile-location">Location</FieldLabel>
                   <Input
                     {...field}
-                    id="form-update-profile-username"
+                    id="form-update-profile-location"
                     aria-invalid={fieldState.invalid}
                     placeholder="New york"
-                    required
                     autoComplete="off"
                   />
                   <FieldDescription>Add your location for best matching</FieldDescription>
@@ -248,12 +284,14 @@ const UpdateProfileForm = () => {
                               url: controllerField.value?.url || "",
                             });
                           }}>
-                          <SelectTrigger className="bg-background w-45">
+                          <SelectTrigger className="bg-background w-45 ">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            {socialLinks.map((item) => (
-                              <SelectItem value={item.value}>{item.label}</SelectItem>
+                            {socialLinks.map((item, index) => (
+                              <SelectItem key={index} value={item.value}>
+                                {item.label}
+                              </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
@@ -314,7 +352,9 @@ const UpdateProfileForm = () => {
           </FieldSet>
           <FieldSeparator />
           <Field orientation="responsive">
-            <Button type="submit">Submit</Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? <Spinner /> : "Submit"}
+            </Button>
           </Field>
         </FieldSet>
       </form>

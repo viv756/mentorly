@@ -1,8 +1,8 @@
 import "dotenv/config";
 import "./config/passport.config";
 
-import passport from "passport";
 import express, { NextFunction, Request, Response } from "express";
+import passport from "passport";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
@@ -42,7 +42,7 @@ app.get(
   })
 );
 
-app.use(`${BASE_PATH}/auth`, authRoutes);
+app.use(`${BASE_PATH}/auth`, authRoutes); 
 app.use(`${BASE_PATH}/user`, passportAuthenticateJwt, userRoutes);
 app.use(`${BASE_PATH}/skill`, passportAuthenticateJwt, userSkillRoutes);
 

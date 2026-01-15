@@ -45,7 +45,12 @@ export const loginController = asyncHandler(
           path: "/api/auth/refresh",
         });
 
-        res.status(HTTP_STATUS.OK).json({ user: user.omitPassword(), accessToken, expiresAt });
+        res.status(HTTP_STATUS.OK).json({
+          message: "Logged in successfully",
+          user: user.omitPassword(),
+          accessToken,
+          expiresAt,
+        });
       }
     )(req, res, next);
   }
@@ -67,9 +72,12 @@ export const refreshTokenController = asyncHandler(async (req: Request, res: Res
 
   const user = await refreshTokenService(payload.userId, token);
 
-  const newAccessToken = signAccessToken({
+  const { accessToken, expiresAt } = signAccessToken({
     userId: user._id.toString(),
   });
 
-  res.status(HTTP_STATUS.OK).json(newAccessToken);
+  res.status(HTTP_STATUS.OK).json({
+    accessToken,
+    expiresAt,
+  });
 });

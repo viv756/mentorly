@@ -7,10 +7,10 @@ const AppLayout = () => {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <div className="h-svh overflow-hidden lg:p-2 w-full">
-        <main className="lg:border lg:rounded-xl overflow-hidden flex flex-col items-center justify-start h-full w-full bg-background">
+      <div className="min-h-svh lg:p-2 overflow-hidden  w-full">
+        <main className="lg:border overflow-hidden lg:rounded-xl flex flex-col items-center justify-start h-full w-full bg-background">
           <Header />
-          <div className="w-full max-w-full px-4 overflow-auto flex-1">
+          <div className="w-full overflow-auto max-w-full px-4 flex-1 pb-2">
             <Outlet />
           </div>
         </main>
