@@ -3,14 +3,15 @@ import { useAuthStore } from "@/store/store";
 import { useGetCurrentUser } from "../user/use-get-current-user";
 
 export const useAuthBootstrap = () => {
-  const { accessToken, user, setUser } = useAuthStore();
+  const { accessToken, setUser, user } = useAuthStore();
+
   const { data, isSuccess } = useGetCurrentUser();
-
   useEffect(() => {
-    if (!accessToken || user) return;
+    if (!accessToken || !isSuccess || !data) return;
 
-    if (isSuccess && data) {
-      setUser(data.user);
-    }
-  }, [accessToken, isSuccess, data, user]);
+    // Prevent unnecessary overwrite
+    if (user?.userId === data.user.userId) return;
+
+    setUser(data.user);
+  }, [accessToken, isSuccess, data, user, setUser]);
 };

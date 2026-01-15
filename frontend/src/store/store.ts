@@ -5,7 +5,7 @@ interface AuthState {
   user: User | null;
   accessToken: string | null;
   isAuthInitializing: boolean;
-  setCredentials: (token: string, expiresAt: number, user?: User) => void;
+  setCredentials: (token: string, expiresAt: number) => void;
   finishAuthInit: () => void;
   accessTokenExpiresAt: number | null;
   setUser: (user: User) => void;
@@ -18,8 +18,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   accessTokenExpiresAt: null,
   isAuthInitializing: true,
 
-  setCredentials: (token, expiresAt, user) =>
-    set({ accessToken: token, accessTokenExpiresAt: expiresAt, user: user }),
+  setCredentials: (token, expiresAt) =>
+    set({ accessToken: token, accessTokenExpiresAt: expiresAt }),
 
   finishAuthInit: () => set({ isAuthInitializing: false }),
 
