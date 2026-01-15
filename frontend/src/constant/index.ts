@@ -53,3 +53,7 @@ export const WEEK_DAY = {
   SAT: "Sat",
   SUN: "Sun",
 };
+
+export type SKILL_ENUM_TYPE = (typeof SKILL_TYPE_ENUM)[keyof typeof SKILL_TYPE_ENUM];
+export type SKILL_LEVEL_ENUM_TYPE = (typeof SKILL_LEVEL_ENUM)[keyof typeof SKILL_LEVEL_ENUM];
+export type SKILL_CATEGORY_ENUM_TYPE = (typeof SKILL_CATEGORY_ENUM)[keyof typeof SKILL_CATEGORY_ENUM];

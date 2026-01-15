@@ -27,7 +27,7 @@ export const userSkillZodSchema = z
       .max(200, "Description must be under 200 characters"),
     category: z.enum(Object.values(SkillCategoryEnum) as [string, ...string[]]),
     experienceYears: z.number().int().min(0).optional(),
-    availability: availabilitySchema.optional(),
+    // availability: availabilitySchema.optional(),
   })
   .superRefine((data, ctx) => {
     if (data.skillType === SkillTypeEnum.TEACH) {
@@ -39,13 +39,13 @@ export const userSkillZodSchema = z
         });
       }
 
-      if (!data.availability) {
-        ctx.addIssue({
-          path: ["availability"],
-          message: "Availability is required for teaching skills",
-          code: z.ZodIssueCode.custom,
-        });
-      }
+      // if (!data.availability) {
+      //   ctx.addIssue({
+      //     path: ["availability"],
+      //     message: "Availability is required for teaching skills",
+      //     code: z.ZodIssueCode.custom,
+      //   });
+      // }
     }
   });
 

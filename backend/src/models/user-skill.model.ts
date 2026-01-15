@@ -25,7 +25,7 @@ export interface UserSkillDocument extends Document {
   category: SkillCategoryEnumType;
   description: string;
   experienceYears?: number;
-  availability?: Availability;
+  // availability?: Availability;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -76,27 +76,27 @@ const userSkillSchema = new Schema<UserSkillDocument>(
       },
       set: (v:any) => Number(v),
     },
-    availability: {
-      type: {
-        days: {
-          type: [String],
-          enum: Object.values(WeekDay),
-          required: function () {
-            return this.skillType === SkillTypeEnum.TEACH;
-          },
-        },
-        timeSlots: {
-          type: [String],
-          required: function () {
-            return this.skillType === SkillTypeEnum.TEACH;
-          },
-        },
-      },
-      required: function () {
-        return this.skillType === SkillTypeEnum.TEACH;
-      },
-      default: undefined,
-    },
+    // availability: {
+    //   type: {
+    //     days: {
+    //       type: [String],
+    //       enum: Object.values(WeekDay),
+    //       required: function () {
+    //         return this.skillType === SkillTypeEnum.TEACH;
+    //       },
+    //     },
+    //     timeSlots: {
+    //       type: [String],
+    //       required: function () {
+    //         return this.skillType === SkillTypeEnum.TEACH;
+    //       },
+    //     },
+    //   },
+    //   required: function () {
+    //     return this.skillType === SkillTypeEnum.TEACH;
+    //   },
+    //   default: undefined,
+    // },
   },
   { timestamps: true }
 );
@@ -106,9 +106,9 @@ userSkillSchema.pre("validate", function () {
 
   if (
     doc.skillType === SkillTypeEnum.TEACH &&
-    (!doc.experienceYears || !doc.availability?.days?.length)
+    (!doc.experienceYears)
   ) {
-    throw new Error("Teaching skills require experience and availability");
+    throw new Error("Teaching skills require experience");
   }
 });
 

@@ -19,13 +19,15 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import { useState } from "react";
 
 const AddNewSkill = () => {
   const isMobile = useIsMobile();
+  const [open, setOpen] = useState(false);
 
   if (!isMobile) {
     return (
-      <Sheet>
+      <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
           <Button>Add new skill</Button>
         </SheetTrigger>
@@ -35,7 +37,7 @@ const AddNewSkill = () => {
             <SheetDescription>Enter the details to add your skill</SheetDescription>
           </SheetHeader>
           <div className="overflow-y-auto">
-            <AddNewSkillForm />
+            <AddNewSkillForm onClose={ ()=>setOpen(false)} />
           </div>
         </SheetContent>
       </Sheet>
@@ -43,7 +45,7 @@ const AddNewSkill = () => {
   }
 
   return (
-    <Drawer>
+    <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
         <Button>Add new skill</Button>
       </DrawerTrigger>
@@ -53,7 +55,7 @@ const AddNewSkill = () => {
           <DrawerDescription>Enter the details to add your skill</DrawerDescription>
         </DrawerHeader>
         <div className="overflow-y-auto px-4">
-          <AddNewSkillForm />
+          <AddNewSkillForm onClose={ ()=>setOpen(false)}/>
         </div>
         <DrawerFooter>
           <DrawerClose asChild>

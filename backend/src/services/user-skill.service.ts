@@ -12,12 +12,6 @@ export const createUserSkillService = async (body: userSkillType, userId: string
   const userSkill = await UserSkillModel.create({
     ...body,
     userId: user._id,
-    availability: body.availability
-      ? {
-          days: body.availability.days as any,
-          timeSlots: body.availability.timeSlots,
-        }
-      : undefined,
   });
 
   if (!userSkill) {

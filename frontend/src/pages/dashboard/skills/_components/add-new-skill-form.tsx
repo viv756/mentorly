@@ -29,6 +29,8 @@ import {
   SKILL_TYPE_ENUM,
 } from "@/constant";
 import { cn } from "@/lib/utils";
+import { useCreateNewSkill } from "@/hooks/api/skills/use-create-new-skill";
+import { Spinner } from "@/components/ui/spinner";
 
 // const availabilitySchema = z.object({
 //   days: z
@@ -39,6 +41,10 @@ import { cn } from "@/lib/utils";
 //     .array(z.string().regex(/^\d{2}:\d{2}-\d{2}:\d{2}$/, "Invalid time slot"))
 //     .min(1, "At least one time slot is required"),
 // });
+
+type AddNewSkillFormProps = {
+  onClose: () => void;
+};
 
 const formSchema = z
   .object({
@@ -78,7 +84,9 @@ const formSchema = z
     }
   });
 
-const AddNewSkillForm = () => {
+const AddNewSkillForm = ({ onClose }: AddNewSkillFormProps) => {
+  const { mutate: createNewSkill, isPending } = useCreateNewSkill();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     mode: "onChange",
@@ -95,8 +103,21 @@ const AddNewSkillForm = () => {
   // for watching skillType to enable or disable experience in years
   const skillType = form.watch("skillType");
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log(data);
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    const payload = {
+      skillName: values.skillName,
+      skillType: values.skillType,
+      skillLevel: values.skillLevel,
+      category: values.category,
+      description: values.description,
+      experienceYears: values.experienceYears,
+    };
+    createNewSkill(payload, {
+      onSuccess: () => {
+        form.reset(form.formState.defaultValues);
+        onClose();
+      },
+    });
   };
 
   return (
@@ -267,8 +288,8 @@ const AddNewSkillForm = () => {
 
           <FieldSeparator />
           <Field orientation="responsive">
-            <Button type="submit" className="mb-4">
-              Submit
+            <Button type="submit" className="mb-4" disabled={isPending}>
+              {isPending ? <Spinner /> : " Submit"}
             </Button>
           </Field>
         </FieldGroup>
