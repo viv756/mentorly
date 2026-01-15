@@ -9,7 +9,7 @@ export const useUpdateProfile = () => {
     mutationFn: (data: FormData) => updateUserProfile(data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: ["user-profile"],
+        queryKey: ["auth-user"],
       });
       toast.success(data.message);
     },
