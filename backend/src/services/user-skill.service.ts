@@ -23,11 +23,23 @@ export const createUserSkillService = async (body: userSkillType, userId: string
 
 export const getUserSkillsService = async (userId: string) => {
   const userSkills = await UserSkillModel.find({ userId }).lean();
+
   if (!userSkills) {
     throw new NotFoundException("User don,t have any skill");
   }
 
-  return userSkills;
+  const learningGoals = [];
+  const mentoringGoals = [];
+
+  for (const skill of userSkills) {
+    if (skill.skillType === "LEARN") {
+      learningGoals.push(skill);
+    } else if (skill.skillType === "TEACH") {
+      mentoringGoals.push(skill);
+    }
+  }
+
+  return { learningGoals, mentoringGoals };
 };
 
 export const deleteUserSkillService = async (userId: string, skillId: string) => {

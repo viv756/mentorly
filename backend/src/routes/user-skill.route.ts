@@ -8,8 +8,8 @@ import {
 
 const userSkillRoutes = Router();
 
-userSkillRoutes.get("/:id", getSkillByIdController);
 userSkillRoutes.get("/all", getUserSkillsController);
+userSkillRoutes.get("/:id", getSkillByIdController);
 
 userSkillRoutes.post("/create", createUserSkillController);
 

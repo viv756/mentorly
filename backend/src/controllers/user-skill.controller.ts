@@ -22,11 +22,13 @@ export const createUserSkillController = asyncHandler(async (req: Request, res: 
 
 export const getUserSkillsController = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?._id;
-  const userSkills = await getUserSkillsService(userId);
+
+  const { learningGoals, mentoringGoals } = await getUserSkillsService(userId);
 
   return res.status(HTTP_STATUS.OK).json({
     message: "User skills fetched successfully",
-    userSkills,
+    learningGoals,
+    mentoringGoals,
   });
 });
 
@@ -45,7 +47,7 @@ export const getSkillByIdController = asyncHandler(async (req: Request, res: Res
   const skillId = skillIdSchema.parse(req.params.id);
 
   const userSkill = await getSkillByIdService(skillId);
-  
+
   return res.status(HTTP_STATUS.OK).json({
     message: "Skill fetched successfully",
     userSkill,

@@ -1,8 +1,15 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import LearningGoals from "./_components/learning-goals";
 import AddNewSkill from "./_components/add-new-skill";
+import { useGetCurrentUserSkills } from "@/hooks/api/skills/use-get-current-user-skills";
+import UserSkillsSection from "./_components/userSkillsSection";
 
 const UserSkills = () => {
+  const { data, isLoading } = useGetCurrentUserSkills();
+
+  if (isLoading || !data) {
+    return <div>loading</div>;
+  }
+
   return (
     <div className="pt-6">
       <div className="flex justify-between items-center">
@@ -15,14 +22,14 @@ const UserSkills = () => {
           <TabsTrigger value="teach">Mentoring Skills</TabsTrigger>
         </TabsList>
         <TabsContent value="learn">
-          <LearningGoals />
+          <UserSkillsSection skills={data.learningGoals} type="LEARN" />
         </TabsContent>
         <TabsContent value="teach">
-          <LearningGoals />
+          <UserSkillsSection skills={data.mentoringGoals} type="TEACH" />
         </TabsContent>
       </Tabs>
     </div>
   );
 };
 
-export default UserSkills
+export default UserSkills;
