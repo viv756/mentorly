@@ -1,0 +1,243 @@
+import { useForm, Controller, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+
+import { FieldError } from "@/components/ui/field";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Plus, X } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { useUpdateWeeklyAvailability } from "@/hooks/api/profile/use-update-weekly-availability";
+import { Spinner } from "@/components/ui/spinner";
+
+/* =======================
+   Constants
+======================= */
+
+const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
+
+const DAY_LABEL: Record<(typeof WEEKDAYS)[number], string> = {
+  Mon: "Monday",
+  Tue: "Tuesday",
+  Wed: "Wednesday",
+  Thu: "Thursday",
+  Fri: "Friday",
+  Sat: "Saturday",
+  Sun: "Sunday",
+};
+
+const TIME_OPTIONS = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, "0")}:00`);
+
+/* =======================
+   Zod Schema
+======================= */
+
+const timeSlotSchema = z
+  .object({
+    from: z.string().min(1, "From time is required"),
+    to: z.string().min(1, "To time is required"),
+  })
+  .refine((data) => data.from < data.to, {
+    message: "End time must be after start time",
+    path: ["to"],
+  });
+
+const weeklyAvailabilitySchema = z.object({
+  weeklyAvailability: z.record(z.enum(WEEKDAYS), z.array(timeSlotSchema)),
+});
+
+export type WeeklyAvailabilityType = z.infer<typeof weeklyAvailabilitySchema>;
+
+/* =======================
+   Component
+======================= */
+
+export default function WeeklyAvailabilityForm() {
+  const { mutate: updateAvailability, isPending } = useUpdateWeeklyAvailability();
+
+  const {
+    handleSubmit,
+    control,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<WeeklyAvailabilityType>({
+    resolver: zodResolver(weeklyAvailabilitySchema),
+    defaultValues: {
+      weeklyAvailability: WEEKDAYS.reduce(
+        (acc, day) => ({ ...acc, [day]: [] }),
+        {} as Record<string, { from: string; to: string }[]>
+      ),
+    },
+  });
+
+  const weeklyAvailability = watch("weeklyAvailability");
+
+  /* =======================
+     Field Arrays per Day
+  ======================= */
+
+  const fieldArrays = {
+    Mon: useFieldArray({ control, name: "weeklyAvailability.Mon" }),
+    Tue: useFieldArray({ control, name: "weeklyAvailability.Tue" }),
+    Wed: useFieldArray({ control, name: "weeklyAvailability.Wed" }),
+    Thu: useFieldArray({ control, name: "weeklyAvailability.Thu" }),
+    Fri: useFieldArray({ control, name: "weeklyAvailability.Fri" }),
+    Sat: useFieldArray({ control, name: "weeklyAvailability.Sat" }),
+    Sun: useFieldArray({ control, name: "weeklyAvailability.Sun" }),
+  };
+
+  /* =======================
+     Submit
+  ======================= */
+
+  const onSubmit = (data: WeeklyAvailabilityType) => {
+    // Optional: remove empty days before sending to backend
+    const cleaned = Object.fromEntries(
+      Object.entries(data.weeklyAvailability).filter(([_, slots]) => slots.length > 0)
+    );
+
+    updateAvailability(cleaned);
+  };
+
+  /* =======================
+     JSX
+  ======================= */
+
+  return (
+    <div className="max-w-3xl p-6 border rounded-lg">
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="flex justify-between mb-6">
+          <h2 className="text-2xl font-semibold">Weekly Availability</h2>
+          <Button disabled={isPending} type="submit">
+            {isPending ? <Spinner /> : "Save"}
+          </Button>
+        </div>
+
+        {WEEKDAYS.map((day) => {
+          const { fields, append, remove } = fieldArrays[day];
+          const isSelected = weeklyAvailability[day]?.length > 0;
+          const dayErrors = errors.weeklyAvailability?.[day];
+
+          return (
+            <div key={day} className="p-4">
+              <div className="flex flex-col gap-3 sm:space-x-45 sm:flex-row items-start  mb-2">
+                {/* Checkbox */}
+                <div className="flex items-center gap-3 w-28">
+                  <Checkbox
+                    className="size-6"
+                    id={day}
+                    checked={isSelected}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        append({ from: "", to: "" });
+                      } else {
+                        setValue(`weeklyAvailability.${day}`, []);
+                      }
+                    }}
+                  />
+                  <Label htmlFor={day} className="cursor-pointer">
+                    {DAY_LABEL[day]}
+                  </Label>
+                </div>
+
+                {/* Slots */}
+                <div className="flex flex-col gap-3 flex-1">
+                  {!isSelected && <div className="text-sm text-muted-foreground">Unavailable</div>}
+
+                  {isSelected &&
+                    fields.map((item, index) => (
+                      <div key={item.id} className="flex items-center gap-2">
+                        {/* From */}
+                        <Controller
+                          name={`weeklyAvailability.${day}.${index}.from`}
+                          control={control}
+                          render={({ field }) => (
+                            <Select value={field.value} onValueChange={field.onChange}>
+                              <SelectTrigger className="w-40">
+                                <SelectValue placeholder="From" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {TIME_OPTIONS.map((time) => (
+                                  <SelectItem key={time} value={time}>
+                                    {time}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          )}
+                        />
+
+                        <span>-</span>
+
+                        {/* To */}
+                        <Controller
+                          name={`weeklyAvailability.${day}.${index}.to`}
+                          control={control}
+                          render={({ field }) => (
+                            <Select value={field.value} onValueChange={field.onChange}>
+                              <SelectTrigger className="w-40">
+                                <SelectValue placeholder="To" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {TIME_OPTIONS.map((time) => (
+                                  <SelectItem key={time} value={time}>
+                                    {time}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          )}
+                        />
+
+                        {/* Add */}
+                        {index === 0 && (
+                          <button
+                            type="button"
+                            onClick={() => append({ from: "", to: "" })}
+                            className="border rounded-full p-1">
+                            <Plus className="w-4 h-4" />
+                          </button>
+                        )}
+
+                        {/* Remove */}
+                        {index > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => remove(index)}
+                            className="border rounded-full p-1">
+                            <X className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                </div>
+              </div>
+
+              {/* Errors */}
+              {Array.isArray(dayErrors) && (
+                <div className="ml-28 mt-2 space-y-1">
+                  {dayErrors.map(
+                    (slotError, index) =>
+                      slotError?.to?.message && (
+                        <FieldError key={index}>
+                          Slot {index + 1}: {slotError.to.message}
+                        </FieldError>
+                      )
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </form>
+    </div>
+  );
+}

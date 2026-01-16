@@ -5,10 +5,11 @@ import {
   Brain,
   UserRound,
   User2,
-  ChevronUp,
   ChevronsUpDown,
   LogOut,
   Settings,
+  Calendar,
+  ChevronRight,
 } from "lucide-react";
 import {
   Sidebar,
@@ -44,6 +45,11 @@ const items = [
     title: "Profile",
     url: "/profile",
     icon: UserRound,
+  },
+  {
+    title: "Calendar",
+    url: "/calendar",
+    icon: Calendar,
   },
   {
     title: "Skills",
@@ -98,7 +104,7 @@ export function AppSidebar() {
                     <SidebarMenuButton className="flex items-center gap-3">
                       <Settings className="h-4 w-4" />
                       <span>Settings</span>
-                      <ChevronUp className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/settings:rotate-180" />
+                      <ChevronRight className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/settings:rotate-90" />
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
 

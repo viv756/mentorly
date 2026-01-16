@@ -2,7 +2,7 @@ import ProfileModel from "../models/profile.model";
 import UserModel from "../models/user.model";
 
 import { NotFoundException } from "../utils/appError";
-import { UpdateProfileInput } from "../validator/user.validator";
+import { UpdateProfileInput, WeeklyAvailabilityDTO } from "../validator/user.validator";
 
 export const findByIdUserService = async (userId: string) => {
   const user = await UserModel.findById(userId);
@@ -83,6 +83,25 @@ export const getCurrentUserProfileService = async (userId: string) => {
   if (!userProfile) {
     throw new NotFoundException("Profile not found");
   }
+
+  return userProfile;
+};
+
+export const updateWeeklyAvailabilityService = async (
+  userId: string,
+  body: WeeklyAvailabilityDTO
+) => {
+  const userProfile = await ProfileModel.findOne({ userId });
+
+  if (!userProfile) {
+    throw new NotFoundException("Profile not found");
+  }
+
+  userProfile.weeklyAvailability = Object.fromEntries(
+    Object.entries(body).filter(([_, slots]) => slots.length > 0)
+  );
+
+  await userProfile.save();
 
   return userProfile;
 };

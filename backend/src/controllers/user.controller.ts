@@ -6,9 +6,10 @@ import {
   getCurrentUserDataService,
   getCurrentUserProfileService,
   updateProfileService,
+  updateWeeklyAvailabilityService,
 } from "../services/user.service";
 import { HTTP_STATUS } from "../config/http.config";
-import { updateProfileSchema } from "../validator/user.validator";
+import { updateProfileSchema, weeklyAvailabilitySchema } from "../validator/user.validator";
 
 export const getCurrentUserController = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?._id;
@@ -64,3 +65,18 @@ export const getCurrentUserProfileController = asyncHandler(async (req: Request,
     userProfile,
   });
 });
+
+export const updateWeeklyAvailabilityController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?._id;
+
+    const body = weeklyAvailabilitySchema.parse(req.body);
+
+    const userProfile = await updateWeeklyAvailabilityService(userId, body);
+
+    return res.status(HTTP_STATUS.OK).json({
+      message: "Weekly availability updated",
+      userProfile,
+    });
+  }
+);

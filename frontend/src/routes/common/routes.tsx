@@ -9,6 +9,7 @@ import Search from "@/pages/dashboard/search";
 import UserSkills from "@/pages/dashboard/skills";
 import Account from "@/pages/dashboard/settings/account";
 import Advanced from "@/pages/dashboard/settings/advanced";
+import Calendar from "@/pages/dashboard/calendar";
 
 export const publicRoutePaths = [{ path: PUBLIC_ROUTES.HOME, element: <Home /> }];
 
@@ -22,6 +23,7 @@ export const authenticationRoutePaths = [
 export const protectedRoutes = [
   { path: PROTECTED_ROUTES.OVERVIEW, element: <Overview /> },
   { path: PROTECTED_ROUTES.PROFILE, element: <Profile /> },
+  { path: PROTECTED_ROUTES.CALENDAR, element: <Calendar /> },
   { path: PROTECTED_ROUTES.SEARCH, element: <Search /> },
   { path: PROTECTED_ROUTES.SKILLS, element: <UserSkills /> },
   { path: PROTECTED_ROUTES.ACCOUNT, element: <Account /> },

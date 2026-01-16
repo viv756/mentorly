@@ -10,6 +10,7 @@ export const AUTH_ROUTES = {
 export const PROTECTED_ROUTES = {
   OVERVIEW: "/overview",
   PROFILE: "/profile",
+  CALENDAR: "/calendar",
   SKILLS: "/skills",
   SEARCH: "/search",
   ACCOUNT: "/account",

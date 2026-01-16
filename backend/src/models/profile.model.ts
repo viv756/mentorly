@@ -5,6 +5,21 @@ import { UserDocument } from "./user.model";
    Interfaces
 ======================= */
 
+interface TimeSlot {
+  from: string; // "HH:mm"
+  to: string; // "HH:mm"
+}
+
+interface WeeklyAvailability {
+  Mon?: TimeSlot[];
+  Tue?: TimeSlot[];
+  Wed?: TimeSlot[];
+  Thu?: TimeSlot[];
+  Fri?: TimeSlot[];
+  Sat?: TimeSlot[];
+  Sun?: TimeSlot[];
+}
+
 interface Rating {
   average: number;
   count: number;
@@ -22,10 +37,26 @@ export interface ProfileDocument extends Document {
   location: string | null;
   profileCompleteness: number;
   rating: Rating;
+  weeklyAvailability: WeeklyAvailability;
   socialLinks: SocialLink[];
   createdAt: Date;
   updatedAt: Date;
 }
+
+/* =======================
+   Reusable Sub Schema
+======================= */
+
+const timeSlotSchema = {
+  from: {
+    type: String,
+    required: true, // "HH:mm"
+  },
+  to: {
+    type: String,
+    required: true, // "HH:mm"
+  },
+};
 
 /* =======================
    Schema
@@ -50,13 +81,22 @@ const profileSchema = new Schema<ProfileDocument>(
     bio: {
       type: String,
       trim: true,
-      maxlength: 500,
+      maxLength: 500,
       default: null,
     },
     location: {
       type: String,
       trim: true,
       default: null,
+    },
+    weeklyAvailability: {
+      Mon: { type: [timeSlotSchema], default: [] },
+      Tue: { type: [timeSlotSchema], default: [] },
+      Wed: { type: [timeSlotSchema], default: [] },
+      Thu: { type: [timeSlotSchema], default: [] },
+      Fri: { type: [timeSlotSchema], default: [] },
+      Sat: { type: [timeSlotSchema], default: [] },
+      Sun: { type: [timeSlotSchema], default: [] },
     },
 
     profileCompleteness: {
