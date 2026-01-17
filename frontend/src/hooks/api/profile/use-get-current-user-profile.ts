@@ -7,6 +7,5 @@ export const useGetCurrentUserProfile = () => {
     queryFn: getCurrentUserProfileFn,
     staleTime: Infinity,
   });
-
   return query
 };

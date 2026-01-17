@@ -52,12 +52,12 @@ export const weeklyAvailabilitySchema = z
     Sat: z.array(timeSlotSchema).optional(),
     Sun: z.array(timeSlotSchema).optional(),
   })
-  .refine(
-    (data) => Object.values(data).some((slots) => slots && slots.length > 0),
-    {
-      message: "At least one day must have availability",
-    }
-  );
+  // .refine(
+  //   (data) => Object.values(data).some((slots) => slots && slots.length > 0),
+  //   {
+  //     message: "At least one day must have availability",
+  //   }
+  // );
 
 
 /* =======================

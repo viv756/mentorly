@@ -6,12 +6,14 @@ import AuthRoute from "./authRoute";
 import ProtectedRoute from "./protectedRoute";
 import { useTokenRefreshTimer } from "@/hooks/api/auth/use-token-refresh";
 import { useAuthInit } from "@/hooks/api/auth/use-auth-init";
-import { useAuthBootstrap } from "@/hooks/api/auth/use-auth-bootstrap";
+import { useGetCurrentUser } from "@/hooks/api/user/use-get-current-user";
+// import { useAuthBootstrap } from "@/hooks/api/auth/use-auth-bootstrap";
 
 const AppRoutes = () => {
   useAuthInit(); // Refresh if cookie exist
   useTokenRefreshTimer(); // Refresh while logged in
-  useAuthBootstrap(); // Fetch current user data
+  // useAuthBootstrap(); // Fetch current user data
+  useGetCurrentUser(); // Fetch + hydrate user
 
   return (
     <BrowserRouter>

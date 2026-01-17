@@ -1,6 +1,7 @@
+import { useEffect } from "react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { FieldError } from "@/components/ui/field";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -16,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useUpdateWeeklyAvailability } from "@/hooks/api/profile/use-update-weekly-availability";
 import { Spinner } from "@/components/ui/spinner";
+import { useAuthStore } from "@/store/store";
 
 /* =======================
    Constants
@@ -60,12 +62,15 @@ export type WeeklyAvailabilityType = z.infer<typeof weeklyAvailabilitySchema>;
 ======================= */
 
 export default function WeeklyAvailabilityForm() {
+  const { user } = useAuthStore();
+
   const { mutate: updateAvailability, isPending } = useUpdateWeeklyAvailability();
 
   const {
     handleSubmit,
     control,
     watch,
+    reset,
     setValue,
     formState: { errors },
   } = useForm<WeeklyAvailabilityType>({
@@ -77,6 +82,12 @@ export default function WeeklyAvailabilityForm() {
       ),
     },
   });
+
+  useEffect(() => {
+    if (!user || !user.weeklyAvailability) return;
+
+    reset({ weeklyAvailability: user.weeklyAvailability });
+  }, [user]);
 
   const weeklyAvailability = watch("weeklyAvailability");
 
@@ -103,6 +114,8 @@ export default function WeeklyAvailabilityForm() {
     const cleaned = Object.fromEntries(
       Object.entries(data.weeklyAvailability).filter(([_, slots]) => slots.length > 0)
     );
+    console.log(cleaned);
+    
 
     updateAvailability(cleaned);
   };

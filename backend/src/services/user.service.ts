@@ -19,7 +19,7 @@ export const getCurrentUserDataService = async (userId: string) => {
     throw new NotFoundException("User not found");
   }
 
-  const profile = await ProfileModel.findOne({ userId }).select("_id avatar");
+  const profile = await ProfileModel.findOne({ userId }).select("_id avatar weeklyAvailability");
   if (!profile) {
     throw new NotFoundException("profile not found");
   }
@@ -30,6 +30,7 @@ export const getCurrentUserDataService = async (userId: string) => {
     userEmail: user.email,
     profileId: profile._id,
     avatar: profile.avatar,
+    weeklyAvailability: profile.weeklyAvailability,
   };
 };
 
