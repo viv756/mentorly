@@ -18,21 +18,22 @@ import { Button } from "@/components/ui/button";
 import { useUpdateWeeklyAvailability } from "@/hooks/api/profile/use-update-weekly-availability";
 import { Spinner } from "@/components/ui/spinner";
 import { useAuthStore } from "@/store/store";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 /* =======================
    Constants
 ======================= */
 
-const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
+const WEEKDAYS = ["Sun","Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
 
 const DAY_LABEL: Record<(typeof WEEKDAYS)[number], string> = {
+  Sun: "Sunday",
   Mon: "Monday",
   Tue: "Tuesday",
   Wed: "Wednesday",
   Thu: "Thursday",
   Fri: "Friday",
   Sat: "Saturday",
-  Sun: "Sunday",
 };
 
 const TIME_OPTIONS = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, "0")}:00`);
@@ -96,13 +97,13 @@ export default function WeeklyAvailabilityForm() {
   ======================= */
 
   const fieldArrays = {
+    Sun: useFieldArray({ control, name: "weeklyAvailability.Sun" }),
     Mon: useFieldArray({ control, name: "weeklyAvailability.Mon" }),
     Tue: useFieldArray({ control, name: "weeklyAvailability.Tue" }),
     Wed: useFieldArray({ control, name: "weeklyAvailability.Wed" }),
     Thu: useFieldArray({ control, name: "weeklyAvailability.Thu" }),
     Fri: useFieldArray({ control, name: "weeklyAvailability.Fri" }),
     Sat: useFieldArray({ control, name: "weeklyAvailability.Sat" }),
-    Sun: useFieldArray({ control, name: "weeklyAvailability.Sun" }),
   };
 
   /* =======================
@@ -114,9 +115,6 @@ export default function WeeklyAvailabilityForm() {
     const cleaned = Object.fromEntries(
       Object.entries(data.weeklyAvailability).filter(([_, slots]) => slots.length > 0)
     );
-    console.log(cleaned);
-    
-
     updateAvailability(cleaned);
   };
 
@@ -129,7 +127,7 @@ export default function WeeklyAvailabilityForm() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex justify-between mb-6">
           <h2 className="text-2xl font-semibold">Weekly Availability</h2>
-          <Button disabled={isPending} type="submit">
+          <Button disabled={isPending} type="submit" className="w-20">
             {isPending ? <Spinner /> : "Save"}
           </Button>
         </div>
@@ -145,7 +143,7 @@ export default function WeeklyAvailabilityForm() {
                 {/* Checkbox */}
                 <div className="flex items-center gap-3 w-28">
                   <Checkbox
-                    className="size-6"
+                    className="size-5"
                     id={day}
                     checked={isSelected}
                     onCheckedChange={(checked) => {
@@ -177,12 +175,14 @@ export default function WeeklyAvailabilityForm() {
                               <SelectTrigger className="w-40">
                                 <SelectValue placeholder="From" />
                               </SelectTrigger>
-                              <SelectContent>
-                                {TIME_OPTIONS.map((time) => (
-                                  <SelectItem key={time} value={time}>
-                                    {time}
-                                  </SelectItem>
-                                ))}
+                              <SelectContent position="popper">
+                                <ScrollArea className="h-40">
+                                  {TIME_OPTIONS.map((time) => (
+                                    <SelectItem key={time} value={time}>
+                                      {time}
+                                    </SelectItem>
+                                  ))}
+                                </ScrollArea>
                               </SelectContent>
                             </Select>
                           )}
@@ -199,12 +199,14 @@ export default function WeeklyAvailabilityForm() {
                               <SelectTrigger className="w-40">
                                 <SelectValue placeholder="To" />
                               </SelectTrigger>
-                              <SelectContent>
-                                {TIME_OPTIONS.map((time) => (
-                                  <SelectItem key={time} value={time}>
-                                    {time}
-                                  </SelectItem>
-                                ))}
+                              <SelectContent position="popper">
+                                <ScrollArea className="h-40">
+                                  {TIME_OPTIONS.map((time) => (
+                                    <SelectItem key={time} value={time}>
+                                      {time}
+                                    </SelectItem>
+                                  ))}
+                                </ScrollArea>
                               </SelectContent>
                             </Select>
                           )}

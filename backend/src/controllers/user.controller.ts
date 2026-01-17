@@ -75,8 +75,7 @@ export const updateWeeklyAvailabilityController = asyncHandler(
     const userProfile = await updateWeeklyAvailabilityService(userId, body);
 
     return res.status(HTTP_STATUS.OK).json({
-      message: "Weekly availability updated",
-      userProfile,
+      message: "Weekly availability updated successfully",
     });
   }
 );

@@ -11,13 +11,13 @@ interface TimeSlot {
 }
 
 interface WeeklyAvailability {
+  Sun?: TimeSlot[];
   Mon?: TimeSlot[];
   Tue?: TimeSlot[];
   Wed?: TimeSlot[];
   Thu?: TimeSlot[];
   Fri?: TimeSlot[];
   Sat?: TimeSlot[];
-  Sun?: TimeSlot[];
 }
 
 interface Rating {
@@ -90,13 +90,13 @@ const profileSchema = new Schema<ProfileDocument>(
       default: null,
     },
     weeklyAvailability: {
+      Sun: { type: [timeSlotSchema], default: [] },
       Mon: { type: [timeSlotSchema], default: [] },
       Tue: { type: [timeSlotSchema], default: [] },
       Wed: { type: [timeSlotSchema], default: [] },
       Thu: { type: [timeSlotSchema], default: [] },
       Fri: { type: [timeSlotSchema], default: [] },
       Sat: { type: [timeSlotSchema], default: [] },
-      Sun: { type: [timeSlotSchema], default: [] },
     },
 
     profileCompleteness: {

@@ -14,6 +14,6 @@ export interface TimeSlot {
   to: string; // "HH:mm"
 }
 
-export type WeekDay = "Mon" | "Tue" | "Wed" | "Thu" | "Fri" | "Sat" | "Sun";
+export type WeekDay = "Sun" | "Mon" | "Tue" | "Wed" | "Thu" | "Fri" | "Sat";
 
 export type WeeklyAvailability = Partial<Record<WeekDay, TimeSlot[]>>;

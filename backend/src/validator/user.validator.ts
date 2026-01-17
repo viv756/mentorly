@@ -26,7 +26,7 @@ export const updateProfileSchema = z.object({
    Constants
 ======================= */
 
-export const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
+export const WEEKDAYS = ["Sun","Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
 
 /* =======================
    Schemas
@@ -44,13 +44,13 @@ const timeSlotSchema = z
 
 export const weeklyAvailabilitySchema = z
   .object({
+    Sun: z.array(timeSlotSchema).optional(),
     Mon: z.array(timeSlotSchema).optional(),
     Tue: z.array(timeSlotSchema).optional(),
     Wed: z.array(timeSlotSchema).optional(),
     Thu: z.array(timeSlotSchema).optional(),
     Fri: z.array(timeSlotSchema).optional(),
     Sat: z.array(timeSlotSchema).optional(),
-    Sun: z.array(timeSlotSchema).optional(),
   })
   // .refine(
   //   (data) => Object.values(data).some((slots) => slots && slots.length > 0),
