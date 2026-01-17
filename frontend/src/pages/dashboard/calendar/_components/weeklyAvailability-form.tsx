@@ -19,12 +19,13 @@ import { useUpdateWeeklyAvailability } from "@/hooks/api/profile/use-update-week
 import { Spinner } from "@/components/ui/spinner";
 import { useAuthStore } from "@/store/store";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import formatTime from "@/lib/helper";
 
 /* =======================
    Constants
 ======================= */
 
-const WEEKDAYS = ["Sun","Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
+const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
 
 const DAY_LABEL: Record<(typeof WEEKDAYS)[number], string> = {
   Sun: "Sunday",
@@ -36,7 +37,12 @@ const DAY_LABEL: Record<(typeof WEEKDAYS)[number], string> = {
   Sat: "Saturday",
 };
 
-const TIME_OPTIONS = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, "0")}:00`);
+const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
+  const hour = Math.floor(i / 2);
+  const minute = i % 2 === 0 ? "00" : "30";
+
+  return `${hour.toString().padStart(2, "0")}:${minute}`;
+});
 
 /* =======================
    Zod Schema
@@ -111,16 +117,11 @@ export default function WeeklyAvailabilityForm() {
   ======================= */
 
   const onSubmit = (data: WeeklyAvailabilityType) => {
-    // Optional: remove empty days before sending to backend
     const cleaned = Object.fromEntries(
       Object.entries(data.weeklyAvailability).filter(([_, slots]) => slots.length > 0)
     );
     updateAvailability(cleaned);
   };
-
-  /* =======================
-     JSX
-  ======================= */
 
   return (
     <div className="max-w-3xl p-6 border rounded-lg">
@@ -139,7 +140,7 @@ export default function WeeklyAvailabilityForm() {
 
           return (
             <div key={day} className="p-4">
-              <div className="flex flex-col gap-3 sm:space-x-45 sm:flex-row items-start  mb-2">
+              <div className="flex flex-col gap-3 sm:space-x-45 md:flex-row items-start  mb-2">
                 {/* Checkbox */}
                 <div className="flex items-center gap-3 w-28">
                   <Checkbox
@@ -172,14 +173,14 @@ export default function WeeklyAvailabilityForm() {
                           control={control}
                           render={({ field }) => (
                             <Select value={field.value} onValueChange={field.onChange}>
-                              <SelectTrigger className="w-40">
+                              <SelectTrigger className="w-40 h-10! rounded-sm!">
                                 <SelectValue placeholder="From" />
                               </SelectTrigger>
                               <SelectContent position="popper">
                                 <ScrollArea className="h-40">
                                   {TIME_OPTIONS.map((time) => (
                                     <SelectItem key={time} value={time}>
-                                      {time}
+                                      {time && formatTime(time)}
                                     </SelectItem>
                                   ))}
                                 </ScrollArea>
@@ -196,14 +197,14 @@ export default function WeeklyAvailabilityForm() {
                           control={control}
                           render={({ field }) => (
                             <Select value={field.value} onValueChange={field.onChange}>
-                              <SelectTrigger className="w-40">
+                              <SelectTrigger className="w-40 h-10! rounded-sm!">
                                 <SelectValue placeholder="To" />
                               </SelectTrigger>
                               <SelectContent position="popper">
                                 <ScrollArea className="h-40">
                                   {TIME_OPTIONS.map((time) => (
                                     <SelectItem key={time} value={time}>
-                                      {time}
+                                      {time && formatTime(time)}
                                     </SelectItem>
                                   ))}
                                 </ScrollArea>
