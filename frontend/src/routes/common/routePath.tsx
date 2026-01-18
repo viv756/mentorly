@@ -12,7 +12,7 @@ export const PROTECTED_ROUTES = {
   PROFILE: "/profile",
   CALENDAR: "/calendar",
   SKILLS: "/skills",
-  SEARCH: "/search",
+  FIND_PEOPLE: "/find-people",
   ACCOUNT: "/account",
   ADVANCED: "/advanced",
 };

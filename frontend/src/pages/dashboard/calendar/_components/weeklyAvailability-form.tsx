@@ -85,7 +85,7 @@ export default function WeeklyAvailabilityForm() {
     defaultValues: {
       weeklyAvailability: WEEKDAYS.reduce(
         (acc, day) => ({ ...acc, [day]: [] }),
-        {} as Record<string, { from: string; to: string }[]>
+        {} as Record<string, { from: string; to: string }[]>,
       ),
     },
   });
@@ -118,7 +118,7 @@ export default function WeeklyAvailabilityForm() {
 
   const onSubmit = (data: WeeklyAvailabilityType) => {
     const cleaned = Object.fromEntries(
-      Object.entries(data.weeklyAvailability).filter(([_, slots]) => slots.length > 0)
+      Object.entries(data.weeklyAvailability).filter(([_, slots]) => slots.length > 0),
     );
     updateAvailability(cleaned);
   };
@@ -140,7 +140,7 @@ export default function WeeklyAvailabilityForm() {
 
           return (
             <div key={day} className="p-4">
-              <div className="flex flex-col gap-3 sm:space-x-45 md:flex-row items-start  mb-2">
+              <div className="flex flex-col gap-3 sm:space-x-45 lg:flex-row items-start  mb-2">
                 {/* Checkbox */}
                 <div className="flex items-center gap-3 w-28">
                   <Checkbox
@@ -246,7 +246,7 @@ export default function WeeklyAvailabilityForm() {
                         <FieldError key={index}>
                           Slot {index + 1}: {slotError.to.message}
                         </FieldError>
-                      )
+                      ),
                   )}
                 </div>
               )}

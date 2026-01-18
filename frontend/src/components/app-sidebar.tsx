@@ -57,8 +57,8 @@ const items = [
     icon: Brain,
   },
   {
-    title: "Search",
-    url: "/search",
+    title: "Find people",
+    url: "/find-people",
     icon: Search,
   },
 ];
