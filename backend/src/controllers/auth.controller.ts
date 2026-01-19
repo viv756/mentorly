@@ -3,6 +3,7 @@ import passport from "passport";
 import jwt from "jsonwebtoken";
 
 import { accountRefreshTokenService, refreshTokenService } from "../services/account.service";
+import { findByIdUserService, markActive } from "../services/user.service";
 import { signAccessToken } from "../utils/tokens";
 import { signRefreshToken } from "../utils/tokens";
 import { asyncHandler } from "../middlewares/asyncHandler.middleware";
@@ -37,6 +38,7 @@ export const loginController = asyncHandler(
         const refreshToken = signRefreshToken({ userId: user._id });
 
         await accountRefreshTokenService(user._id, refreshToken);
+        await markActive(user._id);
 
         res.cookie("refreshToken", refreshToken, {
           httpOnly: true,
@@ -51,9 +53,9 @@ export const loginController = asyncHandler(
           accessToken,
           expiresAt,
         });
-      }
+      },
     )(req, res, next);
-  }
+  },
 );
 
 export const refreshTokenController = asyncHandler(async (req: Request, res: Response) => {
@@ -70,13 +72,17 @@ export const refreshTokenController = asyncHandler(async (req: Request, res: Res
     throw new UnauthorizedException("Invalid or expired refresh token");
   }
 
-  const user = await refreshTokenService(payload.userId, token);
+  const user = await findByIdUserService(payload.userId);
+  await refreshTokenService(payload.userId, token);
 
   const { accessToken, expiresAt } = signAccessToken({
     userId: user._id.toString(),
   });
 
-  res.status(HTTP_STATUS.OK).json({
+  // mark lastActive status
+  await markActive(user._id.toString());
+
+  return res.status(HTTP_STATUS.OK).json({
     accessToken,
     expiresAt,
   });

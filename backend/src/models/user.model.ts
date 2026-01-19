@@ -5,6 +5,7 @@ export interface UserDocument extends Document {
   name: string;
   email: string;
   password: string;
+  lastActiveAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
   comparePassword: (password: string) => Promise<boolean>;
@@ -26,10 +27,15 @@ const userSchema = new Schema<UserDocument>(
       lowercase: true,
     },
     password: { type: String, select: true, required: true },
+    lastActiveAt: {
+      type: Date,
+      default: null,
+      index: true,
+    },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 userSchema.pre("save", async function () {

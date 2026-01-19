@@ -106,3 +106,19 @@ export const updateWeeklyAvailabilityService = async (
 
   return userProfile;
 };
+
+// Updating lastActive status
+export const markActive = async (userId: string) => {
+  const ACTIVITY_INTERVAL = 5 * 60 * 1000;
+
+  await UserModel.updateOne(
+    {
+      _id: userId,
+      $or: [
+        { lastActiveAt: null },
+        { lastActiveAt: { $lt: new Date(Date.now() - ACTIVITY_INTERVAL) } },
+      ],
+    },
+    { $set: { lastActiveAt: new Date() } }
+  );
+};
