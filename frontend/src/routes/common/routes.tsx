@@ -10,6 +10,7 @@ import UserSkills from "@/pages/dashboard/skills";
 import Account from "@/pages/dashboard/settings/account";
 import Advanced from "@/pages/dashboard/settings/advanced";
 import Calendar from "@/pages/dashboard/calendar";
+import UserProfile from "@/pages/user-profile";
 
 export const publicRoutePaths = [{ path: PUBLIC_ROUTES.HOME, element: <Home /> }];
 
@@ -19,8 +20,15 @@ export const authenticationRoutePaths = [
   { path: AUTH_ROUTES.SIGN_UP, element: <SignUp /> },
 ];
 
+export const protectedBaseLayoutRoutes = [
+  {
+    path: PROTECTED_ROUTES.USER_PROFILE, // "/user/userId"
+    element: <UserProfile />,
+  },
+];
+
 // protected routes - user can only access these routes after login
-export const protectedRoutes = [
+export const protectedAppLayoutRoutes = [
   { path: PROTECTED_ROUTES.OVERVIEW, element: <Overview /> },
   { path: PROTECTED_ROUTES.PROFILE, element: <Profile /> },
   { path: PROTECTED_ROUTES.CALENDAR, element: <Calendar /> },
