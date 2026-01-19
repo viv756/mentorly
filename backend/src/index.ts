@@ -16,6 +16,7 @@ import { passportAuthenticateJwt } from "./config/passport.config";
 import authRoutes from "./routes/auth.route";
 import userRoutes from "./routes/user.route";
 import userSkillRoutes from "./routes/user-skill.route";
+import peopleRoutes from "./routes/people.route";
 
 const app = express();
 const BASE_PATH = Env.BASE_PATH;
@@ -45,6 +46,7 @@ app.get(
 app.use(`${BASE_PATH}/auth`, authRoutes); 
 app.use(`${BASE_PATH}/user`, passportAuthenticateJwt, userRoutes);
 app.use(`${BASE_PATH}/skill`, passportAuthenticateJwt, userSkillRoutes);
+app.use(`${BASE_PATH}/people`,passportAuthenticateJwt,peopleRoutes)
 
 app.use(errorHandler);
 

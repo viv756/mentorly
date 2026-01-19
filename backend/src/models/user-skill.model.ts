@@ -8,14 +8,14 @@ import {
   SkillCategoryEnum,
   SkillCategoryEnumType,
 } from "../enums/skill.enum";
-import { WeekDay } from "../enums/date-range.enum";
+// import { WeekDay } from "../enums/date-range.enum";
 
 /* ---------- Types ---------- */
 
-interface Availability {
-  days: WeekDay[];
-  timeSlots: string[]; // "18:00-20:00"
-}
+// interface Availability {
+//   days: WeekDay[];
+//   timeSlots: string[]; // "18:00-20:00"
+// }
 
 export interface UserSkillDocument extends Document {
   userId: mongoose.Types.ObjectId;
@@ -38,6 +38,7 @@ const userSkillSchema = new Schema<UserSkillDocument>(
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
+      index: true,
     },
 
     skillName: {
@@ -74,8 +75,9 @@ const userSkillSchema = new Schema<UserSkillDocument>(
       required: function () {
         return this.skillType === SkillTypeEnum.TEACH;
       },
-      set: (v:any) => Number(v),
+      set: (v: any) => Number(v),
     },
+
     // availability: {
     //   type: {
     //     days: {
@@ -98,16 +100,23 @@ const userSkillSchema = new Schema<UserSkillDocument>(
     //   default: undefined,
     // },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
+// -------------Indexing---------------------
+userSkillSchema.index({
+  skillName: 1,
+  category: 1,
+  skillType: 1,
+  skillLevel: 1,
+  userId: 1,
+});
+
+// ----------------Validation----------------
 userSkillSchema.pre("validate", function () {
   const doc = this as UserSkillDocument;
 
-  if (
-    doc.skillType === SkillTypeEnum.TEACH &&
-    (!doc.experienceYears)
-  ) {
+  if (doc.skillType === SkillTypeEnum.TEACH && !doc.experienceYears) {
     throw new Error("Teaching skills require experience");
   }
 });

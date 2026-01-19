@@ -156,6 +156,8 @@ profileSchema.pre("save", function () {
   this.profileCompleteness = Math.min(completeness, 100);
 });
 
+profileSchema.index({ userId: 1, location: 1 });
+
 /* =======================
    Model
 ======================= */
