@@ -136,7 +136,7 @@ export default function WeeklyAvailabilityForm() {
         {WEEKDAYS.map((day) => {
           const { fields, append, remove } = fieldArrays[day];
           const isSelected = weeklyAvailability[day]?.length > 0;
-          const dayErrors = errors.weeklyAvailability?.[day];
+          // const dayErrors = errors.weeklyAvailability?.[day];
 
           return (
             <div key={day} className="p-4">
@@ -165,81 +165,91 @@ export default function WeeklyAvailabilityForm() {
                   {!isSelected && <div className="text-sm text-muted-foreground">Unavailable</div>}
 
                   {isSelected &&
-                    fields.map((item, index) => (
-                      <div key={item.id} className="flex items-center gap-2">
-                        {/* From */}
-                        <Controller
-                          name={`weeklyAvailability.${day}.${index}.from`}
-                          control={control}
-                          render={({ field }) => (
-                            <Select value={field.value} onValueChange={field.onChange}>
-                              <SelectTrigger className="w-40 h-10! rounded-sm!">
-                                <SelectValue placeholder="From" />
-                              </SelectTrigger>
-                              <SelectContent position="popper">
-                                <ScrollArea className="h-40">
-                                  {TIME_OPTIONS.map((time) => (
-                                    <SelectItem key={time} value={time}>
-                                      {time && formatTime(time)}
-                                    </SelectItem>
-                                  ))}
-                                </ScrollArea>
-                              </SelectContent>
-                            </Select>
+                    fields.map((item, index) => {
+                      const slotError = errors?.weeklyAvailability?.[day]?.[index];
+
+                      return (
+                        <div className="flex flex-col">
+                          <div key={item.id} className="flex items-center gap-2">
+                            {/* From */}
+                            <Controller
+                              name={`weeklyAvailability.${day}.${index}.from`}
+                              control={control}
+                              render={({ field }) => (
+                                <Select value={field.value} onValueChange={field.onChange}>
+                                  <SelectTrigger className="w-40 h-10! rounded-sm!">
+                                    <SelectValue placeholder="From" />
+                                  </SelectTrigger>
+                                  <SelectContent position="popper">
+                                    <ScrollArea className="h-40">
+                                      {TIME_OPTIONS.map((time) => (
+                                        <SelectItem key={time} value={time}>
+                                          {time && formatTime(time)}
+                                        </SelectItem>
+                                      ))}
+                                    </ScrollArea>
+                                  </SelectContent>
+                                </Select>
+                              )}
+                            />
+
+                            <span>-</span>
+
+                            {/* To */}
+                            <Controller
+                              name={`weeklyAvailability.${day}.${index}.to`}
+                              control={control}
+                              render={({ field }) => (
+                                <Select value={field.value} onValueChange={field.onChange}>
+                                  <SelectTrigger className="w-40 h-10! rounded-sm!">
+                                    <SelectValue placeholder="To" />
+                                  </SelectTrigger>
+                                  <SelectContent position="popper">
+                                    <ScrollArea className="h-40">
+                                      {TIME_OPTIONS.map((time) => (
+                                        <SelectItem key={time} value={time}>
+                                          {time && formatTime(time)}
+                                        </SelectItem>
+                                      ))}
+                                    </ScrollArea>
+                                  </SelectContent>
+                                </Select>
+                              )}
+                            />
+
+                            {/* Add */}
+                            {index === 0 && (
+                              <button
+                                type="button"
+                                onClick={() => append({ from: "", to: "" })}
+                                className="border rounded-full p-1">
+                                <Plus className="w-4 h-4" />
+                              </button>
+                            )}
+
+                            {/* Remove */}
+                            {index > 0 && (
+                              <button
+                                type="button"
+                                onClick={() => remove(index)}
+                                className="border rounded-full p-1">
+                                <X className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
+                          {/* Errors */}
+                          {slotError?.to?.message && (
+                            <FieldError>{slotError.to.message}</FieldError>
                           )}
-                        />
-
-                        <span>-</span>
-
-                        {/* To */}
-                        <Controller
-                          name={`weeklyAvailability.${day}.${index}.to`}
-                          control={control}
-                          render={({ field }) => (
-                            <Select value={field.value} onValueChange={field.onChange}>
-                              <SelectTrigger className="w-40 h-10! rounded-sm!">
-                                <SelectValue placeholder="To" />
-                              </SelectTrigger>
-                              <SelectContent position="popper">
-                                <ScrollArea className="h-40">
-                                  {TIME_OPTIONS.map((time) => (
-                                    <SelectItem key={time} value={time}>
-                                      {time && formatTime(time)}
-                                    </SelectItem>
-                                  ))}
-                                </ScrollArea>
-                              </SelectContent>
-                            </Select>
-                          )}
-                        />
-
-                        {/* Add */}
-                        {index === 0 && (
-                          <button
-                            type="button"
-                            onClick={() => append({ from: "", to: "" })}
-                            className="border rounded-full p-1">
-                            <Plus className="w-4 h-4" />
-                          </button>
-                        )}
-
-                        {/* Remove */}
-                        {index > 0 && (
-                          <button
-                            type="button"
-                            onClick={() => remove(index)}
-                            className="border rounded-full p-1">
-                            <X className="w-4 h-4" />
-                          </button>
-                        )}
-                      </div>
-                    ))}
+                        </div>
+                      );
+                    })}
                 </div>
               </div>
 
               {/* Errors */}
-              {Array.isArray(dayErrors) && (
-                <div className="ml-28 mt-2 space-y-1">
+              {/* {Array.isArray(dayErrors) && (
+                <div className=" mt-2 space-y-1">
                   {dayErrors.map(
                     (slotError, index) =>
                       slotError?.to?.message && (
@@ -249,7 +259,7 @@ export default function WeeklyAvailabilityForm() {
                       ),
                   )}
                 </div>
-              )}
+              )} */}
             </div>
           );
         })}
