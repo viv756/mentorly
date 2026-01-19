@@ -14,8 +14,11 @@ const Header = () => {
         {/* Right */}
         <div className="ml-auto flex items-center gap-3">
           <ThemeToggle />
-          <Avatar className="size-10">
-            <AvatarImage src={`${user?.avatar}` || "https://github.com/shadcn.png"}/>
+          <Avatar className="size-10 ">
+            <AvatarImage
+              src={`${user?.avatar}` || "https://github.com/shadcn.png"}
+              className="object-cover "
+            />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
         </div>

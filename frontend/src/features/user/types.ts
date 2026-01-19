@@ -20,3 +20,32 @@ export type GetCurrentUserResponseType = {
   message: string;
   user: User;
 };
+
+type MatchedSkill = {
+  skillName: string;
+  category: string;
+  skillType: string;
+  skillLevel: string;
+};
+
+export type MatchedUser = {
+  totalScore: number;
+  matchedSkills: MatchedSkill[];
+  profile: {
+    bio: string;
+    location: string;
+    rating: {
+      average: number;
+      count: number;
+    };
+    avatar: string;
+  };
+  userId: string;
+  name: string;
+  email: string;
+};
+
+export type GetFindPeopleResponse = {
+  message: string;
+  users: MatchedUser[];
+};

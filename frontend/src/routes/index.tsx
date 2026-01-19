@@ -1,7 +1,12 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import BaseLayout from "@/layout/base-layout";
 import AppLayout from "@/layout/app-layout";
-import { authenticationRoutePaths, protectedRoutes, publicRoutePaths } from "./common/routes";
+import {
+  authenticationRoutePaths,
+  protectedAppLayoutRoutes,
+  protectedBaseLayoutRoutes,
+  publicRoutePaths,
+} from "./common/routes";
 import AuthRoute from "./authRoute";
 import ProtectedRoute from "./protectedRoute";
 import { useTokenRefreshTimer } from "@/hooks/api/auth/use-token-refresh";
@@ -34,10 +39,19 @@ const AppRoutes = () => {
           </Route>
         </Route>
 
-        {/* Protected routes */}
+        {/* Protected applayout routes- Dashboard */}
         <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
-            {protectedRoutes.map((route) => (
+            {protectedAppLayoutRoutes.map((route) => (
+              <Route key={route.path} path={route.path} element={route.element} />
+            ))}
+          </Route>
+        </Route>
+
+        {/* protected base layout routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route element={<BaseLayout />}>
+            {protectedBaseLayoutRoutes.map((route) => (
               <Route key={route.path} path={route.path} element={route.element} />
             ))}
           </Route>

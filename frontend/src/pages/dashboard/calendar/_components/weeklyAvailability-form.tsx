@@ -19,7 +19,8 @@ import { useUpdateWeeklyAvailability } from "@/hooks/api/profile/use-update-week
 import { Spinner } from "@/components/ui/spinner";
 import { useAuthStore } from "@/store/store";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import formatTime from "@/lib/helper";
+import { formatTime } from "@/lib/helper";
+
 
 /* =======================
    Constants
