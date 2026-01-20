@@ -11,6 +11,9 @@ export const useUpdateProfile = () => {
       queryClient.invalidateQueries({
         queryKey: ["auth-user"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["user-profile"],
+      });
       toast.success(data.message);
     },
     onError: (error) => {
