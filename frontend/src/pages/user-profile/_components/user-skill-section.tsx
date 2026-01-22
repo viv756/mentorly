@@ -1,12 +1,11 @@
 import SkillCard from "./skill-card";
 
-export default function CoachingCard() {
+export default function SkillCardSection({ skills }) {
   return (
     <div className="flex flex-wrap gap-5">
-      <SkillCard />
-      <SkillCard />
-      <SkillCard />
-      <SkillCard />
+      {skills.map((skill) => (
+        <SkillCard key={skill.skillId} skill={skill} />
+      ))}
     </div>
   );
 }

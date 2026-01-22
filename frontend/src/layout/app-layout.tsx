@@ -5,7 +5,7 @@ import Header from "@/components/header";
 
 const AppLayout = () => {
   return (
-    <SidebarProvider>
+    <SidebarProvider className="bg-sidebar">
       <AppSidebar />
       <div className="min-h-svh lg:p-2 overflow-hidden  w-full">
         <main className="lg:border overflow-hidden lg:rounded-xl flex flex-col items-center justify-start h-full w-full bg-background">

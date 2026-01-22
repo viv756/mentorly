@@ -10,6 +10,7 @@ import {
   Settings,
   Calendar,
   ChevronRight,
+  Headset,
 } from "lucide-react";
 import {
   Sidebar,
@@ -52,6 +53,11 @@ const items = [
     icon: Calendar,
   },
   {
+    title: "Meetings",
+    url: "/meetings",
+    icon: Headset,
+  },
+  {
     title: "Skills",
     url: "/skills",
     icon: Brain,
@@ -65,7 +71,7 @@ const items = [
 
 export function AppSidebar() {
   return (
-    <Sidebar className="lg:border-r-0">
+    <Sidebar className="lg:border-r-0!">
       {/* Header */}
       <SidebarHeader className="md:p-3.5">
         <SidebarMenu>

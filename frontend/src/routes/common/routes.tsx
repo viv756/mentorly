@@ -11,6 +11,7 @@ import Account from "@/pages/dashboard/settings/account";
 import Advanced from "@/pages/dashboard/settings/advanced";
 import Calendar from "@/pages/dashboard/calendar";
 import UserProfile from "@/pages/user-profile";
+import ScheduleMeeting from "@/pages/schedule-meeting";
 
 export const publicRoutePaths = [{ path: PUBLIC_ROUTES.HOME, element: <Home /> }];
 
@@ -21,10 +22,8 @@ export const authenticationRoutePaths = [
 ];
 
 export const protectedBaseLayoutRoutes = [
-  {
-    path: PROTECTED_ROUTES.USER_PROFILE, // "/user/userId"
-    element: <UserProfile />,
-  },
+  { path: PROTECTED_ROUTES.USER_PROFILE, element: <UserProfile /> },
+  { path: PROTECTED_ROUTES.SCHEDULE_MEETING, element: <ScheduleMeeting /> },
 ];
 
 // protected routes - user can only access these routes after login
