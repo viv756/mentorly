@@ -175,6 +175,7 @@ export const getUserProfileDetailsByIdService = async (userId: string) => {
         },
         profile: {
           bio: "$profile.bio",
+          aboutMe: "$profile.aboutMe",
           location: "$profile.location",
           rating: "$profile.rating",
           avatar: "$profile.avatar",

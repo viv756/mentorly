@@ -3,8 +3,13 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Link, useParams } from "react-router-dom";
 import { PROTECTED_ROUTES } from "@/routes/common/routePath";
+import type { SkillType } from "@/features/profile/types";
 
-const SkillCard = ({ skill }) => {
+type SkillCardProps = {
+  skill: SkillType;
+};
+
+const SkillCard = ({ skill }: SkillCardProps) => {
   const { userId } = useParams();
 
   return (

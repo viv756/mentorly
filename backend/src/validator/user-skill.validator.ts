@@ -24,7 +24,7 @@ export const userSkillZodSchema = z
     description: z
       .string()
       .min(10, "Description is too short")
-      .max(200, "Description must be under 200 characters"),
+      .max(700, "Description must be under 700 characters"),
     category: z.enum(Object.values(SkillCategoryEnum) as [string, ...string[]]),
     experienceYears: z.number().int().min(0).optional(),
     // availability: availabilitySchema.optional(),

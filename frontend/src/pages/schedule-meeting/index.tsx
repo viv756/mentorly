@@ -113,10 +113,10 @@ const ScheduleMeeting = () => {
 
   return (
     <div className="flex items-center justify-center my-auto mx-auto">
-      <div className="p-2 sm:p-0 sm:w-300 mt-15 flex justify-between gap-2 flex-col sm:flex-row">
+      <div className="p-2 sm:p-0 sm:w-300 mt-15 flex sm:justify-between items-center sm:items-start gap-2 flex-col lg:flex-row">
         <div className="p-8 border rounded-3xl sm:min-w-150 sm:max-w-150">
           <Link to={"/"} className="flex items-center gap-2">
-            <ArrowLeft size={20}/> 
+            <ArrowLeft size={20} />
             {user.name}
           </Link>
           <div className="flex justify-between items-center pb mb-4">
@@ -136,117 +136,112 @@ const ScheduleMeeting = () => {
             </div>
           </div>
           <div className="mt-5">
-            <p>{userSkill.description}</p>
+            <p>{`${userSkill.description}`}</p>
           </div>
         </div>
-        <div>
-          <div className="border rounded-3xl max-w-150">
-            <Card className="sm:max-w-xl p-6 space-y-6 rounded-2xl">
-              <h1 className="text-2xl font-bold">Schedule a Meeting</h1>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                {/* -------- DATE SLIDER -------- */}
-                <div>
-                  <h2 className="font-semibold mb-3">Select Date</h2>
-                  <div className="flex items-center gap-3">
-                    <Button
-                      type="button"
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => setStartIndex((i) => Math.max(i - 1, 0))}
-                      disabled={startIndex === 0}>
-                      <ChevronLeft />
-                    </Button>
+        <div className="max-w-120 sm:max-w-150 rounded-3xl">
+          <Card className="p-6 space-y-6 border">
+            <h1 className="text-2xl font-bold">Schedule a Meeting</h1>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              {/* -------- DATE SLIDER -------- */}
+              <div>
+                <h2 className="font-semibold mb-3">Select Date</h2>
+                <div className="flex items-center gap-3">
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => setStartIndex((i) => Math.max(i - 1, 0))}
+                    disabled={startIndex === 0}>
+                    <ChevronLeft />
+                  </Button>
 
-                    <div className="flex gap-2 overflow-hidden flex-1">
-                      {visibleDates.map((d) => {
-                        const disabled = availability[d.weekday]?.length === 0;
+                  <div className="flex gap-2 overflow-hidden flex-1">
+                    {visibleDates.map((d) => {
+                      const disabled = availability[d.weekday]?.length === 0;
+                      return (
+                        <Button
+                          key={d.key}
+                          type="button"
+                          disabled={disabled}
+                          variant={selectedDate === d.iso ? "default" : "outline"}
+                          onClick={() => handleDateSelect(d.iso, d.weekday)}
+                          className="min-w-20 h-20 flex flex-col rounded-xl">
+                          <span className="text-sm">{d.weekday}</span>
+                          <span className="text-lg font-semibold">{d.date}</span>
+                        </Button>
+                      );
+                    })}
+                  </div>
+
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => setStartIndex((i) => Math.min(i + 1, TOTAL_DAYS - DAYS_TO_SHOW))}
+                    disabled={startIndex >= TOTAL_DAYS - DAYS_TO_SHOW}>
+                    <ChevronRight />
+                  </Button>
+                </div>
+              </div>
+
+              {/* -------- TIME SLOTS -------- */}
+              {selectedDate && (
+                <div>
+                  <h2 className="font-semibold mb-3">Available Time</h2>
+                  {timeSlots.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">No availability for this day</p>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-3">
+                      {timeSlots.map((slot) => {
+                        const selected =
+                          form.watch("from") === slot.from && form.watch("to") === slot.to;
 
                         return (
                           <Button
-                            key={d.key}
+                            key={`${slot.from}-${slot.to}`}
                             type="button"
-                            disabled={disabled}
-                            variant={selectedDate === d.iso ? "default" : "outline"}
-                            onClick={() => handleDateSelect(d.iso, d.weekday)}
-                            className="min-w-20 h-20 flex flex-col rounded-xl">
-                            <span className="text-sm">{d.weekday}</span>
-                            <span className="text-lg font-semibold">{d.date}</span>
+                            variant={selected ? "default" : "outline"}
+                            onClick={() => {
+                              form.setValue("from", slot.from);
+                              form.setValue("to", slot.to);
+                            }}
+                            className="rounded-xl">
+                            {slot.from} – {slot.to}
                           </Button>
                         );
                       })}
                     </div>
-
-                    <Button
-                      type="button"
-                      size="icon"
-                      variant="ghost"
-                      onClick={() =>
-                        setStartIndex((i) => Math.min(i + 1, TOTAL_DAYS - DAYS_TO_SHOW))
-                      }
-                      disabled={startIndex >= TOTAL_DAYS - DAYS_TO_SHOW}>
-                      <ChevronRight />
-                    </Button>
-                  </div>
+                  )}
                 </div>
+              )}
 
-                {/* -------- TIME SLOTS -------- */}
-                {selectedDate && (
-                  <div>
-                    <h2 className="font-semibold mb-3">Available Time</h2>
-                    {timeSlots.length === 0 ? (
-                      <p className="text-sm text-muted-foreground">No availability for this day</p>
-                    ) : (
-                      <div className="grid grid-cols-2 gap-3">
-                        {timeSlots.map((slot) => {
-                          const selected =
-                            form.watch("from") === slot.from && form.watch("to") === slot.to;
+              {/* -------- TIMEZONE -------- */}
+              <div>
+                <h2 className="font-semibold mb-3">Timezone</h2>
+                <Select
+                  value={form.watch("timezone")}
+                  onValueChange={(v) => form.setValue("timezone", v)}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Asia/Kolkata">(GMT+5:30) India</SelectItem>
+                    <SelectItem value="Europe/London">(GMT+0) London</SelectItem>
+                    <SelectItem value="America/New_York">(GMT-5) New York</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-                          return (
-                            <Button
-                              key={`${slot.from}-${slot.to}`}
-                              type="button"
-                              variant={selected ? "default" : "outline"}
-                              onClick={() => {
-                                form.setValue("from", slot.from);
-                                form.setValue("to", slot.to);
-                              }}
-                              className="rounded-xl">
-                              {slot.from} – {slot.to}
-                            </Button>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* -------- TIMEZONE -------- */}
-                <div>
-                  <h2 className="font-semibold mb-3">Timezone</h2>
-                  <Select
-                    value={form.watch("timezone")}
-                    onValueChange={(v) => form.setValue("timezone", v)}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Asia/Kolkata">(GMT+5:30) India</SelectItem>
-                      <SelectItem value="Europe/London">(GMT+0) London</SelectItem>
-                      <SelectItem value="America/New_York">(GMT-5) New York</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* -------- SUBMIT -------- */}
-                <Button
-                  type="submit"
-                  className="w-full rounded-xl py-6 text-lg"
-                  disabled={!form.watch("date") || !form.watch("from") || !form.watch("to")}>
-                  Continue
-                </Button>
-              </form>
-            </Card>
-          </div> 
+              {/* -------- SUBMIT -------- */}
+              <Button
+                type="submit"
+                className="w-full rounded-xl py-6 text-lg"
+                disabled={!form.watch("date") || !form.watch("from") || !form.watch("to")}>
+                Schedule
+              </Button>
+            </form>
+          </Card>
         </div>
       </div>
     </div>

@@ -1,6 +1,11 @@
+import type { SkillType } from "@/features/profile/types";
 import SkillCard from "./skill-card";
 
-export default function SkillCardSection({ skills }) {
+type SkillCardSectionProps = {
+  skills: SkillType[];
+};
+
+export default function SkillCardSection({ skills }: SkillCardSectionProps) {
   return (
     <div className="flex flex-wrap gap-5">
       {skills.map((skill) => (
