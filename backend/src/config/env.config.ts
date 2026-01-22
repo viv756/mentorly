@@ -16,6 +16,9 @@ const envConfig = () => ({
   CLOUDINARY_CLOUD_NAME: getEnv("CLOUDINARY_CLOUD_NAME", ""),
   CLOUDINARY_API_KEY: getEnv("CLOUDINARY_API_KEY", ""),
   CLOUDINARY_API_SECRET: getEnv("CLOUDINARY_API_SECRET", ""),
+
+  AGORA_APP_ID: getEnv("AGORA_APP_ID", ""),
+  AGORA_APP_CERTIFICATE: getEnv("AGORA_APP_CERTIFICATE", ""),
 });
 
 export const Env = envConfig();

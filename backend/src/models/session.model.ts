@@ -23,7 +23,8 @@ export interface SessionDocument extends Document {
   skillId: Types.ObjectId;
   sessionType: SessionTypeEnumType;
   scheduledAt: Date;
-  durationMinutes: number;
+  from: Date;
+  to: Date;
   status: SessionStatusEnumType;
   video?: VideoInfo;
   createdAt: Date;
@@ -62,12 +63,15 @@ const sessionSchema = new Schema<SessionDocument>(
       type: Date,
       required: true,
     },
-
-    durationMinutes: {
-      type: Number,
+    from: {
+      type: Date,
       required: true,
-      min: 5,
     },
+    to: {
+      type: Date,
+      required: true,
+    },
+
     status: {
       type: String,
       enum: Object.values(SessionStatusEnum),
@@ -87,7 +91,7 @@ const sessionSchema = new Schema<SessionDocument>(
       required: false,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 /* =======================
