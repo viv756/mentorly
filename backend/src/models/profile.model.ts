@@ -82,7 +82,6 @@ const profileSchema = new Schema<ProfileDocument>(
     bio: {
       type: String,
       trim: true,
-      maxLength: 120,
       default: null,
     },
     aboutMe: {

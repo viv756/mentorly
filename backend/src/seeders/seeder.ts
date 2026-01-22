@@ -24,6 +24,7 @@ const seedUsers = async () => {
     await AccountModel.deleteMany();
     await ProfileModel.deleteMany();
     await UserModel.deleteMany();
+    await UserSkillModel.deleteMany()
 
     // 1️⃣ Hash passwords
     const usersWithHashedPasswords = await Promise.all(
