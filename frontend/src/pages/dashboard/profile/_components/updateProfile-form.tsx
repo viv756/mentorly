@@ -49,14 +49,14 @@ export const formSchema = z.object({
     z
       .string()
       .min(3, "name must be at least 3 characters.")
-      .max(10, "name must be at most 10 characters.")
-      .regex(/^[a-zA-Z0-9_]+$/, "name can only contain letters, numbers, and underscores.")
+      .regex(/^[a-zA-Z]+(?: [a-zA-Z]+)*$/, "Name can only contain letters and spaces."),
   ),
-  bio: optionalInput(
+  bio: optionalInput(z.string().max(120, "Bio must be at most 120 characters")),
+  aboutMe: optionalInput(
     z
       .string()
-      .min(20, "Description must be at least 20 characters")
-      .max(500, "Description must be at most 500 characters")
+      .min(100, "About me must be at least 100 characters")
+      .max(1500, "About me must be at most 1500 characters"),
   ),
   location: optionalInput(z.string()),
   socialLinks: z
@@ -64,7 +64,7 @@ export const formSchema = z.object({
       z.object({
         platform: z.enum(["linkedin", "github", "twitter"]),
         url: z.string().url("Please enter a valid URL"),
-      })
+      }),
     )
     .optional(),
   avatar: avatarSchema.optional(),
@@ -86,6 +86,7 @@ const UpdateProfileForm = () => {
     defaultValues: {
       name: "",
       bio: "",
+      aboutMe: "",
       location: "",
       socialLinks: [],
       avatar: undefined,
@@ -104,6 +105,7 @@ const UpdateProfileForm = () => {
     form.reset({
       name: profile.userId.name || "",
       bio: profile.bio || "",
+      aboutMe: profile.aboutMe || "",
       location: profile.location || "",
       socialLinks: profile.socialLinks || [],
       avatar: profile.avatar || "",
@@ -115,6 +117,7 @@ const UpdateProfileForm = () => {
 
     if (data.name) payload.append("name", data.name);
     if (data.bio) payload.append("bio", data.bio);
+    if (data.aboutMe) payload.append("aboutMe", data.aboutMe);
     if (data.location) payload.append("location", data.location);
     if (data.socialLinks) payload.append("socialLinks", JSON.stringify(data.socialLinks));
     if (data.avatar) payload.append("avatar", data.avatar);
@@ -214,25 +217,23 @@ const UpdateProfileForm = () => {
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="form-update-profile-bio">Bio yourself</FieldLabel>
+                    <FieldLabel htmlFor="form-update-profile-bio">Intro yourself</FieldLabel>
                     <InputGroup>
-                      <InputGroupTextarea
+                      <InputGroupInput
                         {...field}
                         id="form-update-profile-bio"
                         placeholder="Passionate bio building intuitive user experiences..."
-                        rows={5}
-                        className="min-h-24 resize-none"
                         aria-invalid={fieldState.invalid}
                       />
                       <InputGroupAddon align={"block-end"}>
                         <InputGroupText className="tabular-nums">
-                          {field?.value?.length}/500 characters
+                          {field?.value?.length}/120 characters
                         </InputGroupText>
                       </InputGroupAddon>
                     </InputGroup>
 
                     <FieldDescription>
-                      Write a brief description bio yourself, your work, and interests.
+                      Write a short headline that describes you or your expertise.
                     </FieldDescription>
                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                   </Field>
@@ -256,6 +257,36 @@ const UpdateProfileForm = () => {
                     autoComplete="off"
                   />
                   <FieldDescription>Add your location for best matching</FieldDescription>
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
+              )}
+            />
+
+            <Controller
+              name="aboutMe"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="form-update-profile-aboutMe">About Me</FieldLabel>
+                  <InputGroup>
+                    <InputGroupTextarea
+                      {...field}
+                      id="form-update-profile-aboutMe"
+                      rows={5}
+                      placeholder="Write about your self"
+                      className="min-h-50 resize-none"
+                      aria-invalid={fieldState.invalid}
+                    />
+                    <InputGroupAddon align={"block-end"}>
+                      <InputGroupText className="tabular-nums">
+                        {field?.value?.length}/1500 characters
+                      </InputGroupText>
+                    </InputGroupAddon>
+                  </InputGroup>
+                  <FieldDescription>
+                    Share a brief summary about yourself, your experience, and what you’re currently
+                    focused on.
+                  </FieldDescription>
                   {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                 </Field>
               )}
@@ -303,8 +334,8 @@ const UpdateProfileForm = () => {
                               controllerField.value?.platform === "linkedin"
                                 ? "linkedin.com/in/username"
                                 : controllerField.value?.platform === "github"
-                                ? "github.com/username"
-                                : "twitter.com/username"
+                                  ? "github.com/username"
+                                  : "twitter.com/username"
                             }
                             value={controllerField.value?.url || ""}
                             onChange={(e) => {

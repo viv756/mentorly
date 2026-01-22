@@ -134,7 +134,7 @@ export const generateUserSkills = (
       skillLevel: faker.helpers.arrayElement(
         Object.values(SkillLevelEnum),
       ),
-      description: faker.lorem.sentences(2),
+      description: faker.lorem.sentences(30),
     };
 
     return skillType === SkillTypeEnum.TEACH

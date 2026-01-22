@@ -34,6 +34,7 @@ export interface ProfileDocument extends Document {
   userId: Types.ObjectId | UserDocument;
   avatar: string;
   bio: string | null;
+  aboutMe: string | null;
   location: string | null;
   profileCompleteness: number;
   rating: Rating;
@@ -81,7 +82,12 @@ const profileSchema = new Schema<ProfileDocument>(
     bio: {
       type: String,
       trim: true,
-      maxLength: 500,
+      default: null,
+    },
+    aboutMe: {
+      type: String,
+      trim: true,
+      maxLength: 1500,
       default: null,
     },
     location: {
@@ -134,7 +140,7 @@ const profileSchema = new Schema<ProfileDocument>(
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 /* =======================
@@ -146,7 +152,8 @@ profileSchema.pre("save", function () {
   let completeness = 0;
 
   if (this.avatar) completeness += 20;
-  if (this.bio) completeness += 20;
+  if (this.bio) completeness += 10;
+  if (this.aboutMe) completeness += 10;
   if (this.location) completeness += 10;
 
   if (this.socialLinks?.length) {

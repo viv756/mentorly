@@ -1,8 +1,10 @@
+import { Types } from "mongoose";
 import ProfileModel from "../models/profile.model";
 import UserModel from "../models/user.model";
 
 import { NotFoundException } from "../utils/appError";
 import { UpdateProfileInput, WeeklyAvailabilityDTO } from "../validator/user.validator";
+import { SkillTypeEnum } from "../enums/skill.enum";
 
 export const findByIdUserService = async (userId: string) => {
   const user = await UserModel.findById(userId);
@@ -37,9 +39,9 @@ export const getCurrentUserDataService = async (userId: string) => {
 export const updateProfileService = async (
   userId: string,
   profileData: UpdateProfileInput,
-  file: Express.Multer.File | undefined
+  file: Express.Multer.File | undefined,
 ) => {
-  const { bio, socialLinks, name, location } = profileData;
+  const { bio, socialLinks, name, location, aboutMe } = profileData;
 
   const profile = await ProfileModel.findOne({ userId });
   if (!profile) {
@@ -67,6 +69,10 @@ export const updateProfileService = async (
     profile.bio = bio;
   }
 
+  if (aboutMe !== undefined) {
+    profile.aboutMe = aboutMe;
+  }
+
   if (Array.isArray(socialLinks)) {
     profile.socialLinks = socialLinks;
   }
@@ -90,7 +96,7 @@ export const getCurrentUserProfileService = async (userId: string) => {
 
 export const updateWeeklyAvailabilityService = async (
   userId: string,
-  body: WeeklyAvailabilityDTO
+  body: WeeklyAvailabilityDTO,
 ) => {
   const userProfile = await ProfileModel.findOne({ userId });
 
@@ -99,7 +105,7 @@ export const updateWeeklyAvailabilityService = async (
   }
 
   userProfile.weeklyAvailability = Object.fromEntries(
-    Object.entries(body).filter(([_, slots]) => slots.length > 0)
+    Object.entries(body).filter(([_, slots]) => slots.length > 0),
   );
 
   await userProfile.save();
@@ -119,6 +125,92 @@ export const markActive = async (userId: string) => {
         { lastActiveAt: { $lt: new Date(Date.now() - ACTIVITY_INTERVAL) } },
       ],
     },
-    { $set: { lastActiveAt: new Date() } }
+    { $set: { lastActiveAt: new Date() } },
   );
+};
+
+export const getUserProfileDetailsByIdService = async (userId: string) => {
+  const userObjectId = new Types.ObjectId(userId);
+
+  const result = await UserModel.aggregate([
+    /* 1️⃣ Match user */
+    {
+      $match: { _id: userObjectId },
+    },
+
+    /* 2️⃣ Join profile */
+    {
+      $lookup: {
+        from: "profiles",
+        localField: "_id",
+        foreignField: "userId",
+        as: "profile",
+      },
+    },
+    {
+      $unwind: {
+        path: "$profile",
+        preserveNullAndEmptyArrays: false,
+      },
+    },
+
+    /* 3️⃣ Join user skills */
+    {
+      $lookup: {
+        from: "userskills",
+        localField: "_id",
+        foreignField: "userId",
+        as: "skills",
+      },
+    },
+
+    /* 4️⃣ Shape response + filter TEACH skills */
+    {
+      $project: {
+        _id: 0,
+        user: {
+          _id: "$_id",
+          name: "$name",
+          email: "$email",
+        },
+        profile: {
+          bio: "$profile.bio",
+          aboutMe: "$profile.aboutMe",
+          location: "$profile.location",
+          rating: "$profile.rating",
+          avatar: "$profile.avatar",
+          socialLinks: "$profile.socialLinks",
+        },
+        skills: {
+          $map: {
+            input: {
+              $filter: {
+                input: "$skills",
+                as: "skill",
+                cond: {
+                  $eq: ["$$skill.skillType", SkillTypeEnum.TEACH],
+                },
+              },
+            },
+            as: "skill",
+            in: {
+              skillId: "$$skill._id",
+              skillName: "$$skill.skillName",
+              category: "$$skill.category",
+              skillType: "$$skill.skillType",
+              skillLevel: "$$skill.skillLevel",
+              description: "$$skill.description",
+              experienceYears: "$$skill.experienceYears",
+            },
+          },
+        },
+      },
+    },
+  ]);
+
+  if (!result.length) {
+    throw new NotFoundException("User profile not found");
+  }
+
+  return result[0];
 };

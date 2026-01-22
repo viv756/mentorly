@@ -52,7 +52,7 @@ const formSchema = z
     description: z
       .string()
       .min(20, "Description must be at least 20 characters")
-      .max(150, "Description must be at most 200 characters"),
+      .max(700, "Description must be at most 700 characters"),
     skillType: z.enum([SKILL_TYPE_ENUM.LEARN, SKILL_TYPE_ENUM.TEACH]),
     skillLevel: z.enum([
       SKILL_LEVEL_ENUM.BEGINNER,
@@ -223,6 +223,7 @@ const AddNewSkillForm = ({ onClose }: AddNewSkillFormProps) => {
                 <FieldLabel htmlFor="form-create-skill-description">Description</FieldLabel>
                 <Textarea
                   {...field}
+                  className="h-50"
                   id="form-create-skill-description"
                   aria-invalid={fieldState.invalid}
                   placeholder="write about the skill"

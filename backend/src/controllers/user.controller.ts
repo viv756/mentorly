@@ -5,6 +5,7 @@ import {
   findByIdUserService,
   getCurrentUserDataService,
   getCurrentUserProfileService,
+  getUserProfileDetailsByIdService,
   updateProfileService,
   updateWeeklyAvailabilityService,
 } from "../services/user.service";
@@ -77,5 +78,18 @@ export const updateWeeklyAvailabilityController = asyncHandler(
     return res.status(HTTP_STATUS.OK).json({
       message: "Weekly availability updated successfully",
     });
-  }
+  },
+);
+
+export const getUserProfileDetailsByIdController = asyncHandler(
+  async (req: Request, res: Response) => {
+
+    const userId = req.params.userId;
+    const userProfile = await getUserProfileDetailsByIdService(userId);
+
+    return res.status(HTTP_STATUS.OK).json({
+      message: "User profile fetched",
+      userProfile,
+    });
+  },
 );
