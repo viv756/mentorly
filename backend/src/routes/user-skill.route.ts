@@ -2,14 +2,14 @@ import { Router } from "express";
 import {
   createUserSkillController,
   deleteUserSkillController,
-  getSkillByIdController,
+  getSkillByIdAndWeeklyAvailabilityController,
   getUserSkillsController,
 } from "../controllers/user-skill.controller";
 
 const userSkillRoutes = Router();
 
 userSkillRoutes.get("/all", getUserSkillsController);
-userSkillRoutes.get("/:id", getSkillByIdController);
+userSkillRoutes.get("/:id/user/:userId", getSkillByIdAndWeeklyAvailabilityController);
 
 userSkillRoutes.post("/create", createUserSkillController);
 

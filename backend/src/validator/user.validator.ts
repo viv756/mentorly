@@ -8,7 +8,7 @@ export const socialLinksSchema = z
     z.object({
       platform: z.enum(["linkedin", "github", "twitter"]),
       url: z.string().url("Invalid social link URL"),
-    })
+    }),
   )
   .optional();
 
@@ -18,7 +18,8 @@ export const socialLinksSchema = z
 export const updateProfileSchema = z.object({
   name: z.string().optional(),
   location: z.string().optional(),
-  bio: z.string().max(500, "Bio must be at most 500 characters").nullable().optional(),
+  bio: z.string().max(120, "Bio must be at most 120 characters").nullable().optional(),
+  aboutMe: z.string().max(1500, "About me must be at most 1500 characters").nullable().optional(),
   socialLinks: socialLinksSchema.optional(),
 });
 
@@ -26,7 +27,7 @@ export const updateProfileSchema = z.object({
    Constants
 ======================= */
 
-export const WEEKDAYS = ["Sun","Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
+export const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
 
 /* =======================
    Schemas
@@ -42,23 +43,21 @@ const timeSlotSchema = z
     path: ["to"],
   });
 
-export const weeklyAvailabilitySchema = z
-  .object({
-    Sun: z.array(timeSlotSchema).optional(),
-    Mon: z.array(timeSlotSchema).optional(),
-    Tue: z.array(timeSlotSchema).optional(),
-    Wed: z.array(timeSlotSchema).optional(),
-    Thu: z.array(timeSlotSchema).optional(),
-    Fri: z.array(timeSlotSchema).optional(),
-    Sat: z.array(timeSlotSchema).optional(),
-  })
-  // .refine(
-  //   (data) => Object.values(data).some((slots) => slots && slots.length > 0),
-  //   {
-  //     message: "At least one day must have availability",
-  //   }
-  // );
-
+export const weeklyAvailabilitySchema = z.object({
+  Sun: z.array(timeSlotSchema).optional(),
+  Mon: z.array(timeSlotSchema).optional(),
+  Tue: z.array(timeSlotSchema).optional(),
+  Wed: z.array(timeSlotSchema).optional(),
+  Thu: z.array(timeSlotSchema).optional(),
+  Fri: z.array(timeSlotSchema).optional(),
+  Sat: z.array(timeSlotSchema).optional(),
+});
+// .refine(
+//   (data) => Object.values(data).some((slots) => slots && slots.length > 0),
+//   {
+//     message: "At least one day must have availability",
+//   }
+// );
 
 /* =======================
    Types

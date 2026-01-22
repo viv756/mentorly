@@ -1,5 +1,7 @@
+import { Types } from "mongoose";
+import ProfileModel from "../models/profile.model";
 import UserSkillModel from "../models/user-skill.model";
-import UserModel from "../models/user.model";
+import UserModel, { UserDocument } from "../models/user.model";
 import { BadRequestException, NotFoundException } from "../utils/appError";
 import { userSkillType } from "../validator/user-skill.validator";
 
@@ -55,12 +57,33 @@ export const deleteUserSkillService = async (userId: string, skillId: string) =>
   return;
 };
 
-export const getSkillByIdService = async (skillId: string) => {
+export const getSkillByIdAndWeeklyAvailabilityService = async (skillId: string, userId: string) => {
   const userSkill = await UserSkillModel.findById(skillId).lean();
-
   if (!userSkill) {
     throw new NotFoundException("Skill not found ");
   }
 
-  return userSkill;
+  const userProfile = await ProfileModel.findOne({ userId })
+    .populate("userId", "-email")
+    .select("weeklyAvailability avatar userId")
+    .exec();
+
+  if (!userProfile) throw new Error("Profile not found");
+
+  function isUserDocument(user: Types.ObjectId | UserDocument): user is UserDocument {
+    return typeof user === "object" && "omitPassword" in user;
+  }
+
+  if (!isUserDocument(userProfile.userId)) {
+    throw new Error("User not populated");
+  }
+
+  const safeUser = userProfile.userId.omitPassword();
+
+  return {
+    userSkill,
+    user: safeUser,
+    avatar: userProfile.avatar,
+    weeklyAvailability: userProfile.weeklyAvailability,
+  };
 };

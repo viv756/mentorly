@@ -4,7 +4,7 @@ import { skillIdSchema, userSkillZodSchema } from "../validator/user-skill.valid
 import {
   createUserSkillService,
   deleteUserSkillService,
-  getSkillByIdService,
+  getSkillByIdAndWeeklyAvailabilityService,
   getUserSkillsService,
 } from "../services/user-skill.service";
 import { HTTP_STATUS } from "../config/http.config";
@@ -43,13 +43,16 @@ export const deleteUserSkillController = asyncHandler(async (req: Request, res: 
   });
 });
 
-export const getSkillByIdController = asyncHandler(async (req: Request, res: Response) => {
-  const skillId = skillIdSchema.parse(req.params.id);
+export const getSkillByIdAndWeeklyAvailabilityController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const skillId = skillIdSchema.parse(req.params.id);
+    const userId = req.params.userId;
 
-  const userSkill = await getSkillByIdService(skillId);
+    const {...skillAndAvailability } = await getSkillByIdAndWeeklyAvailabilityService(skillId, userId);
 
-  return res.status(HTTP_STATUS.OK).json({
-    message: "Skill fetched successfully",
-    userSkill,
-  });
-});
+    return res.status(HTTP_STATUS.OK).json({
+      message: "Skill fetched successfully",
+      skillAndAvailability
+    });
+  },
+);
