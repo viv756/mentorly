@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import { useSkillByIdAndWeeklyAvailability } from "@/hooks/api/skills/use-get-skillById-and-weeklyAvailability";
 import { formatWord } from "@/lib/helper";
+import { useAuthStore } from "@/store/store";
 
 type AvailabilitySlot = {
   from: string; // "09:00 AM"
@@ -50,6 +51,7 @@ const generateDates = (start: Date, count: number) =>
   });
 
 const ScheduleMeeting = () => {
+  const currentUser = useAuthStore((s) => s.user);
   const { userId, skillId } = useParams();
   const { data } = useSkillByIdAndWeeklyAvailability(userId, skillId);
   const [availability, setAvailability] = useState<Availability>({});
@@ -98,6 +100,9 @@ const ScheduleMeeting = () => {
       from: data.from, // "09:00 AM"
       to: data.to, // "10:00 AM"
       timezone: data.timezone,
+      learnerId: currentUser?.userId,
+      mentorId: userId,
+      skillId: skillId,
     };
 
     console.log("FINAL PAYLOAD:", payload);
@@ -115,7 +120,7 @@ const ScheduleMeeting = () => {
     <div className="flex items-center justify-center my-auto mx-auto">
       <div className="p-2 sm:p-0 sm:w-300 mt-15 flex sm:justify-between items-center sm:items-start gap-2 flex-col lg:flex-row">
         <div className="p-8 border rounded-3xl sm:min-w-150 sm:max-w-150">
-          <Link to={"/"} className="flex items-center gap-2">
+          <Link to={`/user/${userId}`} className="flex items-center gap-2">
             <ArrowLeft size={20} />
             {user.name}
           </Link>
