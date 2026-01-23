@@ -1,8 +1,12 @@
 import { Router } from "express";
-import { createSessionController } from "../controllers/session.controller";
+import {
+  createSessionController,
+  getCurrentUserSessionRequestController,
+} from "../controllers/session.controller";
 
-const sessionRoutes = Router()
+const sessionRoutes = Router();
 
-sessionRoutes.post("/create",createSessionController)
+sessionRoutes.post("/create", createSessionController);
+sessionRoutes.get("/get/session-request", getCurrentUserSessionRequestController);
 
-export default sessionRoutes
+export default sessionRoutes;
