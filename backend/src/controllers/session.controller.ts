@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../middlewares/asyncHandler.middleware";
-import { createSessionSchema } from "../validator/session.validator";
+import { createAcceptRequestSchema, createSessionSchema } from "../validator/session.validator";
 import {
+  createAcceptRequestSessionService,
   createSessionService,
   getCurrentUserSessionRequestService,
 } from "../services/session.service";
@@ -26,11 +27,27 @@ export const getCurrentUserSessionRequestController = asyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user?._id;
 
-    const sessionInbox = await getCurrentUserSessionRequestService(userId);
+    const sessionRequests = await getCurrentUserSessionRequestService(userId);
 
     return res.status(HTTP_STATUS.OK).json({
       message: "Session fetched successfully",
-      sessionInbox,
+      sessionRequests,
+    });
+  },
+);
+
+export const createAcceptRequestSessionController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?._id;
+
+    const body = createAcceptRequestSchema.parse(req.body);
+    // create channelName
+    const channelName = `meeting_${body.mentorId}_${body.learnerId}_${Date.now()}`;
+
+    const acceptSessionRequest = await createAcceptRequestSessionService(userId, channelName, body);
+
+    return res.status(HTTP_STATUS.OK).json({
+      message: "Session created successfully",
     });
   },
 );

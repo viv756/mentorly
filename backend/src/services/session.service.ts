@@ -1,9 +1,9 @@
+import { Types } from "mongoose";
 import SessionModel from "../models/session.model";
-import { SessionTypeEnum, VideoProviderEnum } from "../enums/session.enum";
-import { BadRequestException, UnauthorizedException } from "../utils/appError";
+import { SessionStatusEnum, SessionTypeEnum, VideoProviderEnum } from "../enums/session.enum";
+import { BadRequestException, NotFoundException, UnauthorizedException } from "../utils/appError";
 import { toUTCDate } from "../utils/generateAgoraExpireInSeconds";
-import { CreateBodyType } from "../validator/session.validator";
-import ProfileModel from "../models/profile.model";
+import { CreateAcceptRequestBodyType, CreateBodyType } from "../validator/session.validator";
 
 export const createSessionService = async (
   userId: string,
@@ -42,45 +42,33 @@ export const createSessionService = async (
   return session;
 };
 
-import { Types } from "mongoose";
-
 export const getCurrentUserSessionRequestService = async (userId: string) => {
   const sessionRequests = await SessionModel.aggregate([
-    // 1️⃣ Match mentor sessions
     {
       $match: {
         mentorId: new Types.ObjectId(userId),
+        status: "REQUESTED",
       },
     },
 
-    // 2️⃣ Lookup learner (User)
     {
       $lookup: {
         from: "users",
         localField: "learnerId",
         foreignField: "_id",
         as: "learner",
-        pipeline: [
-          {
-            $project: {
-              password: 0,
-              email: 0,
-            },
-          },
-        ],
+        pipeline: [{ $project: { password: 0, email: 0 } }],
       },
     },
-    {
-      $unwind: "$learner",
-    },
+    { $unwind: "$learner" },
 
-    // 3️⃣ Lookup learner profile
     {
       $lookup: {
         from: "profiles",
         localField: "learner._id",
         foreignField: "userId",
         as: "learner.profile",
+        pipeline: [{ $project: { _id: 1, bio: 1, avatar: 1 } }],
       },
     },
     {
@@ -89,11 +77,79 @@ export const getCurrentUserSessionRequestService = async (userId: string) => {
         preserveNullAndEmptyArrays: true,
       },
     },
+
+    // 🔥 SKILL POPULATION
+    {
+      $lookup: {
+        from: "userskills",
+        localField: "skillId",
+        foreignField: "_id",
+        as: "skill",
+        pipeline: [{ $project: { _id: 1, skillName: 1 } }],
+      },
+    },
+    {
+      $unwind: {
+        path: "$skill",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+
+    // Optional cleanup
+    {
+      $project: {
+        skillId: 0,
+      },
+    },
   ]);
 
-  if (!sessionRequests.length) {
-    throw new BadRequestException("Cannot find sessionInbox");
-  }
 
   return sessionRequests;
+};
+
+export const createAcceptRequestSessionService = async (
+  userId: string,
+  channelName: string,
+  body: CreateAcceptRequestBodyType,
+) => {
+  if (userId.toString() !== body.learnerId) {
+    throw new UnauthorizedException("You can't create session");
+  }
+
+  const fromUTC = toUTCDate(body.date, body.from, body.timezone);
+  const toUTC = toUTCDate(body.date, body.to, body.timezone);
+
+  if (fromUTC >= toUTC) {
+    throw new Error("Invalid session time range");
+  }
+
+  const pendingSession = await SessionModel.findById(body.sessionId);
+  if (!pendingSession) {
+    throw new NotFoundException("session not found");
+  }
+
+  const session = new SessionModel({
+    mentorId: body.mentorId,
+    learnerId: body.learnerId,
+    skillId: body.skillId,
+    sessionType: SessionTypeEnum.VIDEO,
+    scheduledAt: fromUTC,
+    from: fromUTC,
+    to: toUTC,
+    video: {
+      provider: VideoProviderEnum.AGORA,
+      roomId: channelName,
+    },
+  });
+
+  session.status = SessionStatusEnum.ACCEPTED;
+  await session.save();
+  if (!session) {
+    throw new BadRequestException("Session creation failed");
+  }
+
+  pendingSession.status = SessionStatusEnum.ACCEPTED;
+  await pendingSession.save();
+
+  return session;
 };

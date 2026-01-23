@@ -11,4 +11,17 @@ export const createSessionSchema = z.object({
   date: z.string(),
 });
 
+export const createAcceptRequestSchema = z.object({
+  mentorId: z.string(),
+  sessionId: z.string(),
+  learnerId: z.string(),
+  skillId: z.string(),
+  from: z.string(),
+  to: z.string(),
+  // weekday: z.string(),
+  timezone: z.string(),
+  date: z.string(),
+});
+
 export type CreateBodyType = z.infer<typeof createSessionSchema>;
+export type CreateAcceptRequestBodyType = z.infer<typeof createAcceptRequestSchema>;

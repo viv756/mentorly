@@ -9,7 +9,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import React from "react";
 
 const DeclineSessionRequestModal = () => {
   return (
@@ -21,15 +20,14 @@ const DeclineSessionRequestModal = () => {
         <DialogHeader>
           <DialogTitle>Are you absolutely sure?</DialogTitle>
           <DialogDescription>
-            This action cannot be undone. This will permanently delete your account and remove your
-            data from our servers.
+            This action cannot be undone. This will also decline the request.
           </DialogDescription>
         </DialogHeader>
-      <DialogFooter className="">
-        <DialogClose asChild>
-          <Button type="button">Close</Button>
-        </DialogClose>
-      </DialogFooter>
+        <DialogFooter className="">
+          <DialogClose asChild>
+            <Button type="button">Close</Button>
+          </DialogClose>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

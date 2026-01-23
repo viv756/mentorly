@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -9,25 +8,37 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
-const AcceptSessionRequestModal = () => {
+type AcceptSessionRequestModalProps = {
+  learnerId: string,
+  sessionId:string
+}
+
+
+const AcceptSessionRequestModal = ({ learnerId, sessionId }:AcceptSessionRequestModalProps) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant={"ghost"}>Accept</Button>
+        <Button>Accept</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Are you absolutely sure?</DialogTitle>
+          <DialogTitle>Learning Session Required</DialogTitle>
           <DialogDescription>
-            This action cannot be undone. This will permanently delete your account and remove your
-            data from our servers.
+            Accepting the session requires creating a learning session with the user.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="">
-          <DialogClose asChild>
-            <Button type="button">Close</Button>
-          </DialogClose>
+          <Button>
+            <Link
+              to={`/learner-profile/${learnerId}/session/${sessionId}`}
+              className="flex gap-1 items-center  ">
+              Go
+              <ArrowRight />
+            </Link>
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

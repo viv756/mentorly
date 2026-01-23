@@ -14,6 +14,8 @@ import UserProfile from "@/pages/user-profile";
 import ScheduleMeeting from "@/pages/schedule-meeting";
 import Inbox from "@/pages/dashboard/inbox";
 import Meetings from "@/pages/dashboard/meetings";
+import LearnerProfile from "@/pages/dashboard/inbox/_components/learner-profile";
+import CreateSession from "@/pages/dashboard/inbox/_components/create-session";
 
 export const publicRoutePaths = [{ path: PUBLIC_ROUTES.HOME, element: <Home /> }];
 
@@ -26,6 +28,8 @@ export const authenticationRoutePaths = [
 export const protectedBaseLayoutRoutes = [
   { path: PROTECTED_ROUTES.USER_PROFILE, element: <UserProfile /> },
   { path: PROTECTED_ROUTES.SCHEDULE_MEETING, element: <ScheduleMeeting /> },
+  { path: PROTECTED_ROUTES.LEARNER_PROFILE, element: <LearnerProfile /> },
+  { path: PROTECTED_ROUTES.CREATE_SESSION, element: <CreateSession /> },
 ];
 
 // protected routes - user can only access these routes after login
