@@ -12,9 +12,11 @@ export const PROTECTED_ROUTES = {
   PROFILE: "/profile",
   CALENDAR: "/calendar",
   SKILLS: "/skills",
+  INBOX: "/inbox",
+  MEETINGS: "/meetings",
   FIND_PEOPLE: "/find-people",
   USER_PROFILE: "/user/:userId",
-  SCHEDULE_MEETING: "/user/:userId/skill/:skillId", 
+  SCHEDULE_MEETING: "/user/:userId/skill/:skillId",
   ACCOUNT: "/account",
   ADVANCED: "/advanced",
 };

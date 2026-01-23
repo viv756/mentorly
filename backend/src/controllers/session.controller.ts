@@ -6,6 +6,7 @@ import { HTTP_STATUS } from "../config/http.config";
 
 export const createSessionController = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?._id;
+  console.log(req.body);
   const body = createSessionSchema.parse(req.body);
 
   // create channelName

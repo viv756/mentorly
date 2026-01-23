@@ -11,6 +11,7 @@ import {
   Calendar,
   ChevronRight,
   Headset,
+  Inbox,
 } from "lucide-react";
 import {
   Sidebar,
@@ -48,9 +49,9 @@ const items = [
     icon: UserRound,
   },
   {
-    title: "Calendar",
-    url: "/calendar",
-    icon: Calendar,
+    title: "Inbox",
+    url: "/inbox",
+    icon: Inbox,
   },
   {
     title: "Meetings",
@@ -66,6 +67,11 @@ const items = [
     title: "Find people",
     url: "/find-people",
     icon: Search,
+  },
+  {
+    title: "Calendar",
+    url: "/calendar",
+    icon: Calendar,
   },
 ];
 

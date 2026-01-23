@@ -12,6 +12,8 @@ import Advanced from "@/pages/dashboard/settings/advanced";
 import Calendar from "@/pages/dashboard/calendar";
 import UserProfile from "@/pages/user-profile";
 import ScheduleMeeting from "@/pages/schedule-meeting";
+import Inbox from "@/pages/dashboard/inbox";
+import Meetings from "@/pages/dashboard/meetings";
 
 export const publicRoutePaths = [{ path: PUBLIC_ROUTES.HOME, element: <Home /> }];
 
@@ -31,6 +33,8 @@ export const protectedAppLayoutRoutes = [
   { path: PROTECTED_ROUTES.OVERVIEW, element: <Overview /> },
   { path: PROTECTED_ROUTES.PROFILE, element: <Profile /> },
   { path: PROTECTED_ROUTES.CALENDAR, element: <Calendar /> },
+  { path: PROTECTED_ROUTES.INBOX, element: <Inbox /> },
+  { path: PROTECTED_ROUTES.MEETINGS, element: <Meetings /> },
   { path: PROTECTED_ROUTES.FIND_PEOPLE, element: <FindPeople /> },
   { path: PROTECTED_ROUTES.SKILLS, element: <UserSkills /> },
   { path: PROTECTED_ROUTES.ACCOUNT, element: <Account /> },

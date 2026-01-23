@@ -15,6 +15,9 @@ import {
 import { useSkillByIdAndWeeklyAvailability } from "@/hooks/api/skills/use-get-skillById-and-weeklyAvailability";
 import { formatWord } from "@/lib/helper";
 import { useAuthStore } from "@/store/store";
+import { useCreateSession } from "@/hooks/api/session/use-createSession";
+import type { CreateSessionPayload } from "@/features/session/types";
+import { Spinner } from "@/components/ui/spinner";
 
 type AvailabilitySlot = {
   from: string; // "09:00 AM"
@@ -54,6 +57,7 @@ const ScheduleMeeting = () => {
   const currentUser = useAuthStore((s) => s.user);
   const { userId, skillId } = useParams();
   const { data } = useSkillByIdAndWeeklyAvailability(userId, skillId);
+  const { mutate: createSession, isPending } = useCreateSession();
   const [availability, setAvailability] = useState<Availability>({});
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [timeSlots, setTimeSlots] = useState<AvailabilitySlot[]>([]);
@@ -94,18 +98,19 @@ const ScheduleMeeting = () => {
       weekday: "short",
     });
 
-    const payload = {
+    const payload: CreateSessionPayload = {
       date: data.date,
-      weekday,
+      // weekday,
       from: data.from, // "09:00 AM"
       to: data.to, // "10:00 AM"
-      timezone: data.timezone,
-      learnerId: currentUser?.userId,
-      mentorId: userId,
-      skillId: skillId,
+      timezone: "Asia/Kolkata",
+      learnerId: currentUser?.userId as string,
+      mentorId: userId as string,
+      skillId: skillId as string,
     };
 
     console.log("FINAL PAYLOAD:", payload);
+    createSession(payload);
   };
 
   if (!data) {
@@ -243,7 +248,7 @@ const ScheduleMeeting = () => {
                 type="submit"
                 className="w-full rounded-xl py-6 text-lg"
                 disabled={!form.watch("date") || !form.watch("from") || !form.watch("to")}>
-                Schedule
+                {isPending ? <Spinner /> : "Schedule"}
               </Button>
             </form>
           </Card>
