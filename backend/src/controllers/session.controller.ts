@@ -4,6 +4,7 @@ import { createAcceptRequestSchema, createSessionSchema } from "../validator/ses
 import {
   createAcceptRequestSessionService,
   createSessionService,
+  getCurrentUserRequestedAndUpcomingSessionsService,
   getCurrentUserSessionRequestService,
 } from "../services/session.service";
 import { HTTP_STATUS } from "../config/http.config";
@@ -48,6 +49,19 @@ export const createAcceptRequestSessionController = asyncHandler(
 
     return res.status(HTTP_STATUS.OK).json({
       message: "Session created successfully",
+    });
+  },
+);
+
+export const getCurrentUserRequestedAndUpcomingSessionsController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?._id;
+
+    const sessions = await getCurrentUserRequestedAndUpcomingSessionsService(userId);
+
+    return res.status(HTTP_STATUS.OK).json({
+      message: "Sessions fetched successfully",
+      sessions,
     });
   },
 );

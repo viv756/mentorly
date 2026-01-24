@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export const useGetSessionRequest = () => {
   const query = useQuery({
-    queryKey: ["get-session-request"],
+    queryKey: ["get-session-requests"],
     queryFn: getSessionRequestsApiFn,
   });
 

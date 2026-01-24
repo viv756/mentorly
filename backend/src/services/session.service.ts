@@ -103,8 +103,96 @@ export const getCurrentUserSessionRequestService = async (userId: string) => {
     },
   ]);
 
-
   return sessionRequests;
+};
+
+export const getCurrentUserRequestedAndUpcomingSessionsService = async (userId: string) => {
+  const now = new Date();
+
+  const sessions = await SessionModel.aggregate([
+    {
+      $match: {
+        learnerId: new Types.ObjectId(userId),
+        status: { $in: ["REQUESTED", "ACCEPTED"] },
+      },
+    },
+
+    // 🧠 Compute label
+    {
+      $addFields: {
+        sessionTypeLabel: {
+          $cond: [
+            { $eq: ["$status", "REQUESTED"] },
+            "REQUESTED",
+            {
+              $cond: [{ $gte: ["$from", now] }, "UPCOMING", "PAST"],
+            },
+          ],
+        },
+      },
+    },
+
+    // Mentor lookup
+    {
+      $lookup: {
+        from: "users",
+        localField: "mentorId",
+        foreignField: "_id",
+        as: "mentor",
+        pipeline: [{ $project: { password: 0, email: 0 } }],
+      },
+    },
+    { $unwind: "$mentor" },
+
+    {
+      $lookup: {
+        from: "profiles",
+        localField: "mentor._id",
+        foreignField: "userId",
+        as: "mentor.profile",
+        pipeline: [{ $project: { _id: 1, bio: 1, avatar: 1 } }],
+      },
+    },
+    {
+      $unwind: {
+        path: "$mentor.profile",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+
+    // Skill lookup
+    {
+      $lookup: {
+        from: "userskills",
+        localField: "skillId",
+        foreignField: "_id",
+        as: "skill",
+        pipeline: [{ $project: { _id: 1, skillName: 1, description: 1 } }],
+      },
+    },
+    {
+      $unwind: {
+        path: "$skill",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+
+    {
+      $project: {
+        skillId: 0,
+      },
+    },
+
+    // 🚀 Split into two arrays
+    {
+      $facet: {
+        requested: [{ $match: { sessionTypeLabel: "REQUESTED" } }, { $sort: { from: 1 } }],
+        upcoming: [{ $match: { sessionTypeLabel: "UPCOMING" } }, { $sort: { from: 1 } }],
+      },
+    },
+  ]);
+
+  return sessions;
 };
 
 export const createAcceptRequestSessionService = async (

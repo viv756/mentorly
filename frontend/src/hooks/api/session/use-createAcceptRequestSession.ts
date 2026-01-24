@@ -9,7 +9,10 @@ export const useCreateAcceptRequestSession = () => {
     mutationFn: (data: CreateAcceptSessionPayload) => createAcceptSessionRequestApiFn(data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: ["get-session-request"],
+        queryKey: ["get-session-requests"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["get-upcoming-and-requested-sessions"],
       });
 
       toast.success(data.message);
