@@ -1,5 +1,5 @@
 import { differenceInHours, format } from "date-fns";
-import { Video, Calendar, Clock, User } from "lucide-react";
+import { Video, Calendar, Clock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -30,7 +30,7 @@ export default function UpcomingMeetings({ upcoming }: UpcomingMeetingsProps) {
               <Card
                 key={session._id}
                 className="hover:shadow-lg transition-shadow border-l-4 border-l-primary max-w-xl">
-                <CardContent className="p-6">
+                <CardContent className="">
                   <div className="space-y-4">
                     {/* Header Section */}
                     <div className="flex items-start justify-between">
@@ -79,11 +79,9 @@ export default function UpcomingMeetings({ upcoming }: UpcomingMeetingsProps) {
                     {/* Organizer and Participants */}
                     <div className="space-y-3">
                       {/* Organizer */}
-                      <div className="flex items-center gap-3">
-                        <User className="text-muted-foreground" size={18} />
-                        <span className="text-sm text-muted-foreground">Organizer:</span>
+                      <div className="flex items-center gap-2">
                         <div className="flex items-center gap-2">
-                          <Avatar className="w-10 h-10">
+                          <Avatar className="w-8 h-8 ">
                             <AvatarImage
                               src={session.mentor.profile.avatar}
                               className="object-cover"
