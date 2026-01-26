@@ -21,7 +21,6 @@ import { useAuthStore } from "@/store/store";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { formatTime } from "@/lib/helper";
 
-
 /* =======================
    Constants
 ======================= */
@@ -39,11 +38,15 @@ const DAY_LABEL: Record<(typeof WEEKDAYS)[number], string> = {
 };
 
 const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
-  const hour = Math.floor(i / 2);
+  const hour24 = Math.floor(i / 2);
   const minute = i % 2 === 0 ? "00" : "30";
 
-  return `${hour.toString().padStart(2, "0")}:${minute}`;
+  const period = hour24 >= 12 ? "PM" : "AM";
+  const hour12 = hour24 % 12 === 0 ? 12 : hour24 % 12;
+
+  return `${hour12.toString().padStart(2, "0")}:${minute} ${period}`;
 });
+
 
 /* =======================
    Zod Schema
@@ -93,6 +96,7 @@ export default function WeeklyAvailabilityForm() {
 
   useEffect(() => {
     if (!user || !user.weeklyAvailability) return;
+    console.log(user.weeklyAvailability);
 
     reset({ weeklyAvailability: user.weeklyAvailability });
   }, [user]);
@@ -185,7 +189,7 @@ export default function WeeklyAvailabilityForm() {
                                     <ScrollArea className="h-40">
                                       {TIME_OPTIONS.map((time) => (
                                         <SelectItem key={time} value={time}>
-                                          {time && formatTime(time)}
+                                         {time}
                                         </SelectItem>
                                       ))}
                                     </ScrollArea>
@@ -209,7 +213,7 @@ export default function WeeklyAvailabilityForm() {
                                     <ScrollArea className="h-40">
                                       {TIME_OPTIONS.map((time) => (
                                         <SelectItem key={time} value={time}>
-                                          {time && formatTime(time)}
+                                          {time}
                                         </SelectItem>
                                       ))}
                                     </ScrollArea>

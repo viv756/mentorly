@@ -17,6 +17,7 @@ import authRoutes from "./routes/auth.route";
 import userRoutes from "./routes/user.route";
 import userSkillRoutes from "./routes/user-skill.route";
 import peopleRoutes from "./routes/people.route";
+import sessionRoutes from "./routes/session.route";
 
 const app = express();
 const BASE_PATH = Env.BASE_PATH;
@@ -31,7 +32,7 @@ app.use(
   cors({
     origin: Env.FRONTEND_ORIGIN,
     credentials: true,
-  })
+  }),
 );
 
 app.get(
@@ -40,13 +41,14 @@ app.get(
     res.status(HTTP_STATUS.OK).json({
       message: "Hello",
     });
-  })
+  }),
 );
 
-app.use(`${BASE_PATH}/auth`, authRoutes); 
+app.use(`${BASE_PATH}/auth`, authRoutes);
 app.use(`${BASE_PATH}/user`, passportAuthenticateJwt, userRoutes);
 app.use(`${BASE_PATH}/skill`, passportAuthenticateJwt, userSkillRoutes);
-app.use(`${BASE_PATH}/people`,passportAuthenticateJwt,peopleRoutes)
+app.use(`${BASE_PATH}/people`, passportAuthenticateJwt, peopleRoutes);
+app.use(`${BASE_PATH}/session`, passportAuthenticateJwt, sessionRoutes);
 
 app.use(errorHandler);
 

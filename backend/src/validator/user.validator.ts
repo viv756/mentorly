@@ -35,8 +35,8 @@ export const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as con
 
 const timeSlotSchema = z
   .object({
-    from: z.string().regex(/^\d{2}:\d{2}$/),
-    to: z.string().regex(/^\d{2}:\d{2}$/),
+    from: z.string().regex(/^(0[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$/),
+    to: z.string().regex(/^(0[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$/),
   })
   .refine((v) => v.from < v.to, {
     message: "End time must be after start time",

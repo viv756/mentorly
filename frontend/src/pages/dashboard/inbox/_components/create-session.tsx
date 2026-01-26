@@ -15,9 +15,9 @@ import {
 import { useSkillByIdAndWeeklyAvailability } from "@/hooks/api/skills/use-get-skillById-and-weeklyAvailability";
 import { formatWord } from "@/lib/helper";
 import { useAuthStore } from "@/store/store";
-import { useCreateSession } from "@/hooks/api/session/use-createSession";
-import type { CreateSessionPayload } from "@/features/session/types";
+import type { CreateAcceptSessionPayload } from "@/features/session/types";
 import { Spinner } from "@/components/ui/spinner";
+import { useCreateAcceptRequestSession } from "@/hooks/api/session/use-createAcceptRequestSession";
 
 type AvailabilitySlot = {
   from: string; // "09:00 AM"
@@ -53,11 +53,11 @@ const generateDates = (start: Date, count: number) =>
     };
   });
 
-const ScheduleMeeting = () => {
+const CreateSession = () => {
   const currentUser = useAuthStore((s) => s.user);
-  const { userId, skillId } = useParams();
-  const { data } = useSkillByIdAndWeeklyAvailability(userId, skillId);
-  const { mutate: createSession, isPending } = useCreateSession();
+  const { learnerId: mentorId, skillId, sessionId } = useParams();
+  const { data } = useSkillByIdAndWeeklyAvailability(mentorId, skillId);
+  const { mutate: createSession, isPending } = useCreateAcceptRequestSession();
   const [availability, setAvailability] = useState<Availability>({});
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [timeSlots, setTimeSlots] = useState<AvailabilitySlot[]>([]);
@@ -98,18 +98,17 @@ const ScheduleMeeting = () => {
       weekday: "short",
     });
 
-    const payload: CreateSessionPayload = {
+    const payload: CreateAcceptSessionPayload = {
       date: data.date,
-      // weekday,
+      sessionId: sessionId as string,
       from: data.from, // "09:00 AM"
       to: data.to, // "10:00 AM"
       timezone: "Asia/Kolkata",
       learnerId: currentUser?.userId as string,
-      mentorId: userId as string,
+      mentorId: mentorId as string,
       skillId: skillId as string,
     };
 
-    console.log("FINAL PAYLOAD:", payload);
     createSession(payload);
   };
 
@@ -125,7 +124,7 @@ const ScheduleMeeting = () => {
     <div className="flex items-center justify-center my-auto mx-auto">
       <div className="p-2 sm:p-0 sm:w-300 mt-15 flex sm:justify-between items-center sm:items-start gap-2 flex-col lg:flex-row">
         <div className="p-8 border rounded-3xl sm:min-w-150 sm:max-w-150">
-          <Link to={`/user/${userId}`} className="flex items-center gap-2">
+          <Link to={`/user/${mentorId}`} className="flex items-center gap-2">
             <ArrowLeft size={20} />
             {user.name}
           </Link>
@@ -258,4 +257,4 @@ const ScheduleMeeting = () => {
   );
 };
 
-export default ScheduleMeeting;
+export default CreateSession;

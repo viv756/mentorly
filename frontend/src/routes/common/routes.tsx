@@ -12,6 +12,11 @@ import Advanced from "@/pages/dashboard/settings/advanced";
 import Calendar from "@/pages/dashboard/calendar";
 import UserProfile from "@/pages/user-profile";
 import ScheduleMeeting from "@/pages/schedule-meeting";
+import Inbox from "@/pages/dashboard/inbox";
+import Meetings from "@/pages/dashboard/meetings";
+import LearnerProfile from "@/pages/dashboard/inbox/_components/learner-profile";
+import CreateSession from "@/pages/dashboard/inbox/_components/create-session";
+import VideoCall from "@/pages/video-call";
 
 export const publicRoutePaths = [{ path: PUBLIC_ROUTES.HOME, element: <Home /> }];
 
@@ -24,6 +29,9 @@ export const authenticationRoutePaths = [
 export const protectedBaseLayoutRoutes = [
   { path: PROTECTED_ROUTES.USER_PROFILE, element: <UserProfile /> },
   { path: PROTECTED_ROUTES.SCHEDULE_MEETING, element: <ScheduleMeeting /> },
+  { path: PROTECTED_ROUTES.LEARNER_PROFILE, element: <LearnerProfile /> },
+  { path: PROTECTED_ROUTES.CREATE_SESSION, element: <CreateSession /> },
+  { path: PROTECTED_ROUTES.VIDEO_CALL, element: <VideoCall /> },
 ];
 
 // protected routes - user can only access these routes after login
@@ -31,6 +39,8 @@ export const protectedAppLayoutRoutes = [
   { path: PROTECTED_ROUTES.OVERVIEW, element: <Overview /> },
   { path: PROTECTED_ROUTES.PROFILE, element: <Profile /> },
   { path: PROTECTED_ROUTES.CALENDAR, element: <Calendar /> },
+  { path: PROTECTED_ROUTES.INBOX, element: <Inbox /> },
+  { path: PROTECTED_ROUTES.MEETINGS, element: <Meetings /> },
   { path: PROTECTED_ROUTES.FIND_PEOPLE, element: <FindPeople /> },
   { path: PROTECTED_ROUTES.SKILLS, element: <UserSkills /> },
   { path: PROTECTED_ROUTES.ACCOUNT, element: <Account /> },

@@ -1,5 +1,4 @@
 import { useAuthStore } from "@/store/store";
-import React from "react";
 import { Link } from "react-router-dom";
 
 const Home = () => {
