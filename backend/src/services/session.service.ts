@@ -1,15 +1,12 @@
 import { Types } from "mongoose";
+import { v4 as uuidv4 } from "uuid";
 import SessionModel from "../models/session.model";
 import { SessionStatusEnum, SessionTypeEnum, VideoProviderEnum } from "../enums/session.enum";
 import { BadRequestException, NotFoundException, UnauthorizedException } from "../utils/appError";
 import { toUTCDate } from "../utils/generateAgoraExpireInSeconds";
 import { CreateAcceptRequestBodyType, CreateBodyType } from "../validator/session.validator";
 
-export const createSessionService = async (
-  userId: string,
-  channelName: string,
-  body: CreateBodyType,
-) => {
+export const createSessionService = async (userId: string, body: CreateBodyType) => {
   if (userId.toString() !== body.learnerId) {
     throw new UnauthorizedException("You can't create session");
   }
@@ -20,6 +17,8 @@ export const createSessionService = async (
   if (fromUTC >= toUTC) {
     throw new Error("Invalid session time range");
   }
+
+  const channelName = `sess_${uuidv4().replace(/-/g, "").slice(0, 24)}`;
 
   const session = await SessionModel.create({
     mentorId: body.mentorId,
@@ -112,8 +111,22 @@ export const getCurrentUserRequestedAndUpcomingSessionsService = async (userId: 
   const sessions = await SessionModel.aggregate([
     {
       $match: {
-        learnerId: new Types.ObjectId(userId),
-        status: { $in: ["REQUESTED", "ACCEPTED"] },
+        $or: [
+          // REQUESTED → learner only
+          {
+            status: "REQUESTED",
+            learnerId: new Types.ObjectId(userId),
+          },
+
+          // ACCEPTED → learner OR mentor
+          {
+            status: "ACCEPTED",
+            $or: [
+              { learnerId: new Types.ObjectId(userId) },
+              { mentorId: new Types.ObjectId(userId) },
+            ],
+          },
+        ],
       },
     },
 
@@ -197,12 +210,13 @@ export const getCurrentUserRequestedAndUpcomingSessionsService = async (userId: 
 
 export const createAcceptRequestSessionService = async (
   userId: string,
-  channelName: string,
   body: CreateAcceptRequestBodyType,
 ) => {
   if (userId.toString() !== body.learnerId) {
     throw new UnauthorizedException("You can't create session");
   }
+
+  const channelName = `sess_${uuidv4().replace(/-/g, "").slice(0, 24)}`;
 
   const fromUTC = toUTCDate(body.date, body.from, body.timezone);
   const toUTC = toUTCDate(body.date, body.to, body.timezone);
@@ -240,4 +254,31 @@ export const createAcceptRequestSessionService = async (
   await pendingSession.save();
 
   return session;
+};
+
+export const findSessionByIdService = async (sessionId: string, userId: string) => {
+  const session = await SessionModel.findById(sessionId);
+  if (!session) {
+    throw new NotFoundException("Session not found");
+  }
+
+  if (!session.mentorId.equals(userId) && !session.learnerId.equals(userId)) {
+    throw new UnauthorizedException("You cannot join this session");
+  }
+
+  // const now = new Date();
+  // const sessionStart = session.scheduledAt;
+  // const sessionEnd = new Date(sessionStart.getTime() + 60 * 60 * 1000);
+
+  // if (now < sessionStart) {
+  //   throw new Error("Session not started yet");
+  // }
+
+  // if (now > sessionEnd) {
+  //   throw new Error("Session already ended");
+  // }
+
+  const channelName = session.video!.roomId;
+
+  return { channelName, expire: session.to };
 };

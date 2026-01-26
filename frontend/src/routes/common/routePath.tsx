@@ -18,7 +18,8 @@ export const PROTECTED_ROUTES = {
   USER_PROFILE: "/user/:userId",
   SCHEDULE_MEETING: "/user/:userId/skill/:skillId",
   LEARNER_PROFILE: "/learner-profile/:learnerId/session/:sessionId",
-  CREATE_SESSION:"/create-session/:sessionId/skill/:skillId/learner/:learnerId",
+  CREATE_SESSION: "/create-session/:sessionId/skill/:skillId/learner/:learnerId",
+  VIDEO_CALL:"/session/:sessionId/join",
   ACCOUNT: "/account",
   ADVANCED: "/advanced",
 };

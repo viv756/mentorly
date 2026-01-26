@@ -4,6 +4,7 @@ import {
   createSessionController,
   getCurrentUserRequestedAndUpcomingSessionsController,
   getCurrentUserSessionRequestController,
+  joinSessionController,
 } from "../controllers/session.controller";
 
 const sessionRoutes = Router();
@@ -14,6 +15,7 @@ sessionRoutes.get(
   "/get-sessions-upcoming-and-requested",
   getCurrentUserRequestedAndUpcomingSessionsController,
 );
+sessionRoutes.post("/join/:sessionId", joinSessionController);
 sessionRoutes.post("/accept-request", createAcceptRequestSessionController);
 
 export default sessionRoutes;

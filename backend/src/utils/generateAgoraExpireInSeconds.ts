@@ -5,15 +5,21 @@ import timezone from "dayjs/plugin/timezone";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export function getAgoraExpireSeconds(date: string, to: string, timezoneStr: string): number {
-  const meetingEnd = dayjs.tz(`${date} ${to}`, "YYYY-MM-DD hh:mm A", timezoneStr).utc();
+export const getAgoraExpirySeconds = (sessionEnd: Date | string) => {
+  const now = Math.floor(Date.now() / 1000);
+  const endTime =
+    sessionEnd instanceof Date
+      ? Math.floor(sessionEnd.getTime() / 1000)
+      : Math.floor(new Date(sessionEnd).getTime() / 1000);
 
-  const now = dayjs.utc();
-  const diff = meetingEnd.diff(now, "second");
+  const diff = endTime - now;
 
-  // add 10 min buffer
-  return Math.max(diff + 600, 0);
-}
+  if (diff <= 0) {
+    throw new Error("Session already ended");
+  }
+
+  return diff;
+};
 
 export const toUTCDate = (date: string, time: string, tz: string): Date => {
   return dayjs.tz(`${date} ${time}`, "YYYY-MM-DD hh:mm A", tz).utc().toDate();

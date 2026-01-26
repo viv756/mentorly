@@ -16,6 +16,7 @@ import Inbox from "@/pages/dashboard/inbox";
 import Meetings from "@/pages/dashboard/meetings";
 import LearnerProfile from "@/pages/dashboard/inbox/_components/learner-profile";
 import CreateSession from "@/pages/dashboard/inbox/_components/create-session";
+import VideoCall from "@/pages/video-call";
 
 export const publicRoutePaths = [{ path: PUBLIC_ROUTES.HOME, element: <Home /> }];
 
@@ -30,6 +31,7 @@ export const protectedBaseLayoutRoutes = [
   { path: PROTECTED_ROUTES.SCHEDULE_MEETING, element: <ScheduleMeeting /> },
   { path: PROTECTED_ROUTES.LEARNER_PROFILE, element: <LearnerProfile /> },
   { path: PROTECTED_ROUTES.CREATE_SESSION, element: <CreateSession /> },
+  { path: PROTECTED_ROUTES.VIDEO_CALL, element: <VideoCall /> },
 ];
 
 // protected routes - user can only access these routes after login

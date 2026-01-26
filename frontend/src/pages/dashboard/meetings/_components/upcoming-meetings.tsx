@@ -1,9 +1,11 @@
+import { Link } from "react-router-dom";
 import { differenceInHours, format } from "date-fns";
 import { Video, Calendar, Clock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { UpcomingType } from "@/features/session/types";
+import { PROTECTED_ROUTES } from "@/routes/common/routePath";
 
 type UpcomingMeetingsProps = {
   upcoming: UpcomingType | [];
@@ -29,7 +31,7 @@ export default function UpcomingMeetings({ upcoming }: UpcomingMeetingsProps) {
             {upcoming.map((session) => (
               <Card
                 key={session._id}
-                className="hover:shadow-lg transition-shadow border-l-4 border-l-primary max-w-xl">
+                className="hover:shadow-lg transition-shadow border-l-4 border-l-primary max-w-xl ">
                 <CardContent className="">
                   <div className="space-y-4">
                     {/* Header Section */}
@@ -97,10 +99,13 @@ export default function UpcomingMeetings({ upcoming }: UpcomingMeetingsProps) {
 
                     {/* Action Buttons */}
                     <div className="flex gap-3 pt-2 justify-end">
-                      <Button className="">
-                        <Video size={18} />
-                        Join Meeting
-                      </Button>
+                      <Link
+                        to={PROTECTED_ROUTES.VIDEO_CALL.replace(":sessionId", `${session._id}`)}>
+                        <Button className="">
+                          <Video size={18} />
+                          Join Meeting
+                        </Button>
+                      </Link>
                     </div>
                   </div>
                 </CardContent>

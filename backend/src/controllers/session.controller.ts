@@ -1,22 +1,25 @@
 import { Request, Response } from "express";
+import crypto from "crypto";
+
 import { asyncHandler } from "../middlewares/asyncHandler.middleware";
 import { createAcceptRequestSchema, createSessionSchema } from "../validator/session.validator";
 import {
   createAcceptRequestSessionService,
   createSessionService,
+  findSessionByIdService,
   getCurrentUserRequestedAndUpcomingSessionsService,
   getCurrentUserSessionRequestService,
 } from "../services/session.service";
 import { HTTP_STATUS } from "../config/http.config";
+import { generateAgoraToken } from "../config/agora.config";
+import { Env } from "../config/env.config";
+import { getAgoraExpirySeconds } from "../utils/generateAgoraExpireInSeconds";
 
 export const createSessionController = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?._id;
   const body = createSessionSchema.parse(req.body);
 
-  // create channelName
-  const channelName = `meeting_${body.mentorId}_${body.learnerId}_${Date.now()}`;
-
-  const session = await createSessionService(userId, channelName, body);
+  const session = await createSessionService(userId, body);
 
   return res.status(HTTP_STATUS.OK).json({
     message: "Session created",
@@ -42,10 +45,8 @@ export const createAcceptRequestSessionController = asyncHandler(
     const userId = req.user?._id;
 
     const body = createAcceptRequestSchema.parse(req.body);
-    // create channelName
-    const channelName = `meeting_${body.mentorId}_${body.learnerId}_${Date.now()}`;
 
-    const acceptSessionRequest = await createAcceptRequestSessionService(userId, channelName, body);
+    const acceptSessionRequest = await createAcceptRequestSessionService(userId, body);
 
     return res.status(HTTP_STATUS.OK).json({
       message: "Session created successfully",
@@ -65,3 +66,29 @@ export const getCurrentUserRequestedAndUpcomingSessionsController = asyncHandler
     });
   },
 );
+
+export const joinSessionController = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?._id;
+  const sessionId = req.params.sessionId;
+
+  const { channelName, expire } = await findSessionByIdService(sessionId, userId);
+  const expireSeconds = getAgoraExpirySeconds(expire);
+
+  const uid = parseInt(
+    crypto.createHash("md5").update(userId.toString()).digest("hex").slice(0, 8),
+    16,
+  );
+
+  // Generate Token
+  const agoraToken = generateAgoraToken(channelName, uid, expireSeconds);
+
+  res.status(HTTP_STATUS.OK).json({
+    message: "Token generated",
+    agoraData: {
+      appId: Env.AGORA_APP_ID,
+      token: agoraToken,
+      channelName,
+      uid,
+    },
+  });
+});

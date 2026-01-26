@@ -29,7 +29,7 @@ export default function RequestedMeetings({ requested }: RequestedMeetingsProps)
         ) : (
           <div className="space-y-4 grid sm:grid-cols-2 gap-3">
             {requested.map((session) => (
-              <Card key={session._id}>
+              <Card key={session._id} className="hover:shadow-lg transition-shadow border-l-4 border-l-primary max-w-xl">
                 <CardContent className="">
                   <div className="space-y-4">
                     {/* Header Section */}
