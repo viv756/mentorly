@@ -7,7 +7,7 @@ const Navbar = () => {
   const user = useAuthStore((s) => s.user);
 
   return (
-    <nav className="pt-5">
+    <nav className="pt-5 ">
       <div className="flex justify-between items-center">
         <div>
           <Logo />

@@ -2,11 +2,11 @@ import { Button } from "@/components/ui/button";
 
 export default function HeroLanding() {
   return (
-    <div className=" px-10">
+    <div className=" px-10 ">
       <section className="grid lg:grid-cols-2 gap-10  py-16 items-center">
         {/* Left */}
         <div className="space-y-6">
-          <h1 className="text-5xl xl:text-6xl font-serif leading-tight">
+          <h1 className="text-5xl xl:text-6xl font-serif leading-tight ">
             Where Skills Are <br />
             Exchanged <br />
             <span className="text-primary">Not sold.</span>
