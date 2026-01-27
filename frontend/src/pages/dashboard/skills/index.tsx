@@ -11,12 +11,12 @@ const UserSkills = () => {
   }
 
   return (
-    <div className="pt-6">
-      <div className="flex justify-between items-center">
+    <div className="">
+      <div className="flex justify-between items-center py-10">
         <h1 className="text-4xl font-bold tracking-wide">Your Skills</h1>
         <AddNewSkill />
       </div>
-      <Tabs defaultValue="learn" className="w-full mt-10">
+      <Tabs defaultValue="learn" className="w-full">
         <TabsList>
           <TabsTrigger value="learn">Learning Goals</TabsTrigger>
           <TabsTrigger value="teach">Mentoring Skills</TabsTrigger>

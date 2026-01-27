@@ -9,14 +9,14 @@ const Meetings = () => {
   if (isLoading || !data) {
     return <div>Loading</div>;
   }
-  console.log(data);
+  
   const upcoming = data.sessions[0].upcoming;
   const requested = data.sessions[0].requested;
 
   return (
-    <div className="mt-10">
-      <h1 className="text-4xl font-semibold  ">All Meetings </h1>
-      <Tabs defaultValue="upcoming" className="w-full mt-8">
+    <>
+      <h1 className="text-4xl font-semibold py-10">All Meetings </h1>
+      <Tabs defaultValue="upcoming" className="w-full">
         <TabsList className="">
           <TabsTrigger value="upcoming" className="">
             Upcoming
@@ -32,7 +32,7 @@ const Meetings = () => {
           <RequestedMeetings requested={requested} />
         </TabsContent>
       </Tabs>
-    </div>
+    </>
   );
 };
 

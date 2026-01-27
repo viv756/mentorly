@@ -2,9 +2,10 @@ import MentorCardSection from "./_components/mentor-card-section";
 
 const Search = () => {
   return (
-    <div className="mt-10 flex flex-col justify-center items-center">
+    <>
+      <h1 className="text-4xl font-semibold py-10">Connect with people</h1>
       <MentorCardSection />
-    </div>
+    </>
   );
 };
 
