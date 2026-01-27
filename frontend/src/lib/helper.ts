@@ -11,6 +11,6 @@ export const formatTime = (time: string) => {
 export const formatWord = (word: string) =>
   word
     .toLowerCase() // "personal_development"
-    .split("_") // ["personal", "development"]
+    .split(/[_-]/) // ["personal", "development"]
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // ["Personal", "Development"]
     .join(" "); // "Personal Development"
