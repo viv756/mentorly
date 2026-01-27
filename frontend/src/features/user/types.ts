@@ -13,6 +13,8 @@ export type User = {
   userName: string;
   userEmail: string;
   avatar: string;
+  skillId: string;
+  profileCompleteness: number;
   weeklyAvailability?: WeeklyAvailability;
 };
 

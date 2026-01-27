@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 import ProfileModel from "../models/profile.model";
 import UserModel from "../models/user.model";
+import UserSkillModel from "../models/user-skill.model";
 
 import { NotFoundException } from "../utils/appError";
 import { UpdateProfileInput, WeeklyAvailabilityDTO } from "../validator/user.validator";
@@ -21,17 +22,23 @@ export const getCurrentUserDataService = async (userId: string) => {
     throw new NotFoundException("User not found");
   }
 
-  const profile = await ProfileModel.findOne({ userId }).select("_id avatar weeklyAvailability");
+  const profile = await ProfileModel.findOne({ userId }).select(
+    "_id avatar weeklyAvailability profileCompleteness",
+  );
   if (!profile) {
     throw new NotFoundException("profile not found");
   }
+
+  const skill = await UserSkillModel.findOne({ userId: userId });
 
   return {
     userId: user._id,
     userName: user.name,
     userEmail: user.email,
     profileId: profile._id,
+    skillId: (skill && skill._id) || "",
     avatar: profile.avatar,
+    profileCompleteness: profile.profileCompleteness,
     weeklyAvailability: profile.weeklyAvailability,
   };
 };

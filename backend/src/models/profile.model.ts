@@ -153,8 +153,8 @@ profileSchema.pre("save", function () {
 
   if (this.avatar) completeness += 20;
   if (this.bio) completeness += 10;
-  if (this.aboutMe) completeness += 10;
-  if (this.location) completeness += 10;
+  if (this.aboutMe) completeness += 20;
+  if (this.location) completeness += 20;
 
   if (this.socialLinks?.length) {
     completeness += Math.min(this.socialLinks.length * 10, 30);
