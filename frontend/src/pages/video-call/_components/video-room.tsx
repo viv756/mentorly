@@ -3,8 +3,6 @@ import AgoraRTC, {
   type IAgoraRTCClient,
   type ICameraVideoTrack,
   type IMicrophoneAudioTrack,
-  type IRemoteVideoTrack,
-  type IRemoteAudioTrack,
 } from "agora-rtc-sdk-ng";
 import { Video, VideoOff, Mic, MicOff, PhoneOff, Monitor } from "lucide-react";
 

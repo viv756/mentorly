@@ -1,12 +1,11 @@
-import { useAuthStore } from "@/store/store";
-import { Link } from "react-router-dom";
+import Navbar from "./_components/navbar";
+import HeroLanding from "./_components/hero";
 
 const Home = () => {
-  const { user } = useAuthStore();
   return (
-    <div>
-      Home
-      <Link to={"/overview"}>overview</Link>
+    <div className="sm:px-30 px-2 ">
+      <Navbar />
+      <HeroLanding />
     </div>
   );
 };
