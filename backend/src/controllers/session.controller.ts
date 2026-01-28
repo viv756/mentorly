@@ -71,7 +71,7 @@ export const joinSessionController = asyncHandler(async (req: Request, res: Resp
   const userId = req.user?._id;
   const sessionId = req.params.sessionId;
 
-  const { channelName, expire } = await findSessionByIdService(sessionId, userId);
+  const { channelName, expire, learnerId } = await findSessionByIdService(sessionId, userId);
   const expireSeconds = getAgoraExpirySeconds(expire);
 
   const uid = parseInt(
@@ -82,13 +82,14 @@ export const joinSessionController = asyncHandler(async (req: Request, res: Resp
   // Generate Token
   const agoraToken = generateAgoraToken(channelName, uid, expireSeconds);
 
-  res.status(HTTP_STATUS.OK).json({
+  return res.status(HTTP_STATUS.OK).json({
     message: "Token generated",
     agoraData: {
       appId: Env.AGORA_APP_ID,
       token: agoraToken,
       channelName,
       uid,
+      learnerId: learnerId,
     },
   });
 });

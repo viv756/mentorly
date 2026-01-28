@@ -1,21 +1,20 @@
 import { useJoinSession } from "@/hooks/api/session/use-joinSession";
-import { useAuthStore } from "@/store/store";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import  VideoRoom  from "./_components/video-room";
+import VideoRoom from "./_components/video-room";
 
 const VideoCall = () => {
   const { sessionId } = useParams();
   // const { user } = useAuthStore((s) => s.user);
 
-  const { mutate, data, isLoading } = useJoinSession();
+  const { mutate, data, isPending } = useJoinSession();
 
   useEffect(() => {
     if (!sessionId) return;
     mutate(sessionId);
   }, [sessionId, mutate]);
 
-  if (isLoading || !data) {
+  if (isPending || !data) {
     return <div>Loading</div>;
   }
 
@@ -28,6 +27,7 @@ const VideoCall = () => {
         token={agoraData.token}
         channelName={agoraData.channelName}
         uid={agoraData.uid}
+        learnerId={agoraData.learnerId}
       />
     </div>
   );

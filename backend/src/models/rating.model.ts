@@ -16,7 +16,6 @@ const ratingSchema = new Schema<RatingDocument>(
       type: Schema.Types.ObjectId,
       ref: "Session",
       required: true,
-      index: true,
     },
 
     fromUserId: {
@@ -47,7 +46,7 @@ const ratingSchema = new Schema<RatingDocument>(
   { timestamps: true }
 );
 
-ratingSchema.index({ sessionId: 1 }, { unique: true });
+// ratingSchema.index({ sessionId: 1 }, { unique: true });
 
 ratingSchema.pre("validate", function () {
   if (this.fromUserId && this.toUserId && this.fromUserId.equals(this.toUserId)) {

@@ -156,6 +156,13 @@ profileSchema.pre("save", function () {
   if (this.aboutMe) completeness += 20;
   if (this.location) completeness += 20;
 
+  // ✅ Weekly availability check (at least one day)
+  const hasAvailability = Object.values(this.weeklyAvailability || {}).some(
+    (day) => Array.isArray(day) && day.length > 0,
+  );
+
+  if (hasAvailability) completeness += 20;
+
   if (this.socialLinks?.length) {
     completeness += Math.min(this.socialLinks.length * 10, 30);
   }

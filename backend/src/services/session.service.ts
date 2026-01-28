@@ -280,5 +280,5 @@ export const findSessionByIdService = async (sessionId: string, userId: string) 
 
   const channelName = session.video!.roomId;
 
-  return { channelName, expire: session.to };
+  return { channelName, expire: session.to, learnerId: session.learnerId };
 };

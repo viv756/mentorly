@@ -10,12 +10,17 @@ import { Progress } from "@/components/ui/progress";
 import type { User } from "@/features/user/types";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 type ProfileCompletenessProps = {
   user: User;
 };
 
 const ProfileCompleteness = ({ user }: ProfileCompletenessProps) => {
+  const hasAvailability =
+    user?.weeklyAvailability &&
+    Object.values(user.weeklyAvailability).some((day) => day.length > 0);
+
   return (
     <Card className="max-w-xl">
       <CardHeader>
@@ -28,7 +33,7 @@ const ProfileCompleteness = ({ user }: ProfileCompletenessProps) => {
           <Accordion type="single" collapsible defaultValue="availability" className="max-w-lg">
             <AccordionItem value="availability">
               <AccordionTrigger className="hover:no-underline!">
-                {user && user.weeklyAvailability ? (
+                {hasAvailability ? (
                   <span className="flex items-center gap-4 justify-center">
                     <CircleCheck size={20} color="green" /> Add Availability
                   </span>
@@ -43,9 +48,9 @@ const ProfileCompleteness = ({ user }: ProfileCompletenessProps) => {
                   Set your available time slots for appointments or meetings. This helps others see
                   when you're free and schedule sessions accordingly.
                 </p>
-                {user && !user.weeklyAvailability && (
+                {!hasAvailability && (
                   <Link to={"/calendar"}>
-                    <Button className="mt-4 bg-black dark:bg-white dark:text-black">
+                    <Button className="mt-4 bg-black dark:bg-white dark:text-black pointer-events-none">
                       Complete
                     </Button>
                   </Link>
@@ -69,9 +74,9 @@ const ProfileCompleteness = ({ user }: ProfileCompletenessProps) => {
                   Add profile pic and personal details to make your profile more professional and
                   help others recognize you.
                 </p>
-                {user && !user.profileId && (
+                {user && !user.avatar && (
                   <Link to={"/profile"}>
-                    <Button className="mt-4 bg-black dark:bg-white dark:text-black">
+                    <Button className="mt-4 bg-black dark:bg-white dark:text-black pointer-events-none">
                       Complete
                     </Button>
                   </Link>
@@ -97,7 +102,7 @@ const ProfileCompleteness = ({ user }: ProfileCompletenessProps) => {
                 </p>
                 {user && user.skillId?.length === 0 && (
                   <Link to={"/skills"}>
-                    <Button className="mt-4 bg-black dark:bg-white dark:text-black">
+                    <Button className="mt-4 bg-black dark:bg-white dark:text-black pointer-events-none">
                       Complete
                     </Button>
                   </Link>

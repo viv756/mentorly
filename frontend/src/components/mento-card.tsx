@@ -16,7 +16,9 @@ export default function MentorCard({ user }: { user: MatchedUser }) {
           </Avatar>
           <div className="flex-1">
             <h3 className="text-xl font-semibold">{user.name}</h3>
-            <Badge className="bg-green-500 mt-1">{user.profile.rating.average} ★</Badge>
+            <Badge className="bg-green-500 mt-1">
+              {Math.round(user.profile.rating.average * 10) / 10} ★
+            </Badge>
           </div>
         </div>
         <p className="text-sm mt-2 line-clamp-4">{user.profile.bio}</p>

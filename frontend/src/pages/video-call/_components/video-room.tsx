@@ -1,21 +1,28 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 import AgoraRTC, {
   type IAgoraRTCClient,
   type ICameraVideoTrack,
   type IMicrophoneAudioTrack,
 } from "agora-rtc-sdk-ng";
 import { Video, VideoOff, Mic, MicOff, PhoneOff, Monitor } from "lucide-react";
+import UseFeedbackDialog from "@/hooks/use-feedback";
+import FeedbackDialog from "./feedback-dialog";
+import { useAuthStore } from "@/store/store";
 
 interface Props {
   appId: string;
   token: string;
   channelName: string;
   uid: string | number;
+  learnerId: string;
 }
 
-export default function VideoRoom({ appId, token, channelName, uid }: Props) {
-  console.log(channelName);
-  
+export default function VideoRoom({ appId, token, channelName, uid, learnerId }: Props) {
+  const user = useAuthStore((s) => s.user);
+
+  const navigate = useNavigate();
+
   const localVideoRef = useRef<HTMLDivElement>(null);
 
   const clientRef = useRef<IAgoraRTCClient | null>(null);
@@ -27,11 +34,12 @@ export default function VideoRoom({ appId, token, channelName, uid }: Props) {
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(false);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
+  const { isOpen, onOpen, onClose } = UseFeedbackDialog();
 
   useEffect(() => {
     const init = async () => {
       const client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
-      AgoraRTC.setLogLevel(4); 
+      AgoraRTC.setLogLevel(4);
       clientRef.current = client;
 
       client.on("user-published", async (user, mediaType) => {
@@ -45,7 +53,7 @@ export default function VideoRoom({ appId, token, channelName, uid }: Props) {
             }
             return [...prev, user];
           });
-          
+
           // Use setTimeout to ensure the DOM element exists
           setTimeout(() => {
             const element = document.getElementById(`remote-${user.uid}`);
@@ -72,8 +80,7 @@ export default function VideoRoom({ appId, token, channelName, uid }: Props) {
 
       await client.join(appId, channelName, token, uid);
 
-      const [audioTrack, videoTrack] =
-        await AgoraRTC.createMicrophoneAndCameraTracks();
+      const [audioTrack, videoTrack] = await AgoraRTC.createMicrophoneAndCameraTracks();
 
       audioTrackRef.current = audioTrack;
       videoTrackRef.current = videoTrack;
@@ -114,9 +121,9 @@ export default function VideoRoom({ appId, token, channelName, uid }: Props) {
 
     try {
       if (!isScreenSharing) {
-      const screenTrack = await AgoraRTC.createScreenVideoTrack({}, "disable");
+        const screenTrack = await AgoraRTC.createScreenVideoTrack({}, "disable");
         screenTrackRef.current = screenTrack;
-        
+
         await client.unpublish(videoTrackRef.current);
         await client.publish(screenTrack);
         setIsScreenSharing(true);
@@ -125,7 +132,7 @@ export default function VideoRoom({ appId, token, channelName, uid }: Props) {
           await client.unpublish(screenTrackRef.current);
           screenTrackRef.current.close();
         }
-        
+
         await client.publish(videoTrackRef.current);
         setIsScreenSharing(false);
       }
@@ -140,15 +147,16 @@ export default function VideoRoom({ appId, token, channelName, uid }: Props) {
     videoTrackRef.current?.close();
     screenTrackRef.current?.close();
     await clientRef.current?.leave();
-    // Optional: navigate away or show end call screen
+
+    if (learnerId === user?.userId) {
+      onOpen();
+    } else {
+      navigate("/overview");
+    }
   };
 
-  console.log(remoteUsers,"remoteusers");
-  
-
   return (
-
-       <div className="h-screen bg-gray-900 text-white flex flex-col relative">
+    <div className="h-screen bg-gray-900 text-white flex flex-col relative">
       {/* Main Video Area */}
       <div className="flex-1 relative">
         {remoteUsers.length === 0 ? (
@@ -176,17 +184,13 @@ export default function VideoRoom({ appId, token, channelName, uid }: Props) {
               remoteUsers.length === 2
                 ? "grid-cols-2"
                 : remoteUsers.length === 3
-                ? "grid-cols-2"
-                : remoteUsers.length === 4
-                ? "grid-cols-2 grid-rows-2"
-                : "grid-cols-3"
-            }`}
-          >
+                  ? "grid-cols-2"
+                  : remoteUsers.length === 4
+                    ? "grid-cols-2 grid-rows-2"
+                    : "grid-cols-3"
+            }`}>
             {remoteUsers.map((user) => (
-              <div
-                key={user.uid}
-                className="relative bg-black rounded-lg overflow-hidden"
-              >
+              <div key={user.uid} className="relative bg-black rounded-lg overflow-hidden">
                 <div id={`remote-${user.uid}`} className="w-full h-full" />
                 <div className="absolute bottom-3 left-3 bg-black bg-opacity-60 px-3 py-1 rounded-lg text-sm">
                   User {user.uid}
@@ -199,7 +203,7 @@ export default function VideoRoom({ appId, token, channelName, uid }: Props) {
         {/* Local Video - Bottom Right Corner (Google Meet style) */}
         <div className="absolute bottom-8  right-6 w-64 h-48 rounded-xl overflow-hidden shadow-2xl border-2 border-gray-700 bg-black z-10">
           <div ref={localVideoRef} className="w-full h-full" />
-          
+
           {/* Local video overlay info */}
           <div className="absolute bottom-2 left-2 bg-black bg-opacity-60 px-2 py-1 rounded text-xs flex items-center gap-1">
             {isMuted && <MicOff className="w-3 h-3" />}
@@ -231,51 +235,38 @@ export default function VideoRoom({ appId, token, channelName, uid }: Props) {
         <button
           onClick={toggleMute}
           className={`p-3 rounded-full transition ${
-            isMuted
-              ? "bg-red-600 hover:bg-red-700"
-              : "bg-gray-700 hover:bg-gray-600"
+            isMuted ? "bg-red-600 hover:bg-red-700" : "bg-gray-700 hover:bg-gray-600"
           }`}
-          title={isMuted ? "Unmute" : "Mute"}
-        >
+          title={isMuted ? "Unmute" : "Mute"}>
           {isMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
         </button>
 
         <button
           onClick={toggleVideo}
           className={`p-3 rounded-full transition ${
-            isVideoOff
-              ? "bg-red-600 hover:bg-red-700"
-              : "bg-gray-700 hover:bg-gray-600"
+            isVideoOff ? "bg-red-600 hover:bg-red-700" : "bg-gray-700 hover:bg-gray-600"
           }`}
-          title={isVideoOff ? "Turn on camera" : "Turn off camera"}
-        >
-          {isVideoOff ? (
-            <VideoOff className="w-5 h-5" />
-          ) : (
-            <Video className="w-5 h-5" />
-          )}
+          title={isVideoOff ? "Turn on camera" : "Turn off camera"}>
+          {isVideoOff ? <VideoOff className="w-5 h-5" /> : <Video className="w-5 h-5" />}
         </button>
 
         <button
           onClick={toggleScreenShare}
           className={`p-3 rounded-full transition ${
-            isScreenSharing
-              ? "bg-blue-600 hover:bg-blue-700"
-              : "bg-gray-700 hover:bg-gray-600"
+            isScreenSharing ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-700 hover:bg-gray-600"
           }`}
-          title={isScreenSharing ? "Stop sharing" : "Share screen"}
-        >
+          title={isScreenSharing ? "Stop sharing" : "Share screen"}>
           <Monitor className="w-5 h-5" />
         </button>
 
         <button
           onClick={endCall}
           className="p-3 bg-red-600 hover:bg-red-700 rounded-full transition ml-2"
-          title="End call"
-        >
+          title="End call">
           <PhoneOff className="w-5 h-5" />
         </button>
       </div>
+      <FeedbackDialog open={isOpen} onClose={onClose} />
     </div>
   );
 }
