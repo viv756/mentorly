@@ -33,16 +33,16 @@ export const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as con
    Schemas
 ======================= */
 
-const timeSlotSchema = z
+export const timeSlotSchema = z
   .object({
-    from: z.string().regex(/^(0[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$/),
-    to: z.string().regex(/^(0[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$/),
+    from: z.coerce.date(),
+    to: z.coerce.date(),
   })
-  .refine((v) => v.from < v.to, {
+  .refine((v) => new Date(v.from).getTime() < new Date(v.to).getTime(), {
     message: "End time must be after start time",
     path: ["to"],
   });
-
+  
 export const weeklyAvailabilitySchema = z.object({
   Sun: z.array(timeSlotSchema).optional(),
   Mon: z.array(timeSlotSchema).optional(),
@@ -52,12 +52,6 @@ export const weeklyAvailabilitySchema = z.object({
   Fri: z.array(timeSlotSchema).optional(),
   Sat: z.array(timeSlotSchema).optional(),
 });
-// .refine(
-//   (data) => Object.values(data).some((slots) => slots && slots.length > 0),
-//   {
-//     message: "At least one day must have availability",
-//   }
-// );
 
 /* =======================
    Types

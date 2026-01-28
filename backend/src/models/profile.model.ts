@@ -6,8 +6,8 @@ import { UserDocument } from "./user.model";
 ======================= */
 
 interface TimeSlot {
-  from: string; // "HH:mm"
-  to: string; // "HH:mm"
+  from: Date;
+  to: Date;
 }
 
 interface WeeklyAvailability {
@@ -50,12 +50,12 @@ export interface ProfileDocument extends Document {
 
 const timeSlotSchema = {
   from: {
-    type: String,
-    required: true, // "HH:mm"
+    type: Date,
+    required: true,
   },
   to: {
-    type: String,
-    required: true, // "HH:mm"
+    type: Date,
+    required: true,
   },
 };
 
