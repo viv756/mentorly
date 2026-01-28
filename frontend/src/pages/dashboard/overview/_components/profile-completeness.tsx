@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Circle, CircleCheck } from "lucide-react";
 import {
   Accordion,
@@ -9,8 +10,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import type { User } from "@/features/user/types";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { useState } from "react";
 
 type ProfileCompletenessProps = {
   user: User;
