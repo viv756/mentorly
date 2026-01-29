@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { format } from "date-fns";
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -13,16 +14,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useSkillByIdAndWeeklyAvailability } from "@/hooks/api/skills/use-get-skillById-and-weeklyAvailability";
-import { formatWord } from "@/lib/helper";
+import { formatWord, generateDates } from "@/lib/helper";
 import { useAuthStore } from "@/store/store";
 import { useCreateSession } from "@/hooks/api/session/use-createSession";
 import type { CreateSessionPayload } from "@/features/session/types";
 import { Spinner } from "@/components/ui/spinner";
-
-type AvailabilitySlot = {
-  from: string; // "09:00 AM"
-  to: string; // "10:00 AM"
-};
+import { DAYS_TO_SHOW, TOTAL_DAYS } from "@/constant";
 
 type Availability = Record<string, AvailabilitySlot[]>;
 
@@ -33,25 +30,23 @@ type ScheduleForm = {
   timezone: string;
 };
 
-/* ---------------- CONSTANTS ---------------- */
+  // Type for a booked slot
+  interface BookedSlot {
+    date: string; // YYYY-MM-DD
+    from: string; // HH:mm
+    to: string; // HH:mm
+  }
 
-const DAYS_TO_SHOW = 7;
-const TOTAL_DAYS = 30;
+  // Type for availability slot
+  interface AvailabilitySlot {
+    from: string; // HH:mm
+    to: string; // HH:mm
+  }
 
-/* ---------------- HELPERS ---------------- */
-
-const generateDates = (start: Date, count: number) =>
-  Array.from({ length: count }, (_, i) => {
-    const d = new Date(start);
-    d.setDate(d.getDate() + i);
-
-    return {
-      weekday: d.toLocaleDateString("en-US", { weekday: "short" }),
-      date: d.getDate(),
-      iso: d.toISOString().split("T")[0],
-      key: d.toISOString(),
-    };
-  });
+  // Type for weekly availability
+  interface WeeklyAvailability {
+    [key: string]: AvailabilitySlot[] | undefined; // Mon, Tue, etc.
+  }
 
 const ScheduleMeeting = () => {
   const currentUser = useAuthStore((s) => s.user);
@@ -94,22 +89,21 @@ const ScheduleMeeting = () => {
 
   /* -------- SUBMIT -------- */
   const onSubmit = (data: ScheduleForm) => {
-    const weekday = new Date(data.date).toLocaleDateString("en-US", {
-      weekday: "short",
-    });
+    // const weekday = new Date(data.date).toLocaleDateString("en-US", {
+    //   weekday: "short",
+    // });
 
     const payload: CreateSessionPayload = {
       date: data.date,
       // weekday,
-      from: data.from, // "09:00 AM"
-      to: data.to, // "10:00 AM"
+      from: data.from,
+      to: data.to,
       timezone: "Asia/Kolkata",
       learnerId: currentUser?.userId as string,
       mentorId: userId as string,
       skillId: skillId as string,
     };
 
-    console.log("FINAL PAYLOAD:", payload);
     createSession(payload);
   };
 
@@ -120,10 +114,37 @@ const ScheduleMeeting = () => {
   const userSkill = data.skillAndAvailability.userSkill;
   const user = data.skillAndAvailability.user;
   const avatar = data.skillAndAvailability.avatar;
+  const bookedSlots = data.skillAndAvailability.bookedSlots;
+
+  const bookedByDate: Record<string, string[]> = bookedSlots.reduce(
+    (acc: Record<string, string[]>, slot: BookedSlot) => {
+      const dateKey = slot.date.split("T")[0]; // ✅ YYYY-MM-DD
+      if (!acc[dateKey]) acc[dateKey] = [];
+      acc[dateKey].push(`${slot.from}-${slot.to}`);
+      return acc;
+    },
+    {} as Record<string, string[]>,
+  );
+
+  const isDateFullyBooked = (dateIso: string, weekday: keyof WeeklyAvailability) => {
+    const availabilitySlots: AvailabilitySlot[] = availability[weekday] || [];
+
+    // If no availability slots, consider it not bookable (not fully booked)
+    if (availabilitySlots.length === 0) return false;
+    const bookedSlotsForDate: string[] = bookedByDate[dateIso] || [];
+
+    // If no booked slots at all, date is not fully booked
+    if (bookedSlotsForDate.length === 0) return false;
+
+    // Only fully booked if ALL available slots are booked
+    return availabilitySlots.every((slot) =>
+      bookedSlotsForDate.includes(`${slot.from}-${slot.to}`),
+    );
+  };
 
   return (
     <div className="flex items-center justify-center my-auto mx-auto">
-      <div className="p-2 sm:p-0 sm:w-300 mt-15 flex sm:justify-between items-center sm:items-start gap-2 flex-col lg:flex-row">
+      <div className="p-2 sm:p-0 sm:w-300 mt-15 flex sm:justify-between items-center xl:items-start gap-2 flex-col xl:flex-row ">
         <div className="p-8 border rounded-3xl sm:min-w-150 sm:max-w-150">
           <Link to={`/user/${userId}`} className="flex items-center gap-2">
             <ArrowLeft size={20} />
@@ -168,7 +189,9 @@ const ScheduleMeeting = () => {
 
                   <div className="flex gap-2 overflow-hidden flex-1">
                     {visibleDates.map((d) => {
-                      const disabled = availability[d.weekday]?.length === 0;
+                      const disabled =
+                        availability[d.weekday]?.length === 0 ||
+                        isDateFullyBooked(d.iso, d.weekday);
                       return (
                         <Button
                           key={d.key}
@@ -202,22 +225,27 @@ const ScheduleMeeting = () => {
                   {timeSlots.length === 0 ? (
                     <p className="text-sm text-muted-foreground">No availability for this day</p>
                   ) : (
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid sm:grid-cols-3 grid-cols-2 gap-3">
                       {timeSlots.map((slot) => {
                         const selected =
-                          form.watch("from") === slot.from && form.watch("to") === slot.to;
+                        form.watch("from") === slot.from && form.watch("to") === slot.to;
+
+                        // Check if this specific slot is booked
+                        const bookedSlotsForDate = bookedByDate[selectedDate] || [];
+                        const isSlotBooked = bookedSlotsForDate.includes(`${slot.from}-${slot.to}`);
 
                         return (
                           <Button
                             key={`${slot.from}-${slot.to}`}
                             type="button"
                             variant={selected ? "default" : "outline"}
+                            disabled={isSlotBooked}
                             onClick={() => {
                               form.setValue("from", slot.from);
                               form.setValue("to", slot.to);
                             }}
-                            className="rounded-xl">
-                            {slot.from} – {slot.to}
+                            className="rounded-md h-12 w-45">
+                            {format(slot.from, "hh:mm a")} – {format(slot.to, "hh:mm a")}
                           </Button>
                         );
                       })}

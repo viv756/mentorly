@@ -1,4 +1,6 @@
 export const BASE_DATE = "1970-01-01";
+export const DAYS_TO_SHOW = 7;
+export const TOTAL_DAYS = 30;
 
 export const SKILL_CATEGORY_ENUM = {
   PERSONAL_DEVELOPMENT: "PERSONAL_DEVELOPMENT",
@@ -58,4 +60,5 @@ export const WEEK_DAY = {
 
 export type SKILL_ENUM_TYPE = (typeof SKILL_TYPE_ENUM)[keyof typeof SKILL_TYPE_ENUM];
 export type SKILL_LEVEL_ENUM_TYPE = (typeof SKILL_LEVEL_ENUM)[keyof typeof SKILL_LEVEL_ENUM];
-export type SKILL_CATEGORY_ENUM_TYPE = (typeof SKILL_CATEGORY_ENUM)[keyof typeof SKILL_CATEGORY_ENUM];
+export type SKILL_CATEGORY_ENUM_TYPE =
+  (typeof SKILL_CATEGORY_ENUM)[keyof typeof SKILL_CATEGORY_ENUM];
