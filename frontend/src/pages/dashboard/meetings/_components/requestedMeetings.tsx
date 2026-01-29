@@ -62,11 +62,11 @@ export default function RequestedMeetings({ requested }: RequestedMeetingsProps)
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
                         <div className="flex items-center gap-2">
                           <Calendar size={14} className="text-muted-foreground" />
-                          <span>{format(session.from, "dd-mm-yyyy")}</span>
+                          <span>{format(session.scheduledAt, "dd-mm-yyyy")}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Clock size={14} className="text-muted-foreground" />
-                          <span>{format(session.from, "hh-mm")}</span>
+                          <span>{format(session.from, "hh:mm a")}</span>
                         </div>
                       </div>
                     </div>

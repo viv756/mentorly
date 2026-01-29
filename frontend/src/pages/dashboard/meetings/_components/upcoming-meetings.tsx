@@ -6,12 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { UpcomingType } from "@/features/session/types";
 import { PROTECTED_ROUTES } from "@/routes/common/routePath";
+import { Badge } from "@/components/ui/badge";
+import { useAuthStore } from "@/store/store";
 
 type UpcomingMeetingsProps = {
   upcoming: UpcomingType | [];
 };
 
 export default function UpcomingMeetings({ upcoming }: UpcomingMeetingsProps) {
+  const user = useAuthStore((s) => s.user);
+
   return (
     <>
       {/* Meetings List */}
@@ -46,7 +50,12 @@ export default function UpcomingMeetings({ upcoming }: UpcomingMeetingsProps) {
                           {session.skill.description}
                         </p>
                       </div>
-                      <Video className="text-primary shrink-0 ml-4" size={28} />
+                      <span className="flex justify-between items-center">
+                        {user && user.userId === session.mentor._id && (
+                          <Badge variant={"secondary"}>Lead the Session</Badge>
+                        )}
+                        <Video className="text-primary shrink-0 ml-4" size={28} />
+                      </span>
                     </div>
 
                     {/* Meeting Details Grid */}
@@ -56,7 +65,7 @@ export default function UpcomingMeetings({ upcoming }: UpcomingMeetingsProps) {
                         <div>
                           <p className="text-xs text-muted-foreground">Date</p>
                           <p className="font-semibold text-sm">
-                            {format(session.from, "dd-mm-yyyy")}
+                            {format(session.scheduledAt, "dd-mm-yyyy")}
                           </p>
                         </div>
                       </div>
@@ -83,16 +92,33 @@ export default function UpcomingMeetings({ upcoming }: UpcomingMeetingsProps) {
                       {/* Organizer */}
                       <div className="flex items-center gap-2">
                         <div className="flex items-center gap-2">
-                          <Avatar className="w-8 h-8 ">
-                            <AvatarImage
-                              src={session.mentor.profile.avatar}
-                              className="object-cover"
-                            />
-                            <AvatarFallback className="text-xs bg-primary text-white">
-                              AA
-                            </AvatarFallback>
-                          </Avatar>
-                          <span className="font-medium text-sm">{session.mentor.name}</span>
+                          {user && user.userId === session.mentor._id ? (
+                            <>
+                              <Avatar className="w-8 h-8 ">
+                                <AvatarImage
+                                  src={session.learner.profile.avatar}
+                                  className="object-cover"
+                                />
+                                <AvatarFallback className="text-xs bg-primary text-white">
+                                  AA
+                                </AvatarFallback>
+                              </Avatar>
+                              <span className="font-medium text-sm">{session.learner.name}</span>
+                            </>
+                          ) : (
+                            <>
+                              <Avatar className="w-8 h-8 ">
+                                <AvatarImage
+                                  src={session.mentor.profile.avatar}
+                                  className="object-cover"
+                                />
+                                <AvatarFallback className="text-xs bg-primary text-white">
+                                  AA
+                                </AvatarFallback>
+                              </Avatar>
+                              <span className="font-medium text-sm">{session.mentor.name}</span>
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>

@@ -4,6 +4,8 @@ import UserSkillModel from "../models/user-skill.model";
 import UserModel, { UserDocument } from "../models/user.model";
 import { BadRequestException, NotFoundException } from "../utils/appError";
 import { userSkillType } from "../validator/user-skill.validator";
+import SessionModel from "../models/session.model";
+import { SessionStatusEnum } from "../enums/session.enum";
 
 export const createUserSkillService = async (body: userSkillType, userId: string) => {
   const user = await UserModel.findById(userId);
@@ -78,12 +80,29 @@ export const getSkillByIdAndWeeklyAvailabilityService = async (skillId: string, 
     throw new Error("User not populated");
   }
 
+  // omit password
   const safeUser = userProfile.userId.omitPassword();
+
+  // find any accepted sessions
+  const sessions = await SessionModel.find({
+    mentorId: userId,
+    status: SessionStatusEnum.ACCEPTED,
+    scheduledAt: { $gte: new Date() },
+  })
+    .select("scheduledAt from to -_id")
+    .sort({ from: 1 });
+
+  const bookedSlots = sessions.map((s) => ({
+    date: s.scheduledAt.toISOString(),
+    from: s.from.toISOString(),
+    to: s.to.toISOString(),
+  }));
 
   return {
     userSkill,
     user: safeUser,
     avatar: userProfile.avatar,
     weeklyAvailability: userProfile.weeklyAvailability,
+    bookedSlots,
   };
 };

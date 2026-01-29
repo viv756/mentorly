@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { format } from "date-fns";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,7 +20,7 @@ import { useUpdateWeeklyAvailability } from "@/hooks/api/profile/use-update-week
 import { Spinner } from "@/components/ui/spinner";
 import { useAuthStore } from "@/store/store";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { formatTime } from "@/lib/helper";
+import { BASE_DATE } from "@/constant";
 
 /* =======================
    Constants
@@ -38,15 +39,18 @@ const DAY_LABEL: Record<(typeof WEEKDAYS)[number], string> = {
 };
 
 const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
-  const hour24 = Math.floor(i / 2);
-  const minute = i % 2 === 0 ? "00" : "30";
+  const hour = Math.floor(i / 2);
+  const minute = i % 2 === 0 ? 0 : 30;
 
-  const period = hour24 >= 12 ? "PM" : "AM";
-  const hour12 = hour24 % 12 === 0 ? 12 : hour24 % 12;
+  // Create UTC date
+  const date = new Date(`${BASE_DATE}T00:00:00Z`);
+  date.setUTCHours(hour, minute, 0, 0);
 
-  return `${hour12.toString().padStart(2, "0")}:${minute} ${period}`;
+  return {
+    value: date.toISOString(), // 👈 stored value
+    label: format(date, "hh:mm a"), // 👈 UI display
+  };
 });
-
 
 /* =======================
    Zod Schema
@@ -54,10 +58,11 @@ const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
 
 const timeSlotSchema = z
   .object({
-    from: z.string().min(1, "From time is required"),
-    to: z.string().min(1, "To time is required"),
+    from: z.string(),
+    to: z.string(),
+    _id: z.string().optional(),
   })
-  .refine((data) => data.from < data.to, {
+  .refine((data) => new Date(data.from) < new Date(data.to), {
     message: "End time must be after start time",
     path: ["to"],
   });
@@ -96,10 +101,9 @@ export default function WeeklyAvailabilityForm() {
 
   useEffect(() => {
     if (!user || !user.weeklyAvailability) return;
-    console.log(user.weeklyAvailability);
 
     reset({ weeklyAvailability: user.weeklyAvailability });
-  }, [user]);
+  }, [user, reset]);
 
   const weeklyAvailability = watch("weeklyAvailability");
 
@@ -125,6 +129,7 @@ export default function WeeklyAvailabilityForm() {
     const cleaned = Object.fromEntries(
       Object.entries(data.weeklyAvailability).filter(([_, slots]) => slots.length > 0),
     );
+
     updateAvailability(cleaned);
   };
 
@@ -141,7 +146,6 @@ export default function WeeklyAvailabilityForm() {
         {WEEKDAYS.map((day) => {
           const { fields, append, remove } = fieldArrays[day];
           const isSelected = weeklyAvailability[day]?.length > 0;
-          // const dayErrors = errors.weeklyAvailability?.[day];
 
           return (
             <div key={day} className="p-4">
@@ -174,8 +178,8 @@ export default function WeeklyAvailabilityForm() {
                       const slotError = errors?.weeklyAvailability?.[day]?.[index];
 
                       return (
-                        <div className="flex flex-col">
-                          <div key={item.id} className="flex items-center gap-2">
+                        <div key={item.id} className="flex flex-col">
+                          <div className="flex items-center gap-2">
                             {/* From */}
                             <Controller
                               name={`weeklyAvailability.${day}.${index}.from`}
@@ -187,9 +191,9 @@ export default function WeeklyAvailabilityForm() {
                                   </SelectTrigger>
                                   <SelectContent position="popper">
                                     <ScrollArea className="h-40">
-                                      {TIME_OPTIONS.map((time) => (
-                                        <SelectItem key={time} value={time}>
-                                         {time}
+                                      {TIME_OPTIONS.map((time, i) => (
+                                        <SelectItem key={i} value={time.value}>
+                                          {time.label}
                                         </SelectItem>
                                       ))}
                                     </ScrollArea>
@@ -211,9 +215,9 @@ export default function WeeklyAvailabilityForm() {
                                   </SelectTrigger>
                                   <SelectContent position="popper">
                                     <ScrollArea className="h-40">
-                                      {TIME_OPTIONS.map((time) => (
-                                        <SelectItem key={time} value={time}>
-                                          {time}
+                                      {TIME_OPTIONS.map((time, i) => (
+                                        <SelectItem key={i} value={time.value}>
+                                          {time.label}
                                         </SelectItem>
                                       ))}
                                     </ScrollArea>
@@ -251,20 +255,6 @@ export default function WeeklyAvailabilityForm() {
                     })}
                 </div>
               </div>
-
-              {/* Errors */}
-              {/* {Array.isArray(dayErrors) && (
-                <div className=" mt-2 space-y-1">
-                  {dayErrors.map(
-                    (slotError, index) =>
-                      slotError?.to?.message && (
-                        <FieldError key={index}>
-                          Slot {index + 1}: {slotError.to.message}
-                        </FieldError>
-                      ),
-                  )}
-                </div>
-              )} */}
             </div>
           );
         })}

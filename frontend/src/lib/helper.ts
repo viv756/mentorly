@@ -14,3 +14,24 @@ export const formatWord = (word: string) =>
     .split(/[_-]/) // ["personal", "development"]
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // ["Personal", "Development"]
     .join(" "); // "Personal Development"
+
+export const formatLocalDate = (date: Date) => {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+};
+
+export const generateDates = (start: Date, totalDays: number) => {
+  return Array.from({ length: totalDays }).map((_, i) => {
+    const d = new Date(start);
+    d.setDate(start.getDate() + i);
+
+    return {
+      key: d.toDateString(),
+      iso: formatLocalDate(d), // ✅ LOCAL date
+      date: d.getDate(),
+      weekday: d.toLocaleDateString("en-US", { weekday: "short" }),
+    };
+  });
+};

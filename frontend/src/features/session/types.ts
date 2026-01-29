@@ -38,6 +38,18 @@ export type Session = {
       bio: string;
     };
   };
+  learner: {
+      _id: string;
+    createdAt: Date;
+    lastActiveAt: string;
+    name: string;
+    updatedAt: Date;
+    profile: {
+      _id: string;
+      avatar: string;
+      bio: string;
+    };
+  }
   mentorId: string;
   scheduledAt: Date;
   sessionType: string;
