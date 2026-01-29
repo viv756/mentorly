@@ -8,6 +8,7 @@ import {
   getUserProfileDetailsByIdService,
   updateProfileService,
   updateWeeklyAvailabilityService,
+  userProfileAnalyticsService,
 } from "../services/user.service";
 import { HTTP_STATUS } from "../config/http.config";
 import { updateProfileSchema, weeklyAvailabilitySchema } from "../validator/user.validator";
@@ -83,13 +84,27 @@ export const updateWeeklyAvailabilityController = asyncHandler(
 
 export const getUserProfileDetailsByIdController = asyncHandler(
   async (req: Request, res: Response) => {
+    const currUserId = req.user?._id;
 
     const userId = req.params.userId;
-    const userProfile = await getUserProfileDetailsByIdService(userId);
+    const userProfile = await getUserProfileDetailsByIdService(currUserId, userId);
 
     return res.status(HTTP_STATUS.OK).json({
       message: "User profile fetched",
       userProfile,
+    });
+  },
+);
+
+export const getUserProfileAnalyticsController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?._id;
+
+    const analytics = await userProfileAnalyticsService(userId);
+
+    return res.status(HTTP_STATUS.OK).json({
+      message: "Analytics fetched successfully",
+      analytics,
     });
   },
 );

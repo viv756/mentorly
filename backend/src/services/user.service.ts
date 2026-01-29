@@ -6,6 +6,8 @@ import UserSkillModel from "../models/user-skill.model";
 import { NotFoundException } from "../utils/appError";
 import { UpdateProfileInput, WeeklyAvailabilityDTO } from "../validator/user.validator";
 import { SkillTypeEnum } from "../enums/skill.enum";
+import ProfileViewModel from "../models/profileView.model";
+import SessionModel from "../models/session.model";
 
 export const findByIdUserService = async (userId: string) => {
   const user = await UserModel.findById(userId);
@@ -136,7 +138,7 @@ export const markActive = async (userId: string) => {
   );
 };
 
-export const getUserProfileDetailsByIdService = async (userId: string) => {
+export const getUserProfileDetailsByIdService = async (currUserId: string, userId: string) => {
   const userObjectId = new Types.ObjectId(userId);
 
   const result = await UserModel.aggregate([
@@ -174,13 +176,14 @@ export const getUserProfileDetailsByIdService = async (userId: string) => {
     /* 4️⃣ Shape response + filter TEACH skills */
     {
       $project: {
-        _id: 0,
+        _id: 1,
         user: {
           _id: "$_id",
           name: "$name",
           email: "$email",
         },
         profile: {
+          _id: "$profile._id",
           bio: "$profile.bio",
           aboutMe: "$profile.aboutMe",
           location: "$profile.location",
@@ -219,5 +222,252 @@ export const getUserProfileDetailsByIdService = async (userId: string) => {
     throw new NotFoundException("User profile not found");
   }
 
-  return result[0];
+  const userProfile = result[0];
+  console.log(userProfile);
+
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0); // today 00:00:00
+
+  const endOfDay = new Date();
+  endOfDay.setHours(23, 59, 59, 999); // today 23:59:59
+
+  // create or update existing data
+  await ProfileViewModel.updateOne(
+    {
+      profileId: userProfile.profile._id,
+      userId: userProfile._id,
+      viewerId: currUserId,
+      viewedAt: { $gte: startOfDay, $lte: endOfDay },
+    },
+    { $setOnInsert: { viewedAt: new Date() } },
+    { upsert: true },
+  );
+
+  return userProfile;
+};
+
+export const userProfileAnalyticsService = async (userId: string) => {
+  // const sixMonthsAgo = new Date();
+  // sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+  // const analytics = await ProfileViewModel.aggregate([
+  //   // 🔹 Profile views (last 6 months)
+  //   {
+  //     $match: {
+  //       userId: new Types.ObjectId(userId),
+  //       viewedAt: { $gte: sixMonthsAgo },
+  //     },
+  //   },
+  //   {
+  //     $project: {
+  //       month: { $dateToString: { format: "%B", date: "$viewedAt" } },
+  //       year: { $dateToString: { format: "%Y", date: "$viewedAt" } },
+  //       type: { $literal: "profileView" },
+  //     },
+  //   },
+
+  //   // 🔹 Session requests (last 6 months)
+  //   {
+  //     $unionWith: {
+  //       coll: "sessions",
+  //       pipeline: [
+  //         {
+  //           $match: {
+  //             mentorId: new Types.ObjectId(userId),
+  //             createdAt: { $gte: sixMonthsAgo },
+  //           },
+  //         },
+  //         {
+  //           $project: {
+  //             month: { $dateToString: { format: "%B", date: "$createdAt" } },
+  //             year: { $dateToString: { format: "%Y", date: "$createdAt" } },
+  //             type: { $literal: "sessionRequest" },
+  //           },
+  //         },
+  //       ],
+  //     },
+  //   },
+
+  //   // 🔹 Count per type per month
+  //   {
+  //     $group: {
+  //       _id: { month: "$month", type: "$type" },
+  //       count: { $sum: 1 },
+  //     },
+  //   },
+
+  //   // 🔹 Merge both metrics
+  //   {
+  //     $group: {
+  //       _id: "$_id.month",
+  //       counts: { $push: { type: "$_id.type", count: "$count" } },
+  //     },
+  //   },
+
+  //   // 🔹 Final shape
+  //   {
+  //     $project: {
+  //       _id: 0,
+  //       month: "$_id",
+  //       profileViews: {
+  //         $ifNull: [
+  //           {
+  //             $first: {
+  //               $map: {
+  //                 input: {
+  //                   $filter: {
+  //                     input: "$counts",
+  //                     cond: { $eq: ["$$this.type", "profileView"] },
+  //                   },
+  //                 },
+  //                 as: "c",
+  //                 in: "$$c.count",
+  //               },
+  //             },
+  //           },
+  //           0,
+  //         ],
+  //       },
+  //       sessionRequests: {
+  //         $ifNull: [
+  //           {
+  //             $first: {
+  //               $map: {
+  //                 input: {
+  //                   $filter: {
+  //                     input: "$counts",
+  //                     cond: { $eq: ["$$this.type", "sessionRequest"] },
+  //                   },
+  //                 },
+  //                 as: "c",
+  //                 in: "$$c.count",
+  //               },
+  //             },
+  //           },
+  //           0,
+  //         ],
+  //       },
+  //     },
+  //   },
+
+  //   // 🔹 Sort correctly by time
+  //   { $sort: { month: 1 } },
+  // ]);
+
+  const oneYearAgo = new Date();
+  oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+  const analytics = await ProfileViewModel.aggregate([
+    // 🔹 Profile views (last 1 year)
+    {
+      $match: {
+        userId: new Types.ObjectId(userId),
+        viewedAt: { $gte: oneYearAgo },
+      },
+    },
+    {
+      $project: {
+        month: { $dateToString: { format: "%B", date: "$viewedAt" } },
+        year: { $dateToString: { format: "%Y", date: "$viewedAt" } },
+        type: { $literal: "profileView" },
+      },
+    },
+
+    // 🔹 Session requests (last 1 year)
+    {
+      $unionWith: {
+        coll: "sessions",
+        pipeline: [
+          {
+            $match: {
+              mentorId: new Types.ObjectId(userId),
+              createdAt: { $gte: oneYearAgo },
+            },
+          },
+          {
+            $project: {
+              month: { $dateToString: { format: "%B", date: "$createdAt" } },
+              year: { $dateToString: { format: "%Y", date: "$createdAt" } },
+              type: { $literal: "sessionRequest" },
+            },
+          },
+        ],
+      },
+    },
+
+    // 🔹 Count per type per month per year
+    {
+      $group: {
+        _id: {
+          year: "$year",
+          month: "$month",
+          type: "$type",
+        },
+        count: { $sum: 1 },
+      },
+    },
+
+    // 🔹 Merge metrics
+    {
+      $group: {
+        _id: {
+          year: "$_id.year",
+          month: "$_id.month",
+        },
+        counts: { $push: { type: "$_id.type", count: "$count" } },
+      },
+    },
+
+    // 🔹 Final shape for graph
+    {
+      $project: {
+        _id: 0,
+        year: "$_id.year",
+        month: "$_id.month",
+        profileViews: {
+          $ifNull: [
+            {
+              $first: {
+                $map: {
+                  input: {
+                    $filter: {
+                      input: "$counts",
+                      cond: { $eq: ["$$this.type", "profileView"] },
+                    },
+                  },
+                  as: "c",
+                  in: "$$c.count",
+                },
+              },
+            },
+            0,
+          ],
+        },
+        sessionRequests: {
+          $ifNull: [
+            {
+              $first: {
+                $map: {
+                  input: {
+                    $filter: {
+                      input: "$counts",
+                      cond: { $eq: ["$$this.type", "sessionRequest"] },
+                    },
+                  },
+                  as: "c",
+                  in: "$$c.count",
+                },
+              },
+            },
+            0,
+          ],
+        },
+      },
+    },
+
+    // 🔹 Correct chronological sorting
+    { $sort: { year: 1, month: 1 } },
+  ]);
+
+  return analytics;
 };

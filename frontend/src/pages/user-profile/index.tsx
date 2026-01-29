@@ -27,7 +27,6 @@ const UserProfile = () => {
 
   return (
     <div className="flex flex-col sm:flex-row min-h-screen w-full">
-      
       <aside className="flex sm:h-screen sm:min-w-120 sm:max-w-120 flex-col bg-[#F63049] sm:pl-9 pl-5 py-9">
         {/* Profile Section */}
         <div className="shrink-0">
@@ -44,13 +43,15 @@ const UserProfile = () => {
         {/* User Info */}
         <div className="mt-6 shrink-0">
           <h1 className="sm:text-4xl text-3xl font-bold leading-tight">{userProfile.user.name}</h1>
-          <p className="mt-1 text-lg font-medium">{userProfile.profile.bio}</p>
+          <p className="mt-1 text-md font-medium">{userProfile.profile.bio}</p>
         </div>
-        <img
-          src="https://cdn.iconscout.com/icon/premium/png-512-thumb/4-star-badge-icon-svg-download-png-3474612.png?f=webp&w=512"
-          className="w-15 h-15"
-          alt="kkkk"
-        />
+        <div className="mt-3">
+          <img
+            src="https://cdn.iconscout.com/icon/premium/png-512-thumb/4-star-badge-icon-svg-download-png-3474612.png?f=webp&w=512"
+            className="w-15 h-15"
+            alt="kkkk"
+          />
+        </div>
 
         {/* Logo - Pushed to bottom */}
         <div className="mt-auto hidden sm:block">

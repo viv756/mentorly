@@ -8,8 +8,8 @@ import {
 } from "@/components/ui/accordion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import type { User } from "@/features/user/types";
 import { Button } from "@/components/ui/button";
+import type { User } from "@/features/user/types";
 
 type ProfileCompletenessProps = {
   user: User;

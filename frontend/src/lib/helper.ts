@@ -35,3 +35,22 @@ export const generateDates = (start: Date, totalDays: number) => {
     };
   });
 };
+
+export const getLast12MonthsRange = () => {
+  const now = new Date();
+
+  const endMonth = now.toLocaleString("default", {
+    month: "short",
+    year: "numeric",
+  });
+
+  const startDate = new Date(now);
+  startDate.setMonth(now.getMonth() - 11);
+
+  const startMonth = startDate.toLocaleString("default", {
+    month: "short",
+    year: "numeric",
+  });
+
+  return `${startMonth} – ${endMonth}`;
+};
