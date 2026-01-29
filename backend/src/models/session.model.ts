@@ -95,6 +95,42 @@ const sessionSchema = new Schema<SessionDocument>(
 );
 
 /* =======================
+   Index
+======================= */
+
+// mentor side
+sessionSchema.index(
+  { mentorId: 1, scheduledAt: 1, from: 1, to: 1 },
+  {
+    name: "mentor_day_overlap_accepted_idx",
+    partialFilterExpression: {
+      status: SessionStatusEnum.ACCEPTED,
+    },
+  },
+);
+
+// learner side
+sessionSchema.index(
+  { learnerId: 1, scheduledAt: 1, from: 1, to: 1 },
+  {
+    name: "learner_day_overlap_accepted_idx",
+    partialFilterExpression: {
+      status: SessionStatusEnum.ACCEPTED,
+    },
+  },
+);
+
+sessionSchema.index(
+  { mentorId: 1, learnerId: 1 },
+  {
+    name: "mentor_learner_active_session_idx",
+    partialFilterExpression: {
+      status: { $in: [SessionStatusEnum.REQUESTED, SessionStatusEnum.ACCEPTED] },
+    },
+  },
+);
+
+/* =======================
    Validation Logic
 ======================= */
 

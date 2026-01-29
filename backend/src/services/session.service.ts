@@ -3,19 +3,60 @@ import { v4 as uuidv4 } from "uuid";
 import SessionModel from "../models/session.model";
 import { SessionStatusEnum, SessionTypeEnum, VideoProviderEnum } from "../enums/session.enum";
 import { BadRequestException, NotFoundException, UnauthorizedException } from "../utils/appError";
-import { toUTCDate } from "../utils/generateAgoraExpireInSeconds";
 import { CreateAcceptRequestBodyType, CreateBodyType } from "../validator/session.validator";
+import { mergeDateWithTime } from "../utils/mergeDateWithTime";
 
 export const createSessionService = async (userId: string, body: CreateBodyType) => {
   if (userId.toString() !== body.learnerId) {
     throw new UnauthorizedException("You can't create session");
   }
 
-  const fromUTC = toUTCDate(body.date, body.from, body.timezone);
-  const toUTC = toUTCDate(body.date, body.to, body.timezone);
-
-  if (fromUTC >= toUTC) {
+  if (body.from >= body.to) {
     throw new Error("Invalid session time range");
+  }
+
+  // Merge time with actual date
+  const scheduledAt = mergeDateWithTime(body.date, body.from);
+
+  // 1️⃣ User-level rule
+  const alreadyBooked = await SessionModel.findOne({
+    mentorId: body.mentorId,
+    learnerId: userId,
+    status: { $in: [SessionStatusEnum.REQUESTED, SessionStatusEnum.ACCEPTED] },
+  });
+
+  if (alreadyBooked) {
+    throw new BadRequestException("You have already requested a session with this mentor");
+  }
+
+  const overlapBaseQuery = {
+    status: SessionStatusEnum.ACCEPTED,
+    scheduledAt,
+    from: { $lt: body.to },
+    to: { $gt: body.from },
+  };
+
+  const [mentorConflict, learnerConflict] = await Promise.all([
+    SessionModel.findOne({ mentorId: userId, ...overlapBaseQuery }),
+    SessionModel.findOne({ learnerId: userId, ...overlapBaseQuery }),
+  ]);
+
+  const userNotAvailable = mentorConflict || learnerConflict;
+
+  if (userNotAvailable) {
+    throw new BadRequestException("You already have a session during this time");
+  }
+
+  const conflict = await SessionModel.findOne({
+    mentorId: body.mentorId,
+    scheduledAt: scheduledAt,
+    status: SessionStatusEnum.ACCEPTED, // only block accepted sessions
+    from: { $lte: body.to }, // existing session starts before or at new session end
+    to: { $gte: body.from }, // existing session ends after or at new session start
+  });
+
+  if (conflict) {
+    throw new BadRequestException("This time slot is already booked for the mentor");
   }
 
   const channelName = `sess_${uuidv4().replace(/-/g, "").slice(0, 24)}`;
@@ -25,9 +66,9 @@ export const createSessionService = async (userId: string, body: CreateBodyType)
     learnerId: body.learnerId,
     skillId: body.skillId,
     sessionType: SessionTypeEnum.VIDEO,
-    scheduledAt: fromUTC,
-    from: fromUTC,
-    to: toUTC,
+    scheduledAt: scheduledAt,
+    from: body.from,
+    to: body.to,
     video: {
       provider: VideoProviderEnum.AGORA,
       roomId: channelName,
@@ -138,7 +179,7 @@ export const getCurrentUserRequestedAndUpcomingSessionsService = async (userId: 
             { $eq: ["$status", "REQUESTED"] },
             "REQUESTED",
             {
-              $cond: [{ $gte: ["$from", now] }, "UPCOMING", "PAST"],
+              $cond: [{ $gte: ["$scheduledAt", now] }, "UPCOMING", "PAST"],
             },
           ],
         },
@@ -169,6 +210,33 @@ export const getCurrentUserRequestedAndUpcomingSessionsService = async (userId: 
     {
       $unwind: {
         path: "$mentor.profile",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+
+    // learner lookup
+    {
+      $lookup: {
+        from: "users",
+        localField: "learnerId",
+        foreignField: "_id",
+        as: "learner",
+        pipeline: [{ $project: { password: 0, email: 0 } }],
+      },
+    },
+    { $unwind: "$learner" },
+    {
+      $lookup: {
+        from: "profiles",
+        localField: "learner._id",
+        foreignField: "userId",
+        as: "learner.profile",
+        pipeline: [{ $project: { _id: 1, bio: 1, avatar: 1 } }],
+      },
+    },
+    {
+      $unwind: {
+        path: "$learner.profile",
         preserveNullAndEmptyArrays: true,
       },
     },
@@ -216,14 +284,49 @@ export const createAcceptRequestSessionService = async (
     throw new UnauthorizedException("You can't create session");
   }
 
-  const channelName = `sess_${uuidv4().replace(/-/g, "").slice(0, 24)}`;
-
-  const fromUTC = toUTCDate(body.date, body.from, body.timezone);
-  const toUTC = toUTCDate(body.date, body.to, body.timezone);
-
-  if (fromUTC >= toUTC) {
+  if (body.from >= body.to) {
     throw new Error("Invalid session time range");
   }
+
+  // Merge time with actual date
+  const scheduledAt = mergeDateWithTime(body.date, body.from);
+
+  // 1️⃣ User-level rule
+  const alreadyBooked = await SessionModel.findOne({
+    mentorId: body.mentorId,
+    learnerId: userId,
+    status: { $in: [SessionStatusEnum.REQUESTED, SessionStatusEnum.ACCEPTED] },
+  });
+
+  if (alreadyBooked) {
+    throw new BadRequestException("You have already requested a session with this mentor");
+  }
+
+  const userNotAvailable = await SessionModel.findOne({
+    $or: [{ mentorId: userId }, { learnerId: userId }],
+    status: SessionStatusEnum.ACCEPTED,
+    scheduledAt: scheduledAt,
+    // 🔥 overlap logic
+    from: { $lt: body.to }, // existing starts before new ends
+    to: { $gt: body.from }, // existing ends after new starts
+  });
+
+  if (userNotAvailable) {
+    throw new BadRequestException("You already have a session during this time");
+  }
+
+  const conflict = await SessionModel.findOne({
+    mentorId: body.mentorId,
+    status: SessionStatusEnum.ACCEPTED, // only block accepted sessions
+    from: { $lte: body.to }, // existing session starts before or at new session end
+    to: { $gte: body.from }, // existing session ends after or at new session start
+  });
+
+  if (conflict) {
+    throw new BadRequestException("This time slot is already booked for the mentor");
+  }
+
+  const channelName = `sess_${uuidv4().replace(/-/g, "").slice(0, 24)}`;
 
   const pendingSession = await SessionModel.findById(body.sessionId);
   if (!pendingSession) {
@@ -235,9 +338,9 @@ export const createAcceptRequestSessionService = async (
     learnerId: body.learnerId,
     skillId: body.skillId,
     sessionType: SessionTypeEnum.VIDEO,
-    scheduledAt: fromUTC,
-    from: fromUTC,
-    to: toUTC,
+    scheduledAt: scheduledAt,
+    from: body.from,
+    to: body.to,
     video: {
       provider: VideoProviderEnum.AGORA,
       roomId: channelName,
@@ -271,14 +374,18 @@ export const findSessionByIdService = async (sessionId: string, userId: string) 
   // const sessionEnd = new Date(sessionStart.getTime() + 60 * 60 * 1000);
 
   // if (now < sessionStart) {
-  //   throw new Error("Session not started yet");
+  //   throw new BadRequestException("Session not started yet");
   // }
 
   // if (now > sessionEnd) {
-  //   throw new Error("Session already ended");
+  //   throw new BadRequestException("Session already ended");
   // }
 
   const channelName = session.video!.roomId;
+  const scheduledDate = session.scheduledAt.toISOString().split("T")[0];
 
-  return { channelName, expire: session.to, learnerId: session.learnerId };
+  const endTime = new Date(session.to.getTime() + 5 * 60 * 1000);
+  const expire = mergeDateWithTime(scheduledDate, endTime);
+
+  return { channelName, expire, learnerId: session.learnerId };
 };
