@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { UpcomingType } from "@/features/session/types";
 import { PROTECTED_ROUTES } from "@/routes/common/routePath";
-import { useAuthStore } from "@/store/store";
 import { Badge } from "@/components/ui/badge";
+import { useAuthStore } from "@/store/store";
 
 type UpcomingMeetingsProps = {
   upcoming: UpcomingType | [];
