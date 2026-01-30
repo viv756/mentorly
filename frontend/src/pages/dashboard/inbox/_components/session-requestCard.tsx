@@ -59,8 +59,8 @@ export const SessionRequestSkelton = () => {
         <div className=" flex flex-col gap-2">
           <Skeleton className="h-3 w-50 " />
           <Skeleton className="h-3 w-50 " />
-          <Skeleton className="h-3 w-90   " />
-          <Skeleton className="h-3 w-90   " />
+          <Skeleton className="h-3 w-90" />
+          <Skeleton className="h-3 w-90" />
         </div>
       </CardHeader>
       <CardContent>
