@@ -1,13 +1,13 @@
+import { Link } from "react-router-dom";
 import Logo from "@/components/logo/logo";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/store/store";
-import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const user = useAuthStore((s) => s.user);
 
   return (
-    <nav className="pt-5 ">
+    <nav className="pt-5">
       <div className="flex justify-between items-center">
         <div>
           <Logo />
@@ -18,7 +18,7 @@ const Navbar = () => {
           </Link>
         ) : (
           <Link to={"/sign-in"}>
-            <Button className="h-10">Sign In</Button>
+            <Button className="h-10 ">Sign In</Button>
           </Link>
         )}
       </div>

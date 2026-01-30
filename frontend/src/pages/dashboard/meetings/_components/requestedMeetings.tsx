@@ -1,9 +1,12 @@
 import { format, formatDistanceToNow } from "date-fns";
 import { Calendar, Clock, User, Target, Send, AlertCircle, Trash2 } from "lucide-react";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { RequestedType } from "@/features/session/types";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Link } from "react-router-dom";
+import { PROTECTED_ROUTES } from "@/routes/common/routePath";
 
 type RequestedMeetingsProps = {
   requested: RequestedType | [];
@@ -13,7 +16,7 @@ export default function RequestedMeetings({ requested }: RequestedMeetingsProps)
   return (
     <>
       {/* Requests List */}
-      <div className="">
+      <div>
         {requested.length === 0 ? (
           <CardContent className="p-12 text-center">
             <Send className="mx-auto text-muted-foreground mb-4" size={64} />
@@ -21,15 +24,19 @@ export default function RequestedMeetings({ requested }: RequestedMeetingsProps)
             <p className="text-muted-foreground mb-4">
               Start your learning journey by requesting a session with a mentor!
             </p>
-            <Button className="gap-2">
-              <User size={18} />
-              Find a Mentor
-            </Button>
+            <Link to={PROTECTED_ROUTES.FIND_PEOPLE}>
+              <Button className="gap-2">
+                <User size={18} />
+                Find a Mentor
+              </Button>
+            </Link>
           </CardContent>
         ) : (
           <div className="space-y-4 grid sm:grid-cols-2 gap-3">
             {requested.map((session) => (
-              <Card key={session._id} className="hover:shadow-lg transition-shadow border-l-4 border-l-primary max-w-xl">
+              <Card
+                key={session._id}
+                className="hover:shadow-lg transition-shadow border-l-4 border-l-primary max-w-xl">
                 <CardContent className="">
                   <div className="space-y-4">
                     {/* Header Section */}
@@ -41,9 +48,7 @@ export default function RequestedMeetings({ requested }: RequestedMeetingsProps)
                             src={session.mentor.profile.avatar}
                             className="object-cover"
                           />
-                          <AvatarFallback className="text-lg">
-                            MM
-                          </AvatarFallback>
+                          <AvatarFallback className="text-lg">MM</AvatarFallback>
                         </Avatar>
 
                         {/* Mentor Info */}
@@ -106,3 +111,29 @@ export default function RequestedMeetings({ requested }: RequestedMeetingsProps)
     </>
   );
 }
+
+export const RequestedMeetingsSkelton = () => {
+  return (
+    <div className="space-y-4 grid sm:grid-cols-2 gap-3 mt-5">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <Card key={i} className="max-w-xl max-h-76">
+          <CardHeader className="flex items-center gap-3">
+            <Skeleton className="h-20 w-20" />
+            <Skeleton className="h-3 w-30" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="h-3 w-70" />
+            <div className="flex justify-between mt-5 border-y p-6">
+              <Skeleton className="h-3 w-30" />
+              <Skeleton className="h-3 w-30" />
+              <Skeleton className="h-3 w-30" />
+            </div>
+          </CardContent>
+          <CardFooter className="flex justify-end ">
+            <Skeleton className="h-10 w-35" />
+          </CardFooter>
+        </Card>
+      ))}
+    </div>
+  );
+};

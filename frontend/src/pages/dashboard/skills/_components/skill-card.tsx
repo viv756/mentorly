@@ -3,6 +3,7 @@ import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { UserSkill } from "@/features/skills/types";
 import { formatWord } from "@/lib/helper";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type SkillCardType = {
   skill: UserSkill;
@@ -41,3 +42,18 @@ const SkillCard = ({ skill }: SkillCardType) => {
 };
 
 export default SkillCard;
+
+export const SkillCardSkelton = () => {
+  return (
+    <Card className="w-full max-w-md h-38">
+      <CardHeader className="flex justify-between items-center">
+        <Skeleton className="h-3 w-50" />
+        <Skeleton className="h-4  w-20" />
+      </CardHeader>
+      <CardFooter className="flex gap-3 items-center mt-auto ">
+        <Skeleton className="h-3 w-30 " />
+        <Skeleton className="h-3 w-30" />
+      </CardFooter>
+    </Card>
+  );
+};

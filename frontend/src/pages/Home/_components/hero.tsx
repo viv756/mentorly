@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Globe } from "@/components/ui/globe";
 
 export default function HeroLanding() {
   return (
@@ -67,6 +68,7 @@ export default function HeroLanding() {
             </div>
           </div>
         </div>
+  
       </section>
     </div>
   );

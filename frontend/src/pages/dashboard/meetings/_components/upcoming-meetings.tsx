@@ -1,13 +1,14 @@
 import { Link } from "react-router-dom";
 import { differenceInHours, format } from "date-fns";
 import { Video, Calendar, Clock } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { UpcomingType } from "@/features/session/types";
 import { PROTECTED_ROUTES } from "@/routes/common/routePath";
 import { Badge } from "@/components/ui/badge";
 import { useAuthStore } from "@/store/store";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type UpcomingMeetingsProps = {
   upcoming: UpcomingType | [];
@@ -143,3 +144,35 @@ export default function UpcomingMeetings({ upcoming }: UpcomingMeetingsProps) {
     </>
   );
 }
+
+export const UpcomingMeetingsSkelton = () => {
+  return (
+    <div className="space-y-4 grid sm:grid-cols-2 gap-3 mt-5">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <Card key={i} className="max-w-xl max-h-75">
+          <CardHeader className="">
+            <div className="flex  justify-between">
+              <Skeleton className="h-3 w-30" />
+              <Skeleton className="h-3 w-30" />
+            </div>
+            <Skeleton className="h-3 w-full mt-2 " />
+          </CardHeader>
+          <CardContent>
+            <div className="flex justify-between mt-1 border-y p-6">
+              <Skeleton className="h-3 w-30" />
+              <Skeleton className="h-3 w-30" />
+              <Skeleton className="h-3 w-30" />
+            </div>
+            <div className="flex gap-3 items-center">
+              <Skeleton className="h-10 w-10 rounded-full mt-5" />
+              <Skeleton className="h-3 w-30  mt-5" />
+            </div>
+          </CardContent>
+          <CardFooter className="flex justify-end  ">
+            <Skeleton className="h-10 w-35" />
+          </CardFooter>
+        </Card>
+      ))}
+    </div>
+  );
+};

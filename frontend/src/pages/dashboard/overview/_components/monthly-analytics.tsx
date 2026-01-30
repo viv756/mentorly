@@ -18,6 +18,7 @@ import {
 import EmptyChart from "./empty-chart";
 import { useGetUserAnalytics } from "@/hooks/api/user/use-getUserAnalytics";
 import { getLast12MonthsRange } from "@/lib/helper";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const chartConfig = {
   profileViews: {
@@ -34,7 +35,11 @@ const MonthlyAnalytics = () => {
   const { data, isLoading } = useGetUserAnalytics();
 
   if (isLoading || !data) {
-    return <div>Loading</div>;
+    return (
+      <Card className="p-10">
+        <Skeleton className="h-80" />
+      </Card>
+    );
   }
 
   const chartData = data.analytics;

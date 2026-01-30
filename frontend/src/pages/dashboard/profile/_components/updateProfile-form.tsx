@@ -33,6 +33,7 @@ import {
 import { useGetCurrentUserProfile } from "@/hooks/api/profile/use-get-current-user-profile";
 import { useUpdateProfile } from "@/hooks/api/profile/use-update-profile";
 import { Spinner } from "@/components/ui/spinner";
+import UpdateProfileFormSkelton from "./updateProfileForm-skelton";
 
 const optionalInput = (schema: z.ZodString) => schema.optional().or(z.literal(""));
 const avatarSchema = z.union([
@@ -124,6 +125,10 @@ const UpdateProfileForm = () => {
 
     updateProfile(payload);
   };
+
+  if (isLoading || !data) {
+    return <UpdateProfileFormSkelton />;
+  }
 
   return (
     <div className="w-full max-w-xl">

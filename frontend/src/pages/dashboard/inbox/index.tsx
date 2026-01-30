@@ -1,13 +1,22 @@
 import { Send } from "lucide-react";
 import { useGetSessionRequest } from "@/hooks/api/session/use-getSessionRequest";
-import SessionRequestCard from "./_components/session-requestCard";
+import SessionRequestCard, { SessionRequestSkelton } from "./_components/session-requestCard";
 import { CardContent } from "@/components/ui/card";
 
 const Inbox = () => {
   const { data, isLoading } = useGetSessionRequest();
 
-  if (isLoading) {
-    return <div>Loading</div>;
+  if (isLoading || !data) {
+    return (
+      <>
+        <h1 className="text-4xl py-10  font-semibold">Session Requests</h1>
+        <div className="grid sm:grid-cols-2  gap-2">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <SessionRequestSkelton key={i} />
+          ))}
+        </div>
+      </>
+    );
   }
 
   const sessionRequests = data.sessionRequests;
