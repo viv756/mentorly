@@ -444,9 +444,9 @@ export const updateSessionAttendanceWhenLeftService = async (sessionId: string, 
     await SessionModel.updateOne(
       {
         _id: sessionId,
-        "attendance.mentorJoinedAt": { $exists: false },
+        "attendance.mentorLeftAt": { $exists: false },
       },
-      { $set: { "attendance.mentorJoinedAt": now } },
+      { $set: { "attendance.mentorLeftAt": now } },
     );
   }
 
@@ -454,9 +454,9 @@ export const updateSessionAttendanceWhenLeftService = async (sessionId: string, 
     await SessionModel.updateOne(
       {
         _id: sessionId,
-        "attendance.learnerJoinedAt": { $exists: false },
+        "attendance.learnerLeftAt": { $exists: false },
       },
-      { $set: { "attendance.learnerJoinedAt": now } },
+      { $set: { "attendance.learnerLeftAt": now } },
     );
   }
 };

@@ -29,10 +29,7 @@ export const initializeSocket = (httpServer: HTTPServer) => {
         return next(new Error("Invalid authorization header"));
       }
 
-      console.log("Raw access token:", authHeader);
       const token = authHeader.split(" ")[1];
-      console.log("Token", token);
-
       const decodedToken = jwt.verify(token, Env.JWT_ACCESS_SECRET) as {
         userId: string;
       };
@@ -47,7 +44,6 @@ export const initializeSocket = (httpServer: HTTPServer) => {
 
   io.on("connection", (socket: AuthenticatedSocket) => {
     const userId = socket.userId!;
-    console.log(userId, "UserId");
     // const newSocketId = socket.id;
     if (!socket.userId) {
       socket.disconnect(true);
