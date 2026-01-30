@@ -2,7 +2,12 @@ import { Types } from "mongoose";
 import { v4 as uuidv4 } from "uuid";
 import SessionModel from "../models/session.model";
 import { SessionStatusEnum, SessionTypeEnum, VideoProviderEnum } from "../enums/session.enum";
-import { BadRequestException, NotFoundException, UnauthorizedException } from "../utils/appError";
+import {
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+  UnauthorizedException,
+} from "../utils/appError";
 import { CreateAcceptRequestBodyType, CreateBodyType } from "../validator/session.validator";
 import { mergeDateWithTime } from "../utils/mergeDateWithTime";
 
@@ -388,4 +393,70 @@ export const findSessionByIdService = async (sessionId: string, userId: string) 
   const expire = mergeDateWithTime(scheduledDate, endTime);
 
   return { channelName, expire, learnerId: session.learnerId };
+};
+
+export const updateSessionAttendanceWhenJoinService = async (sessionId: string, userId: string) => {
+  const session = await SessionModel.findById(sessionId);
+  if (!session) throw new BadRequestException("Session not found");
+
+  if (session.mentorId.toString() !== userId && session.learnerId.toString() !== userId) {
+    throw new ForbiddenException("User not part of session");
+  }
+
+  if (session.status !== SessionStatusEnum.ACCEPTED) {
+    throw new BadRequestException("Session not active");
+  }
+
+  const now = new Date();
+
+  if (session.mentorId.toString() === userId) {
+    await SessionModel.updateOne(
+      {
+        _id: sessionId,
+        "attendance.mentorJoinedAt": { $exists: false },
+      },
+      { $set: { "attendance.mentorJoinedAt": now } },
+    );
+  }
+
+  if (session.learnerId.toString() === userId) {
+    await SessionModel.updateOne(
+      {
+        _id: sessionId,
+        "attendance.learnerJoinedAt": { $exists: false },
+      },
+      { $set: { "attendance.learnerJoinedAt": now } },
+    );
+  }
+};
+
+export const updateSessionAttendanceWhenLeftService = async (sessionId: string, userId: string) => {
+  const session = await SessionModel.findById(sessionId);
+  if (!session) throw new BadRequestException("Session not found");
+
+  if (session.mentorId.toString() !== userId && session.learnerId.toString() !== userId) {
+    throw new ForbiddenException("User not part of session");
+  }
+
+  const now = new Date();
+
+  if (session.mentorId.toString() === userId) {
+    await SessionModel.updateOne(
+      {
+        _id: sessionId,
+        "attendance.mentorJoinedAt": { $exists: false },
+      },
+      { $set: { "attendance.mentorJoinedAt": now } },
+    );
+  }
+
+  if (session.learnerId.toString() === userId) {
+    await SessionModel.updateOne(
+      {
+        _id: sessionId,
+        "attendance.learnerJoinedAt": { $exists: false },
+      },
+      { $set: { "attendance.learnerJoinedAt": now } },
+    );
+  }
 };

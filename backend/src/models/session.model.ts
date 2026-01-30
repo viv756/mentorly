@@ -1,5 +1,7 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
 import {
+  AttendanceStatusEnum,
+  AttendanceStatusEnumType,
   SessionStatusEnum,
   SessionStatusEnumType,
   SessionTypeEnum,
@@ -26,7 +28,15 @@ export interface SessionDocument extends Document {
   from: Date;
   to: Date;
   status: SessionStatusEnumType;
+  attendance: {
+    mentorJoinedAt: Date;
+    learnerJoinedAt: Date;
+    mentorLeftAt: Date;
+    learnerLeftAt: Date;
+  };
+  attendanceStatus: AttendanceStatusEnumType | null;
   video?: VideoInfo;
+  completedAt: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -78,6 +88,34 @@ const sessionSchema = new Schema<SessionDocument>(
       default: SessionStatusEnum.REQUESTED,
     },
 
+    attendance: {
+      mentorJoinedAt: {
+        type: Date,
+        default: null,
+      },
+      learnerJoinedAt: {
+        type: Date,
+        default: null,
+      },
+      mentorLeftAt: {
+        type: Date,
+        default: null,
+      },
+      learnerLeftAt: {
+        type: Date,
+        default: null,
+      },
+    },
+
+    attendanceStatus: {
+      type: String,
+      enum: Object.values(AttendanceStatusEnum),
+      default: null,
+    },
+    completedAt: {
+      type: Date,
+      default: null,
+    },
     video: {
       type: {
         provider: {
