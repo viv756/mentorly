@@ -1,7 +1,6 @@
-import { ArrowRight } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Link, useParams } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { PROTECTED_ROUTES } from "@/routes/common/routePath";
 import type { SkillType } from "@/features/profile/types";
 
