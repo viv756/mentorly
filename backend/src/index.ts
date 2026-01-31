@@ -2,6 +2,7 @@ import "dotenv/config";
 import "./config/passport.config";
 
 import express, { NextFunction, Request, Response } from "express";
+import http from "http";
 import passport from "passport";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -13,14 +14,21 @@ import { asyncHandler } from "./middlewares/asyncHandler.middleware";
 import { HTTP_STATUS } from "./config/http.config";
 
 import { passportAuthenticateJwt } from "./config/passport.config";
+import { initializeSocket } from "./lib/socket";
 import authRoutes from "./routes/auth.route";
 import userRoutes from "./routes/user.route";
 import userSkillRoutes from "./routes/user-skill.route";
 import peopleRoutes from "./routes/people.route";
 import sessionRoutes from "./routes/session.route";
 import ratingRoutes from "./routes/rating.route";
+import { startSessionAttendanceCron } from "./cron/update-attendanceStatus.cron";
 
 const app = express();
+const server = http.createServer(app);
+
+// socket
+initializeSocket(server);
+
 const BASE_PATH = Env.BASE_PATH;
 
 app.use(express.json());
@@ -54,7 +62,8 @@ app.use(`${BASE_PATH}/rating`, passportAuthenticateJwt, ratingRoutes);
 
 app.use(errorHandler);
 
-app.listen(Env.PORT, async () => {
+server.listen(Env.PORT, async () => {
   await connectDatabase();
   console.log(`Server is running on port ${Env.PORT} in ${Env.NODE_ENV} mode`);
+  startSessionAttendanceCron(); // 👈 start cron here
 });

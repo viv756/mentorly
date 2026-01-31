@@ -223,7 +223,6 @@ export const getUserProfileDetailsByIdService = async (currUserId: string, userI
   }
 
   const userProfile = result[0];
-  console.log(userProfile);
 
   const startOfDay = new Date();
   startOfDay.setHours(0, 0, 0, 0); // today 00:00:00

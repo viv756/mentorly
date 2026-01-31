@@ -1,5 +1,6 @@
-import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { io } from "socket.io-client";
 import AgoraRTC, {
   type IAgoraRTCClient,
   type ICameraVideoTrack,
@@ -9,6 +10,8 @@ import { Video, VideoOff, Mic, MicOff, PhoneOff, Monitor } from "lucide-react";
 import UseFeedbackDialog from "@/hooks/use-feedback";
 import FeedbackDialog from "./feedback-dialog";
 import { useAuthStore } from "@/store/store";
+
+const BASE_URL = import.meta.env.MODE === "development" ? import.meta.env.VITE_API_BASE_URL : "/";
 
 interface Props {
   appId: string;
@@ -20,8 +23,10 @@ interface Props {
 
 export default function VideoRoom({ appId, token, channelName, uid, learnerId }: Props) {
   const user = useAuthStore((s) => s.user);
+  const accessToken = useAuthStore((s) => s.accessToken);
 
   const navigate = useNavigate();
+  const { sessionId } = useParams();
 
   const localVideoRef = useRef<HTMLDivElement>(null);
 
@@ -35,6 +40,23 @@ export default function VideoRoom({ appId, token, channelName, uid, learnerId }:
   const [isVideoOff, setIsVideoOff] = useState(false);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
   const { isOpen, onOpen, onClose } = UseFeedbackDialog();
+
+  useEffect(() => {
+    const socket = io(BASE_URL, {
+      withCredentials: true,
+      autoConnect: true,
+      extraHeaders: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    
+    socket.emit("session:join", sessionId);
+
+    return () => {
+      socket.emit("session:left", sessionId);
+      socket.disconnect();
+    };
+  }, [sessionId]);
 
   useEffect(() => {
     const init = async () => {

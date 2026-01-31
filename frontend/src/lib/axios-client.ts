@@ -1,8 +1,7 @@
 import axios from "axios";
 import { refreshToken } from "@/features/auth/api/refreshTokenAPI";
 import { useAuthStore } from "@/store/store";
-
-const baseURL = import.meta.env.VITE_API_BASE_URL;
+import { baseURL } from "./base-url";
 
 const options = {
   baseURL,
@@ -78,7 +77,7 @@ API.interceptors.response.use(
       message: error.response?.data?.message || "Something went wrong",
       errorCode: error.response?.data?.errorCode || "UNKNOWN_ERROR",
     });
-  }
+  },
 );
 
 export default API;

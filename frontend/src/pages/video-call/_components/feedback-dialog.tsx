@@ -1,5 +1,6 @@
-import * as z from "zod";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,9 +22,9 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Rating, RatingButton } from "@/components/ui/rating";
 import { useCreateRating } from "@/hooks/api/rating/use-createRating";
-import { useNavigate, useParams } from "react-router-dom";
 import { useAuthStore } from "@/store/store";
 import { Spinner } from "@/components/ui/spinner";
+import { PROTECTED_ROUTES } from "@/routes/common/routePath";
 
 const feedbackSchema = z.object({
   rating: z.number().min(1, "Please select a rating"),
@@ -67,7 +68,9 @@ const FeedbackDialog = ({ open, onClose }: FeedbackDialogProps) => {
 
     form.reset();
     onClose();
-    navigate("/overview");
+    setTimeout(() => {
+      navigate("/overview");
+    }, 200);
   };
 
   const handleClose = () => {
@@ -125,9 +128,11 @@ const FeedbackDialog = ({ open, onClose }: FeedbackDialogProps) => {
 
             <DialogFooter>
               <DialogClose asChild>
-                <Button type="button" variant="outline" onClick={handleClose}>
-                  Cancel
-                </Button>
+                <Link to={`${PROTECTED_ROUTES.OVERVIEW}`}>
+                  <Button type="button" variant="outline" onClick={handleClose}>
+                    Cancel
+                  </Button>
+                </Link>
               </DialogClose>
               <Button disabled={isPending} type="submit" className="w-35">
                 {isPending ? <Spinner /> : "Submit Feedback"}
