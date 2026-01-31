@@ -186,7 +186,7 @@ export default function WeeklyAvailabilityForm() {
                               control={control}
                               render={({ field }) => (
                                 <Select value={field.value} onValueChange={field.onChange}>
-                                  <SelectTrigger className="w-38 sm:w-40 h-10! rounded-sm! shrink-0">
+                                  <SelectTrigger className="w-40 h-10! rounded-sm! shrink-0">
                                     <SelectValue placeholder="From" />
                                   </SelectTrigger>
                                   <SelectContent position="popper">
@@ -210,7 +210,7 @@ export default function WeeklyAvailabilityForm() {
                               control={control}
                               render={({ field }) => (
                                 <Select value={field.value} onValueChange={field.onChange}>
-                                  <SelectTrigger className="w-38 sm:w-40 h-10! rounded-sm! shrink-0">
+                                  <SelectTrigger className="w-40 h-10! rounded-sm! shrink-0">
                                     <SelectValue placeholder="To" />
                                   </SelectTrigger>
                                   <SelectContent position="popper">
