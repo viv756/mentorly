@@ -4,6 +4,13 @@ import { UserDocument } from "./user.model";
 /* =======================
    Interfaces
 ======================= */
+interface AchievementStats {
+  completedSessions: number;
+  sessionStreak: number;
+  menteesHelped: number;
+  sessionRequestsSent: number;
+  activityScore: number;
+}
 
 interface TimeSlot {
   from: Date;
@@ -37,6 +44,7 @@ export interface ProfileDocument extends Document {
   aboutMe: string | null;
   location: string | null;
   profileCompleteness: number;
+  achievements: AchievementStats;
   rating: Rating;
   weeklyAvailability: WeeklyAvailability;
   socialLinks: SocialLink[];
@@ -110,6 +118,29 @@ const profileSchema = new Schema<ProfileDocument>(
       min: 0,
       max: 100,
       default: 0,
+    },
+    
+    achievements: {
+      completedSessions: {
+        type: Number,
+        default: 0,
+      },
+      sessionStreak: {
+        type: Number,
+        default: 0,
+      },
+      menteesHelped: {
+        type: Number,
+        default: 0,
+      },
+      sessionRequestsSent: {
+        type: Number,
+        default: 0,
+      },
+      activityScore: {
+        type: Number,
+        default: 0,
+      },
     },
 
     rating: {
