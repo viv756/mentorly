@@ -7,7 +7,7 @@ type UserSkillsSectionProps = {
   type: SKILL_ENUM_TYPE;
 };
 
-const UserSkillsSection = ({ skills, type }: UserSkillsSectionProps) => {
+const UserSkillsSection = ({ skills }: UserSkillsSectionProps) => {
   if (skills.length === 0) {
     return (
       <div className="flex items-center justify-center h-full ">

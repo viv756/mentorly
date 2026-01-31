@@ -7,7 +7,7 @@ import DeclineSessionRequestModal from "./declineSessionRequest-modal";
 import AcceptSessionRequestModal from "./acceptSession.modal";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const SessionRequestCard = ({ session }) => {
+const SessionRequestCard = ({ session }:{session:any}) => {
   return (
     <Card className="max-w-xl">
       <CardHeader className="flex items-center gap-3">

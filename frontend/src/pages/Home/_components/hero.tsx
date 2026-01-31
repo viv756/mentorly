@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Globe } from "@/components/ui/globe";
 
 export default function HeroLanding() {
   return (

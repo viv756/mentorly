@@ -2,10 +2,14 @@ import { joinSessionApiFn } from "@/features/session/api/joinSessionApin";
 import { useMutation } from "@tanstack/react-query";
 
 interface JoinSessionResponse {
-  appId: string;
-  token: string;
-  channelName: string;
-  uid: number;
+  message: string;
+  agoraData: {
+    appId: string;
+    token: string;
+    channelName: string;
+    uid: string;
+    learnerId: string;
+  };
 }
 
 export const useJoinSession = () => {
