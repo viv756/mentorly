@@ -134,9 +134,9 @@ export default function WeeklyAvailabilityForm() {
   };
 
   return (
-    <div className="max-w-3xl p-6 border rounded-lg">
+    <div className="max-w-3xl sm:p-6 py-6 pl-2  border rounded-lg">
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex justify-between mb-6">
+        <div className="flex justify-between mb-6 px-2 sm:px-0">
           <h2 className="text-2xl font-semibold">Weekly Availability</h2>
           <Button disabled={isPending} type="submit" className="w-20">
             {isPending ? <Spinner /> : "Save"}
@@ -148,7 +148,7 @@ export default function WeeklyAvailabilityForm() {
           const isSelected = weeklyAvailability[day]?.length > 0;
 
           return (
-            <div key={day} className="p-4">
+            <div key={day} className="sm:p-4 py-3 px-2 ">
               <div className="flex flex-col gap-3 sm:space-x-45 lg:flex-row items-start  mb-2">
                 {/* Checkbox */}
                 <div className="flex items-center gap-3 w-28">
@@ -179,14 +179,14 @@ export default function WeeklyAvailabilityForm() {
 
                       return (
                         <div key={item.id} className="flex flex-col">
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 flex-nowrap">
                             {/* From */}
                             <Controller
                               name={`weeklyAvailability.${day}.${index}.from`}
                               control={control}
                               render={({ field }) => (
                                 <Select value={field.value} onValueChange={field.onChange}>
-                                  <SelectTrigger className="w-40 h-10! rounded-sm!">
+                                  <SelectTrigger className="w-38 sm:w-40 h-10! rounded-sm! shrink-0">
                                     <SelectValue placeholder="From" />
                                   </SelectTrigger>
                                   <SelectContent position="popper">
@@ -202,7 +202,7 @@ export default function WeeklyAvailabilityForm() {
                               )}
                             />
 
-                            <span>-</span>
+                            <span className="shrink-0">-</span>
 
                             {/* To */}
                             <Controller
@@ -210,7 +210,7 @@ export default function WeeklyAvailabilityForm() {
                               control={control}
                               render={({ field }) => (
                                 <Select value={field.value} onValueChange={field.onChange}>
-                                  <SelectTrigger className="w-40 h-10! rounded-sm!">
+                                  <SelectTrigger className="w-38 sm:w-40 h-10! rounded-sm! shrink-0">
                                     <SelectValue placeholder="To" />
                                   </SelectTrigger>
                                   <SelectContent position="popper">
@@ -231,7 +231,7 @@ export default function WeeklyAvailabilityForm() {
                               <button
                                 type="button"
                                 onClick={() => append({ from: "", to: "" })}
-                                className="border rounded-full p-1">
+                                className="border rounded-full p-1 shrink-0">
                                 <Plus className="w-4 h-4" />
                               </button>
                             )}
@@ -241,7 +241,7 @@ export default function WeeklyAvailabilityForm() {
                               <button
                                 type="button"
                                 onClick={() => remove(index)}
-                                className="border rounded-full p-1">
+                                className="border rounded-full p-1 shrink-0">
                                 <X className="w-4 h-4" />
                               </button>
                             )}

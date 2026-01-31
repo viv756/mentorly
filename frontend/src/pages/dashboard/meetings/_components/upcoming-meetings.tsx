@@ -149,7 +149,7 @@ export const UpcomingMeetingsSkelton = () => {
   return (
     <div className="space-y-4 grid sm:grid-cols-2 gap-3 mt-5">
       {Array.from({ length: 4 }).map((_, i) => (
-        <Card key={i} className="max-w-xl max-h-75">
+        <Card key={i} className="sm:max-w-xl max-w-sm max-h-75">
           <CardHeader className="">
             <div className="flex  justify-between">
               <Skeleton className="h-3 w-30" />

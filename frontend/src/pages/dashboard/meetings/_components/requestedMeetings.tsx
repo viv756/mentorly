@@ -116,7 +116,7 @@ export const RequestedMeetingsSkelton = () => {
   return (
     <div className="space-y-4 grid sm:grid-cols-2 gap-3 mt-5">
       {Array.from({ length: 4 }).map((_, i) => (
-        <Card key={i} className="max-w-xl max-h-76">
+        <Card key={i} className="sm:max-w-xl max-w-sm max-h-76">
           <CardHeader className="flex items-center gap-3">
             <Skeleton className="h-20 w-20" />
             <Skeleton className="h-3 w-30" />

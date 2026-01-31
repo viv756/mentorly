@@ -25,6 +25,7 @@ import {
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import Logo from "./logo/logo";
 import {
@@ -76,6 +77,14 @@ const items = [
 ];
 
 export function AppSidebar() {
+  const { isMobile, setOpenMobile } = useSidebar();
+
+  const handleNavClick = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
+
   return (
     <Sidebar className="lg:border-r-0!">
       {/* Header */}
@@ -94,7 +103,7 @@ export function AppSidebar() {
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <NavLink to={item.url} end>
+                  <NavLink to={item.url} end onClick={handleNavClick}>
                     {({ isActive }) => (
                       <SidebarMenuButton isActive={isActive}>
                         <span className="flex items-center gap-3">
@@ -125,7 +134,9 @@ export function AppSidebar() {
                       <SidebarMenuSubItem>
                         <NavLink to="/account">
                           {({ isActive }) => (
-                            <SidebarMenuButton isActive={isActive}>Account</SidebarMenuButton>
+                            <SidebarMenuButton isActive={isActive} onClick={handleNavClick}>
+                              Account
+                            </SidebarMenuButton>
                           )}
                         </NavLink>
                       </SidebarMenuSubItem>
@@ -133,7 +144,9 @@ export function AppSidebar() {
                       <SidebarMenuSubItem>
                         <NavLink to="/advanced">
                           {({ isActive }) => (
-                            <SidebarMenuButton isActive={isActive}>Advanced</SidebarMenuButton>
+                            <SidebarMenuButton isActive={isActive} onClick={handleNavClick}>
+                              Advanced
+                            </SidebarMenuButton>
                           )}
                         </NavLink>
                       </SidebarMenuSubItem>

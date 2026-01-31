@@ -7,7 +7,7 @@ import DeclineSessionRequestModal from "./declineSessionRequest-modal";
 import AcceptSessionRequestModal from "./acceptSession.modal";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const SessionRequestCard = ({ session }:{session:any}) => {
+const SessionRequestCard = ({ session }: { session: any }) => {
   return (
     <Card className="max-w-xl">
       <CardHeader className="flex items-center gap-3">
@@ -26,7 +26,7 @@ const SessionRequestCard = ({ session }:{session:any}) => {
       </CardHeader>
       <CardContent>
         {/* Skill Requested - Highlighted */}
-        <div className="bg-gradient-to-r from-secondary to-red-100 dark:from-secondary-white dark:to-red-300 rounded-lg p-4 mb-4 border-2 border-secondary dark:border-secondary-dark">
+        <div className="bg-linear-to-r from-secondary to-red-100 dark:from-secondary-white dark:to-red-300 rounded-lg p-4 mb-4 border-2 border-secondary dark:border-secondary-dark">
           <div className="flex items-center gap-2 mb-2">
             <Target size={20} className="text-primary" />
             <span className="font-bold text-primary text-lg">
@@ -59,8 +59,8 @@ export const SessionRequestSkelton = () => {
         <div className=" flex flex-col gap-2">
           <Skeleton className="h-3 w-50 " />
           <Skeleton className="h-3 w-50 " />
-          <Skeleton className="h-3 w-90" />
-          <Skeleton className="h-3 w-90" />
+          <Skeleton className="h-3 sm:w-90 w-full" />
+          <Skeleton className="h-3 sm:w-90 w-full" />
         </div>
       </CardHeader>
       <CardContent>

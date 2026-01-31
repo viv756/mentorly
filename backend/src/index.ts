@@ -65,5 +65,5 @@ app.use(errorHandler);
 server.listen(Env.PORT, async () => {
   await connectDatabase();
   console.log(`Server is running on port ${Env.PORT} in ${Env.NODE_ENV} mode`);
-  startSessionAttendanceCron(); // 👈 start cron here
+  // startSessionAttendanceCron(); // 👈 start cron here
 });
