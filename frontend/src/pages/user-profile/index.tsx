@@ -6,6 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useGetUserDetailsById } from "@/hooks/api/profile/use-get-userDetailsById";
 import SkillCardSection from "./_components/user-skill-section";
 import type { SocialIconKey, SocialLink } from "@/features/profile/types";
+import UserProfileSkelton from "../../components/skelton/userProfile-skelton";
 
 const SOCIAL_ICON_MAP: Record<SocialIconKey, LucideIcon> = {
   linkedin: Linkedin,
@@ -18,7 +19,7 @@ const UserProfile = () => {
   const { data, isLoading } = useGetUserDetailsById(userId as string);
 
   if (isLoading || !data) {
-    return <div>Loading</div>;
+    return <UserProfileSkelton />;
   }
 
   const userProfile = data.userProfile;

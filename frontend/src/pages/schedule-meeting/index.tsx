@@ -20,6 +20,7 @@ import { useCreateSession } from "@/hooks/api/session/use-createSession";
 import type { CreateSessionPayload } from "@/features/session/types";
 import { Spinner } from "@/components/ui/spinner";
 import { DAYS_TO_SHOW, TOTAL_DAYS } from "@/constant";
+import ScheduleMeetingSkelton from "@/components/skelton/scheduleMeeting-skelton";
 
 type Availability = Record<string, AvailabilitySlot[]>;
 
@@ -30,28 +31,28 @@ type ScheduleForm = {
   timezone: string;
 };
 
-  // Type for a booked slot
-  interface BookedSlot {
-    date: string; // YYYY-MM-DD
-    from: string; // HH:mm
-    to: string; // HH:mm
-  }
+// Type for a booked slot
+interface BookedSlot {
+  date: string; // YYYY-MM-DD
+  from: string; // HH:mm
+  to: string; // HH:mm
+}
 
-  // Type for availability slot
-  interface AvailabilitySlot {
-    from: string; // HH:mm
-    to: string; // HH:mm
-  }
+// Type for availability slot
+interface AvailabilitySlot {
+  from: string; // HH:mm
+  to: string; // HH:mm
+}
 
-  // Type for weekly availability
-  interface WeeklyAvailability {
-    [key: string]: AvailabilitySlot[] | undefined; // Mon, Tue, etc.
-  }
+// Type for weekly availability
+interface WeeklyAvailability {
+  [key: string]: AvailabilitySlot[] | undefined; // Mon, Tue, etc.
+}
 
 const ScheduleMeeting = () => {
   const currentUser = useAuthStore((s) => s.user);
   const { userId, skillId } = useParams();
-  const { data } = useSkillByIdAndWeeklyAvailability(userId, skillId);
+  const { data, isLoading } = useSkillByIdAndWeeklyAvailability(userId, skillId);
   const { mutate: createSession, isPending } = useCreateSession();
   const [availability, setAvailability] = useState<Availability>({});
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -107,8 +108,8 @@ const ScheduleMeeting = () => {
     createSession(payload);
   };
 
-  if (!data) {
-    return <div>Loading</div>;
+  if (isLoading || !data) {
+    return <ScheduleMeetingSkelton />;
   }
 
   const userSkill = data.skillAndAvailability.userSkill;
@@ -228,7 +229,7 @@ const ScheduleMeeting = () => {
                     <div className="grid sm:grid-cols-3 grid-cols-2 gap-3">
                       {timeSlots.map((slot) => {
                         const selected =
-                        form.watch("from") === slot.from && form.watch("to") === slot.to;
+                          form.watch("from") === slot.from && form.watch("to") === slot.to;
 
                         // Check if this specific slot is booked
                         const bookedSlotsForDate = bookedByDate[selectedDate] || [];

@@ -19,6 +19,7 @@ import { useAuthStore } from "@/store/store";
 import type { CreateAcceptSessionPayload } from "@/features/session/types";
 import { Spinner } from "@/components/ui/spinner";
 import { useCreateAcceptRequestSession } from "@/hooks/api/session/use-createAcceptRequestSession";
+import ScheduleMeetingSkelton from "@/components/skelton/scheduleMeeting-skelton";
 import { DAYS_TO_SHOW, TOTAL_DAYS } from "@/constant";
 
 type Availability = Record<string, AvailabilitySlot[]>;
@@ -107,7 +108,7 @@ const CreateSession = () => {
   };
 
   if (!data) {
-    return <div>Loading</div>;
+    return <ScheduleMeetingSkelton />;
   }
 
   const userSkill = data.skillAndAvailability.userSkill;
