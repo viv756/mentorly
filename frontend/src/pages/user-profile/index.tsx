@@ -45,9 +45,9 @@ const UserProfile = () => {
           <h1 className="sm:text-4xl text-3xl font-bold leading-tight">{userProfile.user.name}</h1>
           <p className="mt-1 text-md font-medium">{userProfile.profile.bio}</p>
         </div>
-        <div className="mt-3">
+        <div className="mt-3 flex gap-3 flex-wrap">
           <img
-            src="https://cdn.iconscout.com/icon/premium/png-512-thumb/4-star-badge-icon-svg-download-png-3474612.png?f=webp&w=512"
+            src="https://res.cloudinary.com/devincarloz/image/upload/v1769852323/OpenSourcerer_le9uha.png"
             className="w-15 h-15"
             alt="kkkk"
           />

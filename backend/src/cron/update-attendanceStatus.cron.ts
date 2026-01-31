@@ -1,8 +1,10 @@
 import cron from "node-cron";
 import SessionModel from "../models/session.model";
+import ProfileModel from "../models/profile.model";
 import { SessionStatusEnum, AttendanceStatusEnum } from "../enums/session.enum";
+import { evaluateSessionBadges } from "../services/achievement.service";
 
-// Runs every minute (you can adjust)
+// Runs every 5 minute
 export const startSessionAttendanceCron = () => {
   cron.schedule("*/5 * * * *", async () => {
     console.log("Running attendance check cron job...", new Date());
@@ -13,15 +15,18 @@ export const startSessionAttendanceCron = () => {
         to: { $lt: new Date() },
       });
 
+      const processedUserIds = new Set<string>();
+
       for (const s of sessions) {
-        const mentor = !!s.attendance?.mentorJoinedAt;
-        const learner = !!s.attendance?.learnerJoinedAt;
+        const mentorPresent = !!s.attendance?.mentorJoinedAt;
+        const learnerPresent = !!s.attendance?.learnerJoinedAt;
 
         let attendanceStatus;
 
-        if (mentor && learner) attendanceStatus = AttendanceStatusEnum.BOTH_PRESENT;
-        else if (!mentor && !learner) attendanceStatus = AttendanceStatusEnum.BOTH_NO_SHOW;
-        else if (!mentor) attendanceStatus = AttendanceStatusEnum.MENTOR_NO_SHOW;
+        if (mentorPresent && learnerPresent) attendanceStatus = AttendanceStatusEnum.BOTH_PRESENT;
+        else if (!mentorPresent && !learnerPresent)
+          attendanceStatus = AttendanceStatusEnum.BOTH_NO_SHOW;
+        else if (!mentorPresent) attendanceStatus = AttendanceStatusEnum.MENTOR_NO_SHOW;
         else attendanceStatus = AttendanceStatusEnum.LEARNER_NO_SHOW;
 
         await SessionModel.updateOne(
@@ -34,9 +39,31 @@ export const startSessionAttendanceCron = () => {
             },
           },
         );
+
+        // ✅ Increment completed session only if user attended
+        if (mentorPresent) {
+          await ProfileModel.updateOne(
+            { userId: s.mentorId },
+            { $inc: { "achievements.completedSessions": 1 } },
+          );
+          processedUserIds.add(s.mentorId.toString());
+        }
+
+        if (learnerPresent) {
+          await ProfileModel.updateOne(
+            { userId: s.learnerId },
+            { $inc: { "achievements.completedSessions": 1 } },
+          );
+          processedUserIds.add(s.learnerId.toString());
+        }
       }
 
-      console.log("Attendance updated for past sessions");
+      // Run badge evaluation once per user
+      for (const userId of processedUserIds) {
+        await evaluateSessionBadges(userId);
+      }
+
+      console.log("Attendance updated, stats incremented & badges evaluated");
     } catch (err) {
       console.error("Error in cron job:", err);
     }

@@ -11,6 +11,8 @@ import { dummyProfiles } from "./data/profile.seeder";
 import { ProviderEnum } from "../enums/account-provider.enum";
 import { generateUserSkills } from "./data/skill.seeder";
 import UserSkillModel from "../models/user-skill.model";
+import BadgeModel from "../models/badge.model";
+import { badge } from "./data/badge.seed";
 
 type Platform = "linkedin" | "github" | "twitter";
 
@@ -24,7 +26,7 @@ const seedUsers = async () => {
     await AccountModel.deleteMany();
     await ProfileModel.deleteMany();
     await UserModel.deleteMany();
-    await UserSkillModel.deleteMany()
+    await UserSkillModel.deleteMany();
 
     // 1️⃣ Hash passwords
     const usersWithHashedPasswords = await Promise.all(
@@ -72,4 +74,35 @@ const seedUsers = async () => {
   }
 };
 
-seedUsers();
+export const seedBadges = async () => {
+  try {
+    console.log("🌱 Seeding badges...");
+    await connectDatabase();
+
+    const operations = badge.map((b) => ({
+      updateOne: {
+        filter: {
+          key: b.key,
+          level: b.level,
+        },
+        update: {
+          $set: {
+            name: b.name,
+            icon: b.icon, // map correctly
+            minValue: b.minValue,
+          },
+        },
+        upsert: true,
+      },
+    }));
+
+    await BadgeModel.bulkWrite(operations);
+
+    console.log("✅ Badges seeded successfully");
+  } catch (error) {
+    console.error("❌ Badge seeding failed:", error);
+  }
+};
+
+// seedUsers();
+seedBadges();
