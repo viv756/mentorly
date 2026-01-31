@@ -168,6 +168,14 @@ sessionSchema.index(
   },
 );
 
+sessionSchema.index(
+  { to: 1 },
+  {
+    partialFilterExpression: { status: SessionStatusEnum.ACCEPTED },
+    name: "accepted_sessions_to_index",
+  },
+);
+
 /* =======================
    Validation Logic
 ======================= */

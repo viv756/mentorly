@@ -21,6 +21,7 @@ import userSkillRoutes from "./routes/user-skill.route";
 import peopleRoutes from "./routes/people.route";
 import sessionRoutes from "./routes/session.route";
 import ratingRoutes from "./routes/rating.route";
+import { startSessionAttendanceCron } from "./cron/update-attendanceStatus.cron";
 
 const app = express();
 const server = http.createServer(app);
@@ -64,4 +65,5 @@ app.use(errorHandler);
 server.listen(Env.PORT, async () => {
   await connectDatabase();
   console.log(`Server is running on port ${Env.PORT} in ${Env.NODE_ENV} mode`);
+  startSessionAttendanceCron(); // 👈 start cron here
 });

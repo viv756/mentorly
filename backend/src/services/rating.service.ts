@@ -38,10 +38,7 @@ export const createFeedbackService = async (
   profile.rating.average = Math.min(5, Math.max(0, newAverage));
   profile.rating.count = newCount;
 
-  // 3️⃣ Mark session completed
-  session.status = SessionStatusEnum.COMPLETED;
-
-  await Promise.all([profile.save(), session.save()]);
+  await profile.save();
 
   return rating;
 };
