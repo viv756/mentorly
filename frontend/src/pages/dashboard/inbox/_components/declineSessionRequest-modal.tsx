@@ -32,20 +32,28 @@ const DeclineSessionRequestModal = ({ sessionId }: DeclineSessionRequestModalPro
       <DialogTrigger asChild>
         <Button variant={"ghost"}>Decline</Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="rounded-lg">
         <DialogHeader>
           <DialogTitle>Are you absolutely sure?</DialogTitle>
           <DialogDescription>
             This action cannot be undone. This will also decline the request.
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter className="">
+        <DialogFooter className="flex-row justify-end gap-2">
           <DialogClose asChild>
-            <Button variant={"ghost"} type="button" onClick={() => setOpen(false)}>
+            <Button
+              className="sm:flex-none sm:w-auto"
+              variant={"ghost"}
+              type="button"
+              onClick={() => setOpen(false)}>
               Close
             </Button>
           </DialogClose>
-          <Button type="button" className="w-20" onClick={handleSubmit} disabled={isPending}>
+          <Button
+            type="button"
+            className=" sm:flex-none sm:w-20"
+            onClick={handleSubmit}
+            disabled={isPending}>
             {isPending ? <Spinner /> : "  Submit"}
           </Button>
         </DialogFooter>
