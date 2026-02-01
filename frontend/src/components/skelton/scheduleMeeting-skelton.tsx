@@ -11,9 +11,9 @@ const ScheduleMeetingSkelton = () => {
             <div className="p-4 sm:p-6 md:p-8 border rounded-2xl sm:rounded-3xl w-full">
               <Skeleton className="h-3 w-30 mb-4" />
 
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+              <div className="flex  flex-row justify-between items-center gap-4 mb-4">
                 <Skeleton className="h-4 w-50" />
-                <Skeleton className="h-20 w-20 sm:h-24 sm:w-24 md:h-28 md:w-28 rounded-full shrink-0" />
+                <Skeleton className="h-28 w-28 sm:h-28 rounded-full shrink-0" />
               </div>
 
               <div className="border-y py-3 sm:py-4 mb-4 sm:mb-6 space-y-3 sm:space-y-0 sm:flex sm:justify-between sm:items-center gap-4">
