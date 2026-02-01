@@ -22,7 +22,7 @@ const LogoutDialog = ({ isOpen, setIsOpen }: LogoutDialogProps) => {
   const handleLogout = useCallback(() => {
     if (isPending) return;
     logout();
-    setIsOpen(false)
+    setIsOpen(false);
   }, [isPending, logout]);
 
   return (

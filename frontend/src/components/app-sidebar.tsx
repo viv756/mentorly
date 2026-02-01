@@ -178,9 +178,7 @@ export function AppSidebar() {
                 <DropdownMenuContent side="top" className="w-60">
                   <DropdownMenuItem
                     className="flex gap-2 text-destructive"
-                    onClick={() => {
-                      setIsOpen(true);
-                    }}>
+                    onClick={() => setIsOpen(true)}>
                     <LogOut className="h-4 w-4" />
                     Logout
                   </DropdownMenuItem>
