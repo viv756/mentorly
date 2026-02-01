@@ -18,7 +18,7 @@ const VideoCall = () => {
   if (isPending || !data) {
     return (
       <div className="flex items-center justify-center min-h-screen w-full">
-        <Loader title="Configuring your dashboard" />
+        <Loader title="Configuring your screen" />
       </div>
     );
   }
