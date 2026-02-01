@@ -43,7 +43,7 @@ export const loginController = asyncHandler(
         res.cookie("refreshToken", refreshToken, {
           httpOnly: true,
           secure: true,
-          sameSite: "strict",
+          sameSite: "none",
           path: "/api/auth/refresh",
         });
 
