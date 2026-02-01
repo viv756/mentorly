@@ -4,11 +4,13 @@ import crypto from "crypto";
 import { asyncHandler } from "../middlewares/asyncHandler.middleware";
 import { createAcceptRequestSchema, createSessionSchema } from "../validator/session.validator";
 import {
+  cancelSessionService,
   createAcceptRequestSessionService,
   createSessionService,
   findSessionByIdService,
   getCurrentUserRequestedAndUpcomingSessionsService,
   getCurrentUserSessionRequestService,
+  rejectSessionService,
 } from "../services/session.service";
 import { HTTP_STATUS } from "../config/http.config";
 import { generateAgoraToken } from "../config/agora.config";
@@ -53,6 +55,25 @@ export const createAcceptRequestSessionController = asyncHandler(
     });
   },
 );
+
+export const rejectSessionController = asyncHandler(async (req: Request, res: Response) => {
+  const sessionId = req.params.sessionId;
+
+  const session = await rejectSessionService(sessionId);
+
+  return res.status(HTTP_STATUS.OK).json({
+    message: "Session rejected",
+  });
+});
+
+export const cancelSessionController = asyncHandler(async (req: Request, res: Response) => {
+  const sessionId = req.params.sessionId;
+
+  await cancelSessionService(sessionId);
+  return res.status(HTTP_STATUS.OK).json({
+    message: "Session request cancelled",
+  });
+});
 
 export const getCurrentUserRequestedAndUpcomingSessionsController = asyncHandler(
   async (req: Request, res: Response) => {

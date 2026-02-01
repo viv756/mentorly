@@ -87,6 +87,30 @@ export const createSessionService = async (userId: string, body: CreateBodyType)
   return session;
 };
 
+export const rejectSessionService = async (sessionId: string) => {
+  const session = await SessionModel.findByIdAndUpdate(
+    sessionId,
+    { status: SessionStatusEnum.REJECTED },
+    { new: true }, // return updated document
+  );
+
+  if (!session) {
+    throw new BadRequestException("Session not found");
+  }
+
+  return session;
+};
+
+export const cancelSessionService = async (sessionId: string) => {
+  const session = await SessionModel.findByIdAndDelete(sessionId);
+
+  if (!session) {
+    throw new BadRequestException("Session not found");
+  }
+
+  return session;
+};
+
 export const getCurrentUserSessionRequestService = async (userId: string) => {
   const sessionRequests = await SessionModel.aggregate([
     {
