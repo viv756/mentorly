@@ -61,38 +61,39 @@ const LearnerProfile = () => {
       </aside>
 
       {/* Main Content Area */}
-      <ScrollArea>
-        <main className="flex-1 p-8 h-svh">
-          <h1 className="text-3xl  mb-7 underline underline-offset-2 font-semibold ">
-            Topics I Mentor and Guide Learners In
-          </h1>
+      <main className="flex-1 p-8 sm:h-screen sm:overflow-hidden">
+        <ScrollArea className="h-full">
+          <div className="sm:pr-4">
+            <h1 className="text-3xl mb-7 underline underline-offset-2 font-semibold">
+              Topics I Mentor and Guide Learners In
+            </h1>
 
-          <SkillCardSection skills={skills} />
-          <div className="mt-10">
-            <h2 className="text-3xl font-semibold">About Me</h2>
-            {socialLinks && socialLinks.length > 0 && (
-              <div className="flex gap-6 mt-4">
-                {socialLinks.map((socialLink, i) => {
-                  const Icon = SOCIAL_ICON_MAP[socialLink.platform];
-                  return (
-                    <Link
-                      key={i}
-                      target="_blank"
-                      to={`${socialLink.url}`}
-                      className="h-16 w-16 border rounded-xl flex items-center justify-center bg-secondary">
-                      <Icon className="h-10 w-10" />
-                    </Link>
-                  );
-                })}
+            <SkillCardSection skills={skills} />
+            <div className="mt-10">
+              <h2 className="text-3xl font-semibold">About Me</h2>
+              {socialLinks && socialLinks.length > 0 && (
+                <div className="flex gap-6 mt-4">
+                  {socialLinks.map((socialLink, i) => {
+                    const Icon = SOCIAL_ICON_MAP[socialLink.platform];
+                    return (
+                      <Link
+                        key={i}
+                        target="_blank"
+                        to={`${socialLink.url}`}
+                        className="h-16 w-16 border rounded-xl flex items-center justify-center bg-secondary">
+                        <Icon className="h-10 w-10" />
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+              <div className="mt-10 pb-10">
+                <p className="whitespace-pre-line">{`${userProfile.profile.aboutMe}`}</p>
               </div>
-            )}
-
-            <div className="mt-10 pb-10">
-              <p className="whitespace-pre-line">{`${userProfile.profile.aboutMe}`}</p>
             </div>
           </div>
-        </main>
-      </ScrollArea>
+        </ScrollArea>
+      </main>
     </div>
   );
 };
