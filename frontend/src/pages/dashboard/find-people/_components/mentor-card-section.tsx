@@ -11,7 +11,7 @@ const MentorCardSection = () => {
     return (
       <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-4">
         {Array.from({ length: 6 }).map((_, i) => (
-          <Card className="w-full max-w-sm min-h-80" key={i}>
+          <Card className="w-full sm:max-w-sm min-h-80" key={i}>
             <CardContent className="flex flex-col gap-3">
               <div className="flex gap-3">
                 <Skeleton className="h-20 w-20" />

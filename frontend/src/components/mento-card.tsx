@@ -7,7 +7,7 @@ import type { MatchedUser } from "@/features/user/types";
 
 export default function MentorCard({ user }: { user: MatchedUser }) {
   return (
-    <Card className="w-full max-w-sm min-h-80 ">
+    <Card className="w-full sm:max-w-sm min-h-80 ">
       <CardContent className="">
         <div className="flex items-start gap-4 mb-4">
           <Avatar className="w-20 h-20 rounded-md">

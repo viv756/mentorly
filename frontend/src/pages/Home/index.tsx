@@ -31,10 +31,10 @@ const Home = () => {
         <div className="px-4 sm:px-8 md:px-16 lg:px-30 relative z-10">
           <Meteors />
           <Navbar />
-          
-          <div className="relative pb-20 sm:pb-32 md:pb-40 lg:pb-60 overflow-hidden w-full min-h-[calc(100vh-80px)] sm:min-h-screen flex items-center justify-center">
+
+          <div className="relative pb-20 sm:pb-32 md:pb-40 lg:pb-60 overflow-hidden w-full min-h-[calc(100vh-60px)]  sm:min-h-screen  flex items-center justify-center">
             <div className="space-y-4 sm:space-y-6 text-center max-w-5xl mx-auto px-4">
-              <h1 className="pointer-events-none bg-gradient-to-b from-black to-gray-300/80 bg-clip-text text-center text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight sm:leading-none font-semibold whitespace-pre-wrap text-transparent dark:from-white dark:to-slate-900/10">
+              <h1 className="pointer-events-none bg-linear-to-b from-black to-gray-300/80 bg-clip-text text-center text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight sm:leading-none font-semibold whitespace-pre-wrap text-transparent dark:from-white dark:to-slate-900/10">
                 Where Skills Are Exchanged <br />
                 <span className="text-primary block text-center mt-2">Not sold.</span>
               </h1>
@@ -43,9 +43,9 @@ const Home = () => {
                 mentoring.
               </p>
             </div>
-            <Globe className="absolute top-[60%] sm:top-[65%] md:top-[70%] lg:top-80 left-1/2 -translate-x-1/2 w-full max-w-[300px] sm:max-w-[400px] md:max-w-[500px] lg:max-w-[600px] lg:min-w-250" />
+            <Globe className="absolute top-[60%] sm:top-[65%] md:top-[70%] lg:top-80 left-1/2 -translate-x-1/2 w-full max-w-75 sm:max-w-100 md:max-w-125 lg:max-w-150 lg:min-w-250" />
           </div>
-          
+
           <div className="pointer-events-none absolute inset-0 h-full bg-[radial-gradient(circle_at_50%_200%,rgba(255,0,0,0.2),rgba(255,255,255,0))] dark:bg-[radial-gradient(circle_at_50%_200%,rgba(127,29,29,0.3),rgba(0,0,0,0))]" />
         </div>
       </div>

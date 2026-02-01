@@ -18,7 +18,7 @@ const Meetings = () => {
             <TabsTrigger value="requested" className="">
               Requested
             </TabsTrigger>
-          </TabsList>
+          </TabsList> 
           <TabsContent value="upcoming">
             <UpcomingMeetingsSkelton />
           </TabsContent>

@@ -11,12 +11,12 @@ type SkillCardType = {
 
 const SkillCard = ({ skill }: SkillCardType) => {
   return (
-    <Card className="w-full max-w-md overflow-hidden hover:shadow-lg transition-shadow duration-300 border-l-4 border-l-primary">
+    <Card className="w-full sm:max-w-md overflow-hidden hover:shadow-lg transition-shadow duration-300 border-l-4 border-l-primary">
       <CardHeader className="space-y-3 pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-2xl font-bold">{skill.skillName}</CardTitle>
           <Badge variant="secondary" className="text-xs font-semibold">
-            {skill.skillLevel}
+            {skill.skillLevel} 
           </Badge>
         </div>
         {/* <CardDescription className="text-sm leading-relaxed line-clamp-3">
@@ -45,7 +45,7 @@ export default SkillCard;
 
 export const SkillCardSkelton = () => {
   return (
-    <Card className="w-full max-w-md h-38">
+    <Card className="w-full sm:max-w-md h-38">
       <CardHeader className="flex justify-between items-center">
         <Skeleton className="h-3 w-50" />
         <Skeleton className="h-4  w-20" />

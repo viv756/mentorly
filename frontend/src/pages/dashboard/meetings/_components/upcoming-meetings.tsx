@@ -32,11 +32,11 @@ export default function UpcomingMeetings({ upcoming }: UpcomingMeetingsProps) {
             </p>
           </div>
         ) : (
-          <div className="space-y-4 grid sm:grid-cols-2 ">
+          <div className="grid lg:grid-cols-2 gap-3">
             {upcoming.map((session) => (
               <Card
                 key={session._id}
-                className="hover:shadow-lg transition-shadow border-l-4 border-l-primary max-w-xl ">
+                className="hover:shadow-lg transition-shadow border-l-4 border-l-primary w-full sm:max-w-xl ">
                 <CardContent className="">
                   <div className="space-y-4">
                     {/* Header Section */}
@@ -151,7 +151,7 @@ export const UpcomingMeetingsSkelton = () => {
       {Array.from({ length: 4 }).map((_, i) => (
         <Card key={i} className="sm:max-w-xl max-w-sm max-h-75">
           <CardHeader className="">
-            <div className="flex  justify-between">
+            <div className="flex justify-between">
               <Skeleton className="h-3 w-30" />
               <Skeleton className="h-3 w-30" />
             </div>
