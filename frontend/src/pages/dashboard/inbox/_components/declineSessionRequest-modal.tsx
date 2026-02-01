@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,14 +18,17 @@ interface DeclineSessionRequestModalProps {
 }
 
 const DeclineSessionRequestModal = ({ sessionId }: DeclineSessionRequestModalProps) => {
+  const [open, setOpen] = useState(false);
   const { mutate: rejectSession, isPending } = useRejectSessionRequest();
 
   const handleSubmit = () => {
-    rejectSession(sessionId);
+    rejectSession(sessionId, {
+      onSuccess: () => setOpen(false),
+    });
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant={"ghost"}>Decline</Button>
       </DialogTrigger>
@@ -37,12 +41,12 @@ const DeclineSessionRequestModal = ({ sessionId }: DeclineSessionRequestModalPro
         </DialogHeader>
         <DialogFooter className="">
           <DialogClose asChild>
-            <Button variant={"ghost"} type="button">
+            <Button variant={"ghost"} type="button" onClick={() => setOpen(false)}>
               Close
             </Button>
           </DialogClose>
-          <Button onClick={handleSubmit} className="w-20">
-            {isPending ? <Spinner /> : "Submit"}
+          <Button type="button" className="w-20" onClick={handleSubmit} disabled={isPending}>
+            {isPending ? <Spinner /> : "  Submit"}
           </Button>
         </DialogFooter>
       </DialogContent>

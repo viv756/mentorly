@@ -1,10 +1,9 @@
-import { cancelSessionRequestApiFn } from "@/features/session/api/cancelSessionRequestApi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { cancelSessionRequestApiFn } from "@/features/session/api/cancelSessionRequestApi";
 import { toast } from "sonner";
 
 export const useCancelSessionRequest = () => {
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: (sessionId: string) => cancelSessionRequestApiFn(sessionId),
     onSuccess: (data) => {

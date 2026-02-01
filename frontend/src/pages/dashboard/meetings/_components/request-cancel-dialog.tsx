@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,22 +13,24 @@ import {
 } from "@/components/ui/dialog";
 import { Spinner } from "@/components/ui/spinner";
 import { useCancelSessionRequest } from "@/hooks/api/session/use-cancelSessionRequest";
-import { Trash2 } from "lucide-react";
 
 interface SessionCancelDialogProps {
   sessionId: string;
 }
 
 const SessionCancelDialog = ({ sessionId }: SessionCancelDialogProps) => {
+  const [open, setOpen] = useState(false);
   const { mutate: cancelSession, isPending } = useCancelSessionRequest();
 
   const handleSubmit = () => {
-    cancelSession(sessionId);
+    cancelSession(sessionId, {
+      onSuccess: () => setOpen(false),
+    });
   };
 
   return (
     <div>
-      <Dialog>
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button
             variant="ghost"
@@ -45,12 +49,12 @@ const SessionCancelDialog = ({ sessionId }: SessionCancelDialogProps) => {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <DialogClose>
-              <Button type="button" variant="ghost">
+            <DialogClose asChild>
+              <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="button" className="w-25" onClick={handleSubmit}>
+            <Button type="button" className="w-20" onClick={handleSubmit} disabled={isPending}>
               {isPending ? <Spinner /> : "  Submit"}
             </Button>
           </DialogFooter>
