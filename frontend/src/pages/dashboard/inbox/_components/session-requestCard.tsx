@@ -42,7 +42,7 @@ const SessionRequestCard = ({ session }: { session: any }) => {
         </div>
       </CardContent>
       <CardFooter className="flex justify-end">
-        <DeclineSessionRequestModal />
+        <DeclineSessionRequestModal sessionId={session._id} />
         <AcceptSessionRequestModal sessionId={session._id} learnerId={session.learner._id} />
       </CardFooter>
     </Card>

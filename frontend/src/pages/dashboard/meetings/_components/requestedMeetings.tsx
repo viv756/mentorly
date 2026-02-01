@@ -1,5 +1,5 @@
 import { format, formatDistanceToNow } from "date-fns";
-import { Calendar, Clock, User, Target, Send, AlertCircle, Trash2 } from "lucide-react";
+import { Calendar, Clock, User, Target, Send, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -7,6 +7,7 @@ import type { RequestedType } from "@/features/session/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "react-router-dom";
 import { PROTECTED_ROUTES } from "@/routes/common/routePath";
+import SessionCancelDialog from "./request-cancel-dialog";
 
 type RequestedMeetingsProps = {
   requested: RequestedType | [];
@@ -31,9 +32,9 @@ export default function RequestedMeetings({ requested }: RequestedMeetingsProps)
               </Button>
             </Link>
           </CardContent>
-        ) : ( 
+        ) : (
           <div className=" grid lg:grid-cols-2 gap-3">
-            {requested.map((session) => ( 
+            {requested.map((session) => (
               <Card
                 key={session._id}
                 className="hover:shadow-lg transition-shadow border-l-4 border-l-primary w-full sm:max-w-xl">
@@ -92,14 +93,7 @@ export default function RequestedMeetings({ requested }: RequestedMeetingsProps)
 
                     {/* Actions */}
                     <CardFooter className="mt-auto flex justify-end ">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        // onClick={() => handleCancel(request.id)}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50">
-                        <Trash2 size={16} className="mr-1" />
-                        Cancel
-                      </Button>
+                      <SessionCancelDialog sessionId={session._id} />
                     </CardFooter>
                   </div>
                 </CardContent>

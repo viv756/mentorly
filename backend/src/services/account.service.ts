@@ -1,5 +1,5 @@
 import AccountModel from "../models/account.model";
-import { ForbiddenException } from "../utils/appError";
+import { BadRequestException, ForbiddenException } from "../utils/appError";
 
 export const accountRefreshTokenService = async (userId: string, token: string) => {
   const account = await AccountModel.findOne({ userId });
@@ -23,4 +23,17 @@ export const refreshTokenService = async (userId: string, token: string) => {
   if (storedRefreshToken !== token) {
     throw new ForbiddenException("Refresh token reuse detected");
   }
+};
+
+export const logoutService = async (userId: string) => {
+  const account = await AccountModel.updateOne(
+    { userId },
+    { $set: { refreshToken: null, tokenExpiry: null } },
+  );
+
+  if (account.matchedCount === 0) {
+    throw new BadRequestException("Account not found");
+  }
+
+  return account;
 };
