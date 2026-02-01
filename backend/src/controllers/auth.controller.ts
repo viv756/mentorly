@@ -2,7 +2,11 @@ import { NextFunction, Request, Response } from "express";
 import passport from "passport";
 import jwt from "jsonwebtoken";
 
-import { accountRefreshTokenService, refreshTokenService } from "../services/account.service";
+import {
+  accountRefreshTokenService,
+  logoutService,
+  refreshTokenService,
+} from "../services/account.service";
 import { findByIdUserService, markActive } from "../services/user.service";
 import { signAccessToken } from "../utils/tokens";
 import { signRefreshToken } from "../utils/tokens";
@@ -86,5 +90,22 @@ export const refreshTokenController = asyncHandler(async (req: Request, res: Res
   return res.status(HTTP_STATUS.OK).json({
     accessToken,
     expiresAt,
+  });
+});
+
+export const logoutController = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?._id;
+
+  await logoutService(userId);
+
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    path: "/api/auth/refresh",
+  });
+
+  return res.status(HTTP_STATUS.OK).json({
+    message: "Logged out successfully",
   });
 });

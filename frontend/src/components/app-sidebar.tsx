@@ -36,6 +36,8 @@ import {
 } from "./ui/dropdown-menu";
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
+import LogoutDialog from "./logout-dialog";
+import { useState } from "react";
 
 // Main menu items (NO settings here)
 const items = [
@@ -77,6 +79,7 @@ const items = [
 ];
 
 export function AppSidebar() {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const { isMobile, setOpenMobile } = useSidebar();
 
   const handleNavClick = () => {
@@ -86,101 +89,108 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar className="lg:border-r-0!">
-      {/* Header */}
-      <SidebarHeader className="md:p-3.5">
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <Logo />
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader>
+    <>
+      <Sidebar className="lg:border-r-0!">
+        {/* Header */}
+        <SidebarHeader className="md:p-3.5">
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <Logo />
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarHeader>
 
-      {/* Content */}
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <NavLink to={item.url} end onClick={handleNavClick}>
-                    {({ isActive }) => (
-                      <SidebarMenuButton isActive={isActive}>
-                        <span className="flex items-center gap-3">
-                          <item.icon className="h-4 w-4" />
-                          <span>{item.title}</span>
-                        </span>
+        {/* Content */}
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {items.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <NavLink to={item.url} end onClick={handleNavClick}>
+                      {({ isActive }) => (
+                        <SidebarMenuButton isActive={isActive}>
+                          <span className="flex items-center gap-3">
+                            <item.icon className="h-4 w-4" />
+                            <span>{item.title}</span>
+                          </span>
+                        </SidebarMenuButton>
+                      )}
+                    </NavLink>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+
+              {/* Settings collapsible */}
+              <SidebarMenu>
+                <Collapsible className="group/settings">
+                  <SidebarMenuItem>
+                    <CollapsibleTrigger asChild>
+                      <SidebarMenuButton className="flex items-center gap-3">
+                        <Settings className="h-4 w-4" />
+                        <span>Settings</span>
+                        <ChevronRight className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/settings:rotate-90" />
                       </SidebarMenuButton>
-                    )}
-                  </NavLink>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+                    </CollapsibleTrigger>
 
-            {/* Settings collapsible */}
-            <SidebarMenu>
-              <Collapsible className="group/settings">
-                <SidebarMenuItem>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton className="flex items-center gap-3">
-                      <Settings className="h-4 w-4" />
-                      <span>Settings</span>
-                      <ChevronRight className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/settings:rotate-90" />
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
+                    <CollapsibleContent className="ml-3">
+                      <SidebarMenuSub className="text-muted-foreground">
+                        <SidebarMenuSubItem>
+                          <NavLink to="/account">
+                            {({ isActive }) => (
+                              <SidebarMenuButton isActive={isActive} onClick={handleNavClick}>
+                                Account
+                              </SidebarMenuButton>
+                            )}
+                          </NavLink>
+                        </SidebarMenuSubItem>
 
-                  <CollapsibleContent className="ml-3">
-                    <SidebarMenuSub className="text-muted-foreground">
-                      <SidebarMenuSubItem>
-                        <NavLink to="/account">
-                          {({ isActive }) => (
-                            <SidebarMenuButton isActive={isActive} onClick={handleNavClick}>
-                              Account
-                            </SidebarMenuButton>
-                          )}
-                        </NavLink>
-                      </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <NavLink to="/advanced">
+                            {({ isActive }) => (
+                              <SidebarMenuButton isActive={isActive} onClick={handleNavClick}>
+                                Advanced
+                              </SidebarMenuButton>
+                            )}
+                          </NavLink>
+                        </SidebarMenuSubItem>
+                      </SidebarMenuSub>
+                    </CollapsibleContent>
+                  </SidebarMenuItem>
+                </Collapsible>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
 
-                      <SidebarMenuSubItem>
-                        <NavLink to="/advanced">
-                          {({ isActive }) => (
-                            <SidebarMenuButton isActive={isActive} onClick={handleNavClick}>
-                              Advanced
-                            </SidebarMenuButton>
-                          )}
-                        </NavLink>
-                      </SidebarMenuSubItem>
-                    </SidebarMenuSub>
-                  </CollapsibleContent>
-                </SidebarMenuItem>
-              </Collapsible>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-
-      {/* Footer */}
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton>
-                  <User2 className="h-4 w-4" />
-                  <span>Username</span>
-                  <ChevronsUpDown className="ml-auto h-4 w-4" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent side="top" className="w-60">
-                <DropdownMenuItem className="flex gap-2 text-destructive">
-                  <LogOut className="h-4 w-4" />
-                  <span>Logout</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
-    </Sidebar>
+        {/* Footer */}
+        <SidebarFooter>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <SidebarMenuButton>
+                    <User2 className="h-4 w-4" />
+                    <span>Username</span>
+                    <ChevronsUpDown className="ml-auto h-4 w-4" />
+                  </SidebarMenuButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent side="top" className="w-60">
+                  <DropdownMenuItem
+                    className="flex gap-2 text-destructive"
+                    onClick={() => {
+                      setIsOpen(true);
+                    }}>
+                    <LogOut className="h-4 w-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
+      </Sidebar>
+      <LogoutDialog isOpen={isOpen} setIsOpen={setIsOpen} />
+    </>
   );
 }
