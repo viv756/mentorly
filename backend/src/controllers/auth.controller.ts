@@ -45,6 +45,7 @@ export const loginController = asyncHandler(
           secure: true,
           sameSite: "none",
           path: "/api/auth/refresh",
+          maxAge: 30 * 24 * 60 * 60 * 1000,
         });
 
         res.status(HTTP_STATUS.OK).json({
