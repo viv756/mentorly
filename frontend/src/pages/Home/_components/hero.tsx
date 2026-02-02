@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 
 export default function HeroLanding() {
   return (
-    <div className=" px-10 ">
+    <div className="px-10 ">
       <section className="grid lg:grid-cols-2 gap-10  py-16 items-center">
         {/* Left */}
         <div className="space-y-6">
