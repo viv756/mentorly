@@ -16,7 +16,7 @@ const SkillCard = ({ skill }: SkillCardType) => {
         <div className="flex items-center justify-between">
           <CardTitle className="text-2xl font-bold">{skill.skillName}</CardTitle>
           <Badge variant="secondary" className="text-xs font-semibold">
-            {skill.skillLevel} 
+            {skill.skillLevel}
           </Badge>
         </div>
         {/* <CardDescription className="text-sm leading-relaxed line-clamp-3">
@@ -24,7 +24,7 @@ const SkillCard = ({ skill }: SkillCardType) => {
         </CardDescription> */}
       </CardHeader>
       <CardFooter className="mt-auto">
-        <div className="flex items-center gap-4 text-sm ">
+        <div className="flex items-center gap-4 text-sm">
           <div className="flex items-center gap-2">
             <Briefcase className="w-4 h-4 text-blue-600" />
             <span className="font-medium">{formatWord(skill.category)}</span>

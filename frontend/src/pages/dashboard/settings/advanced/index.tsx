@@ -1,6 +1,11 @@
+import AccountManagement from "./_components/account-management";
 
 const Advanced = () => {
-  return <div>Advanced</div>;
+  return (
+    <div className="mt-10">
+       <AccountManagement/>
+   </div>
+  )
 };
 
 export default Advanced;

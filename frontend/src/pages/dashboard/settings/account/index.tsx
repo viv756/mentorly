@@ -1,6 +1,9 @@
+import AccountDetails from "./_components/account-details";
 
-const Account = () => {
-  return <div>Account</div>;
-};
-
-export default Account;
+export default function Account() {
+  return (
+    <div className="mt-10 ">
+      <AccountDetails />
+    </div>
+  );
+}
