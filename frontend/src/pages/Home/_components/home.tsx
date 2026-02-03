@@ -308,9 +308,9 @@ function GlowyWavesHero() {
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" aria-hidden="true" />
 
       <div className="absolute inset-0 -z-10 pointer-events-none">
-        <div className="absolute left-1/2 top-0 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-foreground/[0.035] blur-[140px] dark:bg-foreground/[0.06]" />
-        <div className="absolute bottom-0 right-0 h-[360px] w-[360px] rounded-full bg-foreground/[0.025] blur-[120px] dark:bg-foreground/[0.05]" />
-        <div className="absolute top-1/2 left-1/4 h-[400px] w-[400px] rounded-full bg-primary/[0.02] blur-[150px] dark:bg-primary/[0.05]" />
+        <div className="absolute left-1/2 top-0 h-130 w-130 -translate-x-1/2 rounded-full bg-foreground/[0.035] blur-[140px] dark:bg-foreground/6" />
+        <div className="absolute bottom-0 right-0 h-90 w-90 rounded-full bg-foreground/2.5 blur-[120px] dark:bg-foreground/5" />
+        <div className="absolute top-1/2 left-1/4 h-100 w-100 rounded-full bg-primary/2 blur-[150px] dark:bg-primary/5" />
       </div>
 
       <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col items-center px-6 py-24 text-center md:px-8 lg:px-12">
@@ -483,7 +483,7 @@ function AboutUsSection() {
           whileInView="visible"
           viewport={{ once: true }}
           className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
-          {values.map((value, index) => {
+          {values.map((value) => {
             const Icon = value.icon;
             return (
               <motion.div key={value.title} variants={itemVariants}>
@@ -566,7 +566,7 @@ function FooterBlock() {
           }
         />
         <motion.div
-          className="absolute -bottom-36 right-0 h-96 w-96 rounded-full bg-[hsl(var(--primary)_/_0.18)] blur-[200px]"
+          className="absolute -bottom-36 right-0 h-96 w-96 rounded-full bg-[hsl(var(--primary)/0.18)] blur-[200px]"
           animate={
             shouldReduceMotion ? undefined : { opacity: [0.18, 0.4, 0.18], rotate: [0, 25, 0] }
           }
