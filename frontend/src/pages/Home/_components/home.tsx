@@ -436,7 +436,7 @@ const values = [
     icon: Heart,
     title: "Our Values",
     description:
-      "Trust, transparency, inclusivity, and a deep commitment to personal and professional growth.",
+      "Trust, transparency, inclusively, and a deep commitment to personal and professional growth.",
   },
 ];
 
