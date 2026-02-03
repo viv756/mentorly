@@ -14,6 +14,7 @@ import UserProfile from "@/pages/user-profile";
 import ScheduleMeeting from "@/pages/schedule-meeting";
 import Inbox from "@/pages/dashboard/inbox";
 import Meetings from "@/pages/dashboard/meetings";
+import DiscoverAi from "@/pages/dashboard/discover-ai";
 import LearnerProfile from "@/pages/dashboard/inbox/_components/learner-profile";
 import CreateSession from "@/pages/dashboard/inbox/_components/create-session";
 import VideoCall from "@/pages/video-call";
@@ -42,6 +43,7 @@ export const protectedAppLayoutRoutes = [
   { path: PROTECTED_ROUTES.INBOX, element: <Inbox /> },
   { path: PROTECTED_ROUTES.MEETINGS, element: <Meetings /> },
   { path: PROTECTED_ROUTES.FIND_PEOPLE, element: <FindPeople /> },
+  { path: PROTECTED_ROUTES.DISCOVER_AI, element: <DiscoverAi /> },
   { path: PROTECTED_ROUTES.SKILLS, element: <UserSkills /> },
   { path: PROTECTED_ROUTES.ACCOUNT, element: <Account /> },
   { path: PROTECTED_ROUTES.ADVANCED, element: <Advanced /> },
