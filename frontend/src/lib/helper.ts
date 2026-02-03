@@ -1,3 +1,5 @@
+import type { ChatMessage } from "@/features/ai/types";
+
 export const formatTime = (time: string) => {
   const [h, m] = time.split(":");
   const hour24 = Number(h);
@@ -53,4 +55,27 @@ export const getLast12MonthsRange = () => {
   });
 
   return `${startMonth} – ${endMonth}`;
+};
+
+const extractUserMessage = (msg: ChatMessage): { role: "user"; content: string } | null => {
+  if (msg.role === "user") {
+    return {
+      role: msg.role,
+      content: msg.content,
+    };
+  }
+  return null;
+};
+
+export const filterUserMessages = (messages: ChatMessage[]) => {
+  const result: Array<{ role: "user"; content: string }> = [];
+
+  for (const msg of messages) {
+    const userMsg = extractUserMessage(msg);
+    if (userMsg) {
+      result.push(userMsg);
+    }
+  }
+
+  return result;
 };

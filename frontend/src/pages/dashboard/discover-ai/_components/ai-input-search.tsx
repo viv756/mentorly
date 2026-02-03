@@ -4,19 +4,17 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 import { useAutoResizeTextarea } from "@/hooks/use-auto-resize-textarea";
+import { useAiAssistant } from "@/hooks/api/ai/use-aiAssistent";
+import type { ChatMessage } from "@/features/ai/types";
+import { useChatStore } from "@/store/use-message-store";
 
 // Define form schema
 const formSchema = z.object({
-  search: z.string().min(1, {
+  content: z.string().min(1, {
     message: "Please enter a search query.",
   }),
 });
@@ -24,6 +22,10 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export default function AI_Input_Search() {
+  const addMessage = useChatStore((s) => s.addMessage);
+  const messages = useChatStore((s) => s.messages);
+  const { mutate: sendMessage } = useAiAssistant();
+
   const { textareaRef, adjustHeight } = useAutoResizeTextarea({
     minHeight: 52,
     maxHeight: 200,
@@ -34,18 +36,24 @@ export default function AI_Input_Search() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      search: "",
+      content: "",
     },
   });
 
-  const value = form.watch("search");
+  const value = form.watch("content");
 
   const onSubmit = async (data: FormValues) => {
     try {
       console.log("Submitted:", data);
-      // Your API call here
-      
-      // Reset form after submission
+
+      const payload: ChatMessage = {
+        role: "user",
+        content: data.content,
+      };
+
+      addMessage(payload);
+      sendMessage([...messages, payload]);
+
       form.reset();
       adjustHeight(true);
     } catch (error) {
@@ -69,7 +77,7 @@ export default function AI_Input_Search() {
 
   return (
     <div className="w-full py-4">
-      <div className="relative max-w-[700px] w-full mx-auto">
+      <div className="relative max-w-200 w-full mx-auto">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div
@@ -87,10 +95,10 @@ export default function AI_Input_Search() {
                   handleContainerClick();
                 }
               }}>
-              <div className="overflow-y-auto max-h-[200px]">
+              <div className="overflow-y-auto max-h-50">
                 <FormField
                   control={form.control}
-                  name="search"
+                  name="content"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
