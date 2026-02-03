@@ -7,16 +7,12 @@ const Navbar = () => {
   const user = useAuthStore((s) => s.user);
 
   return (
-    <nav className="pt-5">
+    <nav className="pt-5 sm:px-24 px-2 ">
       <div className="flex justify-between items-center">
         <div>
           <Logo />
         </div>
-        {user ? (
-          <Link to={"/overview"}>
-            <Button className="h-10">DashBoard</Button>
-          </Link>
-        ) : (
+        {!user && (
           <Link to={"/sign-in"}>
             <Button className="h-10 ">Sign In</Button>
           </Link>

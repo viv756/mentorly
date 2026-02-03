@@ -113,7 +113,7 @@ const DiscoverAi = () => {
 
                     if (message.type === "searchResults") {
                       return (
-                        <Message key={message.messageId} from="assistant" className=" ">
+                        <Message key={message.messageId} from="assistant" className="">
                           <MessageContent className="flex flex-col gap-11 ">
                             {message.content.map((user) => (
                               <div
