@@ -15,11 +15,12 @@ export const PROTECTED_ROUTES = {
   INBOX: "/inbox",
   MEETINGS: "/meetings",
   FIND_PEOPLE: "/find-people",
+  DISCOVER_AI: "/ai-search",
   USER_PROFILE: "/user/:userId",
   SCHEDULE_MEETING: "/user/:userId/skill/:skillId",
   LEARNER_PROFILE: "/learner-profile/:learnerId/session/:sessionId",
   CREATE_SESSION: "/create-session/:sessionId/skill/:skillId/learner/:learnerId",
-  VIDEO_CALL:"/session/:sessionId/join",
+  VIDEO_CALL: "/session/:sessionId/join",
   ACCOUNT: "/account",
   ADVANCED: "/advanced",
 };
