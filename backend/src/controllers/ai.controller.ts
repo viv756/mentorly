@@ -1,13 +1,17 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../middlewares/asyncHandler.middleware";
-import { aiAssistantService, ChatMessage } from "../services/ai.service";
+import { aiAssistantService } from "../services/ai.service";
 import { HTTP_STATUS } from "../config/http.config";
+import { ChatMessagesSchema } from "../validator/ai.validator";
 
 export const aiAssistantController = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?._id;
-  const { message} = req.body.message;
+  console.log(req.body);
 
-  const response = await aiAssistantService(message, userId);
+  const body = ChatMessagesSchema.parse(req.body);
+
+  const response = await aiAssistantService(body, userId);
+  console.log("response:", response);
 
   return res.status(HTTP_STATUS.OK).json({
     message: "Ai fetched",
