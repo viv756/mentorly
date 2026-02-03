@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   Conversation,
   ConversationContent,
   ConversationEmptyState,
+  ConversationScrollButton,
 } from "@/components/ai/conversation";
 import { Message, MessageContent } from "@/components/ai/message";
 import { Orb } from "@/components/ai/orb";
@@ -12,10 +15,10 @@ import { useChatStore } from "@/store/use-message-store";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { StreamingResponse } from "./_components/streaming-response";
-import { useAiAssistant } from "@/hooks/api/ai/use-aiAssistent";
+import { ShimmeringText } from "@/components/ai/shimmering-text";
+import { useAiAssistant } from "@/hooks/api/ai/use-aiAssistant";
 
 export type MessageVariant = "user" | "assistant";
 
@@ -27,11 +30,27 @@ export interface Message {
   avatarUrl: string;
 }
 
+const phrases = [
+  "Agent is thinking...",
+  "Processing your request...",
+  "Analyzing the data...",
+  "Generating response...",
+  "Almost there...",
+];
+
 const DiscoverAi = () => {
   const [isStreaming, setIsStreaming] = useState(false);
-  // const { isPending } = useAiAssistant();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const { mutate: sendMessage, isPending } = useAiAssistant();
   const messages = useChatStore((s) => s.messages);
   const clearMessages = useChatStore((s) => s.clearMessages);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % phrases.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     // cleanup runs when component unmounts
@@ -41,13 +60,13 @@ const DiscoverAi = () => {
   }, [clearMessages]);
 
   return (
-    <div className="min-h-screen flex flex-col w-full">
+    <div className="h-full flex flex-col w-full">
       {/* Main content area */}
-      <div className="flex-1 flex justify-center w-full">
+      <div className="flex-1 min-h-0 flex justify-center w-full">
         <div className="max-w-4xl w-full">
-          <Conversation>
+          <Conversation className="h-full">
             <ConversationContent>
-              {messages.length === 0 ? (
+              {messages.length === 0 && !isPending ? (
                 <ConversationEmptyState
                   icon={<Orb className="size-12" />}
                   title="Start a conversation"
@@ -97,7 +116,9 @@ const DiscoverAi = () => {
                         <Message key={message.messageId} from="assistant" className=" ">
                           <MessageContent className="flex flex-col gap-11 ">
                             {message.content.map((user) => (
-                              <div className="flex sm:flex-row flex-col gap-5 sm:gap-2 items-center">
+                              <div
+                                key={user.userId}
+                                className="flex sm:flex-row flex-col gap-5 sm:gap-2 items-center">
                                 <Card className="w-full sm:max-w-sm min-h-80">
                                   <CardContent className="">
                                     <div className="flex items-start gap-4 mb-4">
@@ -141,29 +162,39 @@ const DiscoverAi = () => {
                         </Message>
                       );
                     }
-                    // assistant message
-                    // return (
-                    //   <Message key={message.messageId} from="assistant">
-                    //     <MessageContent>
-                    //       {isLastMessage ? (
-                    //         <StreamingResponse text={message.content} />
-                    //       ) : (
-                    //         <Response>{message.content}</Response>
-                    //       )}
-                    //     </MessageContent>
-                    //   </Message>
-                    // );
                   })}
+
+                  {/* Show loading shimmer when pending */}
                 </>
               )}
+              {isPending && (
+                <Message from="assistant">
+                  <MessageContent>
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={currentIndex}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.3 }}>
+                        <ShimmeringText text={phrases[currentIndex]} />
+                      </motion.div>
+                    </AnimatePresence>
+                  </MessageContent>
+                  <div className="ring-border size-8 overflow-hidden rounded-full ring-1">
+                    <Orb className="h-full w-full" agentState="thinking" />
+                  </div>
+                </Message>
+              )}
             </ConversationContent>
+            <ConversationScrollButton />
           </Conversation>
         </div>
       </div>
 
       {/* Input fixed at bottom */}
-      <div className="sticky bottom-0 bg-background/80 backdrop-blur-sm border-t">
-        <AI_Input_Search />
+      <div className="shrink-0 bg-background/80 backdrop-blur-sm border-t">
+        <AI_Input_Search onSend={sendMessage} />
       </div>
     </div>
   );

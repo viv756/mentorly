@@ -1,16 +1,15 @@
-import { Globe, Send } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Globe, Send } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
-import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
-import { useAutoResizeTextarea } from "@/hooks/use-auto-resize-textarea";
-import { useAiAssistant } from "@/hooks/api/ai/use-aiAssistent";
 import type { ChatMessage } from "@/features/ai/types";
 import { useChatStore } from "@/store/use-message-store";
+import { useAutoResizeTextarea } from "@/hooks/use-auto-resize-textarea";
 
 // Define form schema
 const formSchema = z.object({
@@ -21,10 +20,9 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export default function AI_Input_Search() {
+export default function AI_Input_Search({ onSend }: { onSend: (m: any) => void }) {
   const addMessage = useChatStore((s) => s.addMessage);
   const messages = useChatStore((s) => s.messages);
-  const { mutate: sendMessage } = useAiAssistant();
 
   const { textareaRef, adjustHeight } = useAutoResizeTextarea({
     minHeight: 52,
@@ -44,15 +42,13 @@ export default function AI_Input_Search() {
 
   const onSubmit = async (data: FormValues) => {
     try {
-      console.log("Submitted:", data);
-
       const payload: ChatMessage = {
         role: "user",
         content: data.content,
       };
 
       addMessage(payload);
-      sendMessage([...messages, payload]);
+      onSend([...messages, payload]);
 
       form.reset();
       adjustHeight(true);

@@ -6,12 +6,9 @@ import { ChatMessagesSchema } from "../validator/ai.validator";
 
 export const aiAssistantController = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?._id;
-  console.log(req.body);
-
   const body = ChatMessagesSchema.parse(req.body);
 
   const response = await aiAssistantService(body, userId);
-  console.log("response:", response);
 
   return res.status(HTTP_STATUS.OK).json({
     message: "Ai fetched",

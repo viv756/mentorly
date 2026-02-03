@@ -9,14 +9,12 @@ export const useAiAssistant = () => {
 
   return useMutation({
     mutationFn: (messages: ChatMessage[]) => {
-      const userMessages  = filterUserMessages(messages);
+      const userMessages = filterUserMessages(messages);
       return aiAssistantAPiFn(userMessages);
     },
 
     onSuccess: (data) => {
       const aiResponse = data.response;
-      console.log("API Response:", aiResponse); // Debug log
-
       if (aiResponse.type === "followup") {
         addMessage({
           role: "assistant",
@@ -26,8 +24,6 @@ export const useAiAssistant = () => {
       }
 
       if (aiResponse.type === "searchResults") {
-        console.log("Mentors data:", aiResponse.mentors); // Debug log
-
         // Check if mentors is an array and has the expected structure
         if (!Array.isArray(aiResponse.mentors)) {
           console.error("Mentors is not an array:", aiResponse.mentors);

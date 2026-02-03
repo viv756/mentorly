@@ -1,10 +1,10 @@
-import { createOpenRouter } from "@openrouter/ai-sdk-provider";
-import { Env } from "../config/env.config";
-import { generateText } from "ai";
-import UserSkillModel from "../models/user-skill.model";
 import mongoose from "mongoose";
-import { ChatMessagesType } from "../validator/ai.validator";
+import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { z } from "zod";
+import { generateText } from "ai";
+import { Env } from "../config/env.config";
+import UserSkillModel from "../models/user-skill.model";
+import { ChatMessagesType } from "../validator/ai.validator";
 import { SkillTypeEnum } from "../enums/skill.enum";
 
 const openRouter = createOpenRouter({
@@ -197,8 +197,6 @@ export const aiAssistantService = async (messages: ChatMessagesType, userId: str
         role: "assistant",
       };
     }
-
-    console.log("AI Intent:", aiResponse);
 
     // 3️⃣ Handle follow-up
     if (aiResponse.type === "followup") {

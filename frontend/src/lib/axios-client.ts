@@ -6,7 +6,6 @@ import { baseURL } from "./base-url";
 const options = {
   baseURL,
   withCredentials: true,
-  timeout: 10000,
 };
 
 // Create axios Instance
