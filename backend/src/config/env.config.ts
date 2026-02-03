@@ -10,6 +10,9 @@ const envConfig = () => ({
   JWT_ACCESS_SECRET: getEnv("JWT_SECRET", "secert_jwt"),
   JWT_ACCESS_EXPIRES_IN: getEnv("JWT_EXPIRES_IN", "15m") as string,
 
+  // GOOGLE_GENERATIVE_AI_API_KEY: getEnv("GOOGLE_GENERATIVE_AI_API_KEY"),
+  OPEN_ROUTER_API_KEY:getEnv("OPEN_ROUTER_API_KEY"),
+
   JWT_REFRESH_SECRET: getEnv("JWT_REFRESH_SECRET", "secert_jwt_refresh"),
   JWT_REFRESH_EXPIRES_IN: getEnv("JWT_REFRESH_EXPIRES_IN", "7d") as string,
 

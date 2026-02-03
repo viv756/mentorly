@@ -21,6 +21,7 @@ import userSkillRoutes from "./routes/user-skill.route";
 import peopleRoutes from "./routes/people.route";
 import sessionRoutes from "./routes/session.route";
 import ratingRoutes from "./routes/rating.route";
+import aiRoutes from "./routes/ai.route";
 import { startSessionAttendanceCron } from "./cron/update-attendanceStatus.cron";
 
 const app = express();
@@ -59,6 +60,7 @@ app.use(`${BASE_PATH}/skill`, passportAuthenticateJwt, userSkillRoutes);
 app.use(`${BASE_PATH}/people`, passportAuthenticateJwt, peopleRoutes);
 app.use(`${BASE_PATH}/session`, passportAuthenticateJwt, sessionRoutes);
 app.use(`${BASE_PATH}/rating`, passportAuthenticateJwt, ratingRoutes);
+app.use(`${BASE_PATH}/ai`, passportAuthenticateJwt, aiRoutes);
 
 app.use(errorHandler);
 

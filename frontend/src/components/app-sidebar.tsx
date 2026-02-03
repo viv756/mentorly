@@ -1,10 +1,10 @@
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
   Search,
   Brain,
   UserRound,
-  User2,
   ChevronsUpDown,
   LogOut,
   Settings,
@@ -12,6 +12,7 @@ import {
   ChevronRight,
   Headset,
   Inbox,
+  Sparkles,
 } from "lucide-react";
 import {
   Sidebar,
@@ -34,10 +35,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
 import LogoutDialog from "./logout-dialog";
-import { useState } from "react";
+import { useAuthStore } from "@/store/store";
 
 // Main menu items (NO settings here)
 const items = [
@@ -72,6 +72,11 @@ const items = [
     icon: Search,
   },
   {
+    title: "Discover (AI)",
+    url: "/ai-search",
+    icon: Sparkles,
+  },
+  {
     title: "Calendar",
     url: "/calendar",
     icon: Calendar,
@@ -81,6 +86,7 @@ const items = [
 export function AppSidebar() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { isMobile, setOpenMobile } = useSidebar();
+  const user = useAuthStore((s) => s.user);
 
   const handleNavClick = () => {
     if (isMobile) {
@@ -169,10 +175,8 @@ export function AppSidebar() {
             <SidebarMenuItem>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <SidebarMenuButton>
-                    <User2 className="h-4 w-4" />
-                    <span>Username</span>
-                    <ChevronsUpDown className="ml-auto h-4 w-4" />
+                  <SidebarMenuButton className="flex justify-between">
+                    {user?.userEmail} <ChevronsUpDown />
                   </SidebarMenuButton>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent side="top" className="w-60">
