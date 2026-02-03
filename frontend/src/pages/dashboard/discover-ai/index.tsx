@@ -1,4 +1,4 @@
-
+import { useEffect, useState } from "react";
 import {
   Conversation,
   ConversationContent,
@@ -14,6 +14,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { StreamingResponse } from "./_components/streaming-response";
+import { useAiAssistant } from "@/hooks/api/ai/use-aiAssistent";
 
 export type MessageVariant = "user" | "assistant";
 
@@ -26,9 +28,17 @@ export interface Message {
 }
 
 const DiscoverAi = () => {
+  const [isStreaming, setIsStreaming] = useState(false);
+  // const { isPending } = useAiAssistant();
   const messages = useChatStore((s) => s.messages);
+  const clearMessages = useChatStore((s) => s.clearMessages);
 
-  console.log(messages);
+  useEffect(() => {
+    // cleanup runs when component unmounts
+    return () => {
+      clearMessages();
+    };
+  }, [clearMessages]);
 
   return (
     <div className="min-h-screen flex flex-col w-full">
@@ -45,13 +55,39 @@ const DiscoverAi = () => {
                 />
               ) : (
                 <>
-                  {messages.map((message) => {
+                  {messages.map((message, index) => {
+                    const isLastMessage = index === messages.length - 1;
+
                     if (message.role === "user") {
                       return (
                         <Message key={message.messageId} from="user">
                           <MessageContent>
                             <Response>{message.content}</Response>
                           </MessageContent>
+                        </Message>
+                      );
+                    }
+
+                    // FOLLOW-UP (STREAM ONLY LATEST)
+                    if (message.type === "followup") {
+                      return (
+                        <Message key={message.messageId} from="assistant">
+                          <MessageContent>
+                            {isLastMessage ? (
+                              <StreamingResponse
+                                text={message.content}
+                                onStreamingChange={setIsStreaming}
+                              />
+                            ) : (
+                              <Response>{message.content}</Response>
+                            )}
+                          </MessageContent>
+                          <div className="ring-border size-8 overflow-hidden rounded-full ring-1">
+                            <Orb
+                              className="h-full w-full"
+                              agentState={isStreaming ? "talking" : null}
+                            />
+                          </div>
                         </Message>
                       );
                     }
@@ -106,16 +142,17 @@ const DiscoverAi = () => {
                       );
                     }
                     // assistant message
-                    return (
-                      <Message key={message.messageId} from="assistant">
-                        <MessageContent>
-                          <Response>{message.content as string}</Response>
-                        </MessageContent>
-                        <div className="ring-border size-8 overflow-hidden rounded-full ring-1">
-                          <Orb className="h-full w-full" agentState={"talking"} />
-                        </div>
-                      </Message>
-                    );
+                    // return (
+                    //   <Message key={message.messageId} from="assistant">
+                    //     <MessageContent>
+                    //       {isLastMessage ? (
+                    //         <StreamingResponse text={message.content} />
+                    //       ) : (
+                    //         <Response>{message.content}</Response>
+                    //       )}
+                    //     </MessageContent>
+                    //   </Message>
+                    // );
                   })}
                 </>
               )}
