@@ -81,7 +81,7 @@ const SignInForm = () => {
             )}
           />
           <Button type="submit" className="w-full" disabled={isPending}>
-            {isPending ? <Spinner /> : "Sign up"}
+            {isPending ? <Spinner /> : "Sign in"}
           </Button>
           <div className="flex w-full items-center justify-center">
             <div className="h-px w-full bg-border" />
@@ -90,7 +90,7 @@ const SignInForm = () => {
           </div>
           <Button type="button" variant="outline" className="w-full">
             <GoogleIcon />
-            Sign up with Google
+            Sign in with Google
           </Button>
         </div>
         <div className="text-center text-sm">
