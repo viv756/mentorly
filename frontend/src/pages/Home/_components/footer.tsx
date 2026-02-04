@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useTheme } from "next-themes";
 import { Input } from "@/components/ui/input";
-import { Github, Linkedin, Twitter, Moon, Sun, ArrowDownLeft, MessageCircle } from "lucide-react";
+import { Github, Linkedin, Twitter, ArrowDownLeft, MessageCircle } from "lucide-react";
 import Logo from "@/components/logo/logo";
 
 const data = () => ({
@@ -34,9 +33,9 @@ const data = () => ({
   },
   socialLinks: [
     { icon: Twitter, label: "Twitter", href: "#" },
-    { icon: Github, label: "GitHub", href: "#" },
     { icon: MessageCircle, label: "Discord", href: "#" },
-    { icon: Linkedin, label: "LinkedIn", href: "#" },
+    { icon: Github, label: "GitHub", href: "https://github.com/viv756" },
+    { icon: Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/in/vr-vivek" },
   ],
   bottomLinks: [
     { href: "/privacy", label: "Privacy Policy" },
@@ -46,7 +45,6 @@ const data = () => ({
 });
 
 export default function FooterStandard() {
-  const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -69,7 +67,7 @@ export default function FooterStandard() {
               <Logo/>
             </Link>
             <p className="text-muted-foreground max-w-md">
-              Building innovative solutions for modern businesses. Fast, reliable, and scalable.
+             Powering modern mentorship with fast, reliable, and scalable technology.
             </p>
             <div className="flex items-center gap-2">
               <div className="flex gap-2">
@@ -86,14 +84,7 @@ export default function FooterStandard() {
                   </Button>
                 ))}
               </div>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="hover:bg-primary dark:hover:bg-primary border-primary/30! !hover:border-primary cursor-pointer shadow-none transition-all duration-1000 hover:scale-110 hover:-rotate-12 hover:text-white hover:shadow-md">
-                {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-                <span className="sr-only">Toggle theme</span>
-              </Button>
+              
             </div>
             <form onSubmit={(e) => e.preventDefault()} className="w-full max-w-md space-y-3">
               <label htmlFor="email" className="block text-sm font-medium">
@@ -113,9 +104,7 @@ export default function FooterStandard() {
                   Subscribe
                 </Button>
               </div>
-              <p className="text-muted-foreground text-xs">
-                Get the latest updates, tutorials, and exclusive offers.
-              </p>
+            
             </form>
             <h1 className="from-muted-foreground/15 bg-linear-to-b bg-clip-text text-5xl font-extrabold text-transparent lg:text-7xl">
              Mentorly
@@ -149,7 +138,7 @@ export default function FooterStandard() {
         {/* Bottom Section */}
         <div className="animate-rotate-3d via-primary h-px w-full bg-linear-to-r from-transparent to-transparent" />
         <div className="text-muted-foreground container m-auto flex flex-col items-center justify-between gap-4 p-4 text-xs md:flex-row md:px-0 md:text-sm">
-          <p className="">&copy; {currentYear} Mvpblocks | All rights reserved</p>
+          <p className="">&copy; {currentYear} Mentorly | All rights reserved</p>
           <div className="flex items-center gap-4">
             {data().bottomLinks.map(({ href, label }) => (
               <Link key={href} to={href} className="hover:text-foreground">
