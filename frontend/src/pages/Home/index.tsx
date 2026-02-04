@@ -1,7 +1,9 @@
 import Navbar from "./_components/navbar";
 // import { Meteors } from "@/components/ui/meteors";
 // import { Globe } from "@/components/ui/globe";
-import Page from "./_components/home";
+import GlowyWavesHero from "./_components/hero2";
+import { AboutUsSection } from "./_components/about-us";
+import FooterStandard from "./_components/footer";
 
 const Home = () => {
   return (
@@ -53,7 +55,24 @@ const Home = () => {
     //     </>
     <>
       <Navbar />
-      <Page />
+      <div className="mx-auto pt-12">
+        <div className="mx-auto  space-y-12">
+          {/* Glowy Waves Hero */}
+          <section>
+            <GlowyWavesHero />
+          </section>
+
+          {/* About Us */}
+          <section>
+            <AboutUsSection />
+          </section>
+
+          {/* Footer Block */}
+          <section>
+            <FooterStandard />
+          </section>
+        </div>
+      </div>
     </>
   );
 };
