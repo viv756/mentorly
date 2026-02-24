@@ -11,7 +11,7 @@ const envConfig = () => ({
   JWT_ACCESS_EXPIRES_IN: getEnv("JWT_EXPIRES_IN", "15m") as string,
 
   // GOOGLE_GENERATIVE_AI_API_KEY: getEnv("GOOGLE_GENERATIVE_AI_API_KEY"),
-  OPEN_ROUTER_API_KEY:getEnv("OPEN_ROUTER_API_KEY"),
+  OPEN_ROUTER_API_KEY: getEnv("OPEN_ROUTER_API_KEY"),
 
   JWT_REFRESH_SECRET: getEnv("JWT_REFRESH_SECRET", "secert_jwt_refresh"),
   JWT_REFRESH_EXPIRES_IN: getEnv("JWT_REFRESH_EXPIRES_IN", "7d") as string,
@@ -22,6 +22,8 @@ const envConfig = () => ({
 
   AGORA_APP_ID: getEnv("AGORA_APP_ID", ""),
   AGORA_APP_CERTIFICATE: getEnv("AGORA_APP_CERTIFICATE", ""),
+
+  REDIS_URL: getEnv("REDIS_URL", ""),
 });
 
 export const Env = envConfig();
